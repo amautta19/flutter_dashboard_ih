@@ -4,7 +4,7 @@ class SupabaseServices {
   final supabase = Supabase.instance.client;
   Future<List<Map<String, dynamic>>> getData() async{
     final response = await supabase
-      .from('agua_manifold')
+      .from('agua_manifold_diario_v2')
       .select();
     return response;
   }
