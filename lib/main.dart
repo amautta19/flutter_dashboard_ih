@@ -54,10 +54,12 @@ class _WindowsTableScreenState extends State<WindowsTableScreen> {
     PlutoColumn(title: 'Quasy', field: 'quasy', type: PlutoColumnType.number()),
     PlutoColumn(title: 'Servicios', field: 'servicios', type: PlutoColumnType.number()),
     PlutoColumn(title: 'Contisolv', field: 'contisolv', type: PlutoColumnType.number()),
+    PlutoColumn(title: 'Total Consumo', field: 'total', type: PlutoColumnType.number())
   ].map((column){
       column.enableContextMenu = false;
       column.enableColumnDrag = false;
       column.enableDropToResize = false;
+      column.readOnly = true;
       return column;
   }).toList();
 
@@ -73,23 +75,40 @@ class _WindowsTableScreenState extends State<WindowsTableScreen> {
 
       // 2. Convertimos los mapas de Supabase a filas de PlutoGrid
       setState(() {
-        rows = data.map((item) => PlutoRow(
-          cells: {
-            'fecha': PlutoCell(value: item['fecha_operativa'].toString()),
-            'cip': PlutoCell(value: item['CIP'] ?? 0),
-            'desaireadorA': PlutoCell(value: item['DesaireadorA'] ?? 0),
-            'desaireadorB': PlutoCell(value: item['DesaireadorB'] ?? 0),
-            'desaireadorC': PlutoCell(value: item['DesaireadorC'] ?? 0),
-            'fuerza': PlutoCell(value: item['Fuerza'] ?? 0),
-            'lavadoras': PlutoCell(value: item['Lavadoras'] ?? 0),
-            'lineasPET': PlutoCell(value: item['LineasPET'] ?? 0),
-            'multimix': PlutoCell(value: item['Multimix'] ?? 0),
-            'potable': PlutoCell(value: item['Potable'] ?? 0),
-            'quasy': PlutoCell(value: item['Quasy'] ?? 0),
-            'servicios': PlutoCell(value: item['Servicios'] ?? 0),
-            'contisolv': PlutoCell(value: item['Contisiolv'] ?? 0),
-          },
-        )).toList();
+        rows = data.map((item) {
+          
+          final total = (item['CIP'] ?? 0) +
+              (item['DesaireadorA'] ?? 0) +
+              (item['DesaireadorB'] ?? 0) +
+              (item['DesaireadorC'] ?? 0) +
+              (item['Fuerza'] ?? 0) +
+              (item['Lavadoras'] ?? 0) +
+              (item['LineasPET'] ?? 0) +
+              (item['Multimix'] ?? 0) +
+              (item['Potable'] ?? 0) +
+              (item['Quasy'] ?? 0) +
+              (item['Servicios'] ?? 0) +
+              (item['Contisiolv'] ?? 0);
+
+          return PlutoRow(
+            cells: {
+              'fecha':        PlutoCell(value: item['fecha_operativa'].toString()),
+              'cip':          PlutoCell(value: item['CIP'] ?? 0),
+              'desaireadorA': PlutoCell(value: item['DesaireadorA'] ?? 0),
+              'desaireadorB': PlutoCell(value: item['DesaireadorB'] ?? 0),
+              'desaireadorC': PlutoCell(value: item['DesaireadorC'] ?? 0),
+              'fuerza':       PlutoCell(value: item['Fuerza'] ?? 0),
+              'lavadoras':    PlutoCell(value: item['Lavadoras'] ?? 0),
+              'lineasPET':    PlutoCell(value: item['LineasPET'] ?? 0),
+              'multimix':     PlutoCell(value: item['Multimix'] ?? 0),
+              'potable':      PlutoCell(value: item['Potable'] ?? 0),
+              'quasy':        PlutoCell(value: item['Quasy'] ?? 0),
+              'servicios':    PlutoCell(value: item['Servicios'] ?? 0),
+              'contisolv':    PlutoCell(value: item['Contisiolv'] ?? 0),
+              'total':        PlutoCell(value: total), // 👈
+            },
+          );
+        }).toList();
         isLoading = false;
       });
     } catch (e) {
