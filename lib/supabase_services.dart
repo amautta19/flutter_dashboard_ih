@@ -5,7 +5,8 @@ class SupabaseServices {
   Future<List<Map<String, dynamic>>> getData() async{
     final response = await supabase
       .from('agua_manifold_diario_v2')
-      .select();
+      .select()
+      .order('fecha_operativa', ascending: false);
     return response;
   }
 }
