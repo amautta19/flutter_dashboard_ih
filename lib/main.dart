@@ -102,33 +102,29 @@ class _WindowsTableScreenState extends State<WindowsTableScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Consumo de Agua')),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: isLoading 
-          ? const Center(child: CircularProgressIndicator()) // Mientras carga
-          : PlutoGrid(
-              columns: columns,
-              rows: rows,
-              configuration: PlutoGridConfiguration(
-                columnSize: PlutoGridColumnSizeConfig(
-                  autoSizeMode: PlutoAutoSizeMode.scale,
-                  resizeMode: PlutoResizeMode.pushAndPull
+      body: isLoading 
+        ? const Center(child: CircularProgressIndicator()) // Mientras carga
+        : PlutoGrid(
+            columns: columns,
+            rows: rows,
+            configuration: PlutoGridConfiguration(
+              columnSize: PlutoGridColumnSizeConfig(
+                autoSizeMode: PlutoAutoSizeMode.equal
+              ),
+              style: PlutoGridStyleConfig(
+                columnTextStyle: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black
                 ),
-                style: PlutoGridStyleConfig(
-                  columnTextStyle: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black
-                  ),
-                  cellTextStyle: TextStyle(
-                    fontSize: 12,
-                    color: Colors.black
-                  ),
-                  gridBorderColor: Colors.transparent,
+                cellTextStyle: TextStyle(
+                  fontSize: 12,
+                  color: Colors.black
                 ),
+                gridBorderColor: Colors.transparent,
               ),
             ),
-      ),
+          ),
     );
   }
 }
