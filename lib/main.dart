@@ -59,37 +59,63 @@ class _WindowsTableScreenState extends State<WindowsTableScreen> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Consumo de Agua - Industrial')),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : SfDataGrid(
-              source: _dataSource,
-              columnWidthMode: ColumnWidthMode.fill,
-              allowColumnsResizing: true,
-              gridLinesVisibility: GridLinesVisibility.both,
-              headerGridLinesVisibility: GridLinesVisibility.both,
-              columns: [
-                _buildColumn('fecha', 'Fecha'),
-                _buildColumn('cip', 'CIP'),
-                _buildColumn('desaireadorA', 'Des. A'),
-                _buildColumn('desaireadorB', 'Des. B'),
-                _buildColumn('desaireadorC', 'Des. C'),
-                _buildColumn('fuerza', 'Fuerza'),
-                _buildColumn('lavadoras', 'Lavadoras'),
-                _buildColumn('lineasPET', 'Líneas PET'),
-                _buildColumn('multimix', 'Multimix'),
-                _buildColumn('potable', 'Potable'),
-                _buildColumn('quasy', 'Quasy'),
-                _buildColumn('servicios', 'Servicios'),
-                _buildColumn('contisolv', 'Contisolv'),
-                _buildColumn('total', 'TOTAL', isTotal: true),
-              ],
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(title: const Text('Consumo de Agua - Industrial')),
+    body: isLoading
+        ? const Center(child: CircularProgressIndicator())
+        : SingleChildScrollView( // Opcional: por si la pantalla es más pequeña que 800px
+            child: Center(
+              child: Container(
+                padding: const EdgeInsets.all(10),
+                // Definimos el tamaño fijo aquí
+                width: MediaQuery.of(context).size.width * 0.90, // Casi todo el ancho
+                child: Column(
+                  children: [
+                    const Text(
+                      "Historial de Consumo Operativo",
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 20),
+                    
+                    // CONTENEDOR DE 800PX
+                    SizedBox(
+                      height: 500, 
+                      child: SfDataGrid(
+                        source: _dataSource,
+                        columnWidthMode: ColumnWidthMode.fill,
+                        headerRowHeight: 50,
+                        allowColumnsResizing: true,
+                        gridLinesVisibility: GridLinesVisibility.both,
+                        headerGridLinesVisibility: GridLinesVisibility.both,
+                        // Esto hace que el scroll sea más fluido con el mouse en Windows
+                        isScrollbarAlwaysShown: true, 
+                        columns: [
+                          _buildColumn('fecha', 'Fecha'),
+                          _buildColumn('cip', 'CIP'),
+                          _buildColumn('desaireadorA', 'Desaireador A'),
+                          _buildColumn('desaireadorB', 'Desaireador B'),
+                          _buildColumn('desaireadorC', 'Desaireador C'),
+                          _buildColumn('fuerza', 'Fuerza'),
+                          _buildColumn('lavadoras', 'Lavadoras'),
+                          _buildColumn('lineasPET', 'Líneas PET'),
+                          _buildColumn('multimix', 'Multimix'),
+                          _buildColumn('potable', 'Potable'),
+                          _buildColumn('quasy', 'Quasy'),
+                          _buildColumn('servicios', 'Servicios'),
+                          _buildColumn('contisolv', 'Contisolv'),
+                          _buildColumn('total', 'TOTAL', isTotal: true),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
-    );
-  }
+          ),
+  );
+}
 
   GridColumn _buildColumn(String name, String label, {bool isTotal = false}) {
     return GridColumn(
@@ -98,7 +124,11 @@ class _WindowsTableScreenState extends State<WindowsTableScreen> {
         padding: const EdgeInsets.all(8),
         alignment: Alignment.center,
         color: isTotal ? Colors.blueAccent.withOpacity(0.2) : Colors.transparent,
-        child: Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
+        child: Text(
+          label, 
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 14)),
       ),
     );
   }
@@ -150,6 +180,7 @@ class _ConsumoDataSource extends DataGridSource {
           child: Text(
             cell.value.toString(),
             style: TextStyle(
+              fontSize: 12,
               color: isTotal ? Colors.blueAccent : Colors.white,
               fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
             ),
