@@ -34,8 +34,16 @@ class WindowsTableScreen extends StatefulWidget {
 class _WindowsTableScreenState extends State<WindowsTableScreen> {
   final SupabaseServices _services = SupabaseServices();
   late _ConsumoDataSource _dataSource;
-  List<dynamic> _rawData = []; 
+  List<dynamic> _allData = []; // Todos los datos de Supabase
+  List<dynamic> _rawData = []; // Datos filtrados para la gráfica
   bool isLoading = true;
+
+  // --- VARIABLES DE FILTRO ---
+  String _mesSeleccionado = 'Todos';
+  final List<String> _meses = [
+    'Todos', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 
+    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+  ];
 
   @override
   void initState() {
@@ -47,19 +55,17 @@ class _WindowsTableScreenState extends State<WindowsTableScreen> {
     try {
       final data = await _services.getData(); 
       
-      // 1. Ordenamos ASCENDENTE para la gráfica (Pasado -> Presente)
+      // Ordenamos Ascendente (Antiguo -> Nuevo) para la lógica base
       data.sort((a, b) {
         DateTime fechaA = DateTime.parse(a['fecha_operativa'].toString());
         DateTime fechaB = DateTime.parse(b['fecha_operativa'].toString());
         return fechaA.compareTo(fechaB); 
       });
 
-      // 2. Creamos una versión REVERSA (Descendente) solo para la tabla
-      final dataParaTabla = List.from(data.reversed);
-
       setState(() {
-        _rawData = data; // La gráfica usa el orden cronológico
-        _dataSource = _ConsumoDataSource(data: dataParaTabla); // La tabla muestra lo nuevo arriba
+        _allData = data; 
+        _rawData = data; 
+        _dataSource = _ConsumoDataSource(data: List.from(data.reversed));
         isLoading = false;
       });
     } catch (e) {
@@ -68,11 +74,33 @@ class _WindowsTableScreenState extends State<WindowsTableScreen> {
     }
   }
 
+  // --- FUNCIÓN DE FILTRADO ---
+  void _filtrarPorMes(String? mes) {
+    if (mes == null) return;
+
+    List<dynamic> filtrados;
+    if (mes == 'Todos') {
+      filtrados = _allData;
+    } else {
+      int numeroMes = _meses.indexOf(mes); // Enero = 1, Marzo = 3...
+      filtrados = _allData.where((item) {
+        DateTime fecha = DateTime.parse(item['fecha_operativa'].toString());
+        return fecha.month == numeroMes;
+      }).toList();
+    }
+
+    setState(() {
+      _mesSeleccionado = mes;
+      _rawData = filtrados;
+      _dataSource = _ConsumoDataSource(data: List.from(filtrados.reversed));
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Consumo de Agua - Dashboard Industrial'),
+        title: const Text('Dashboard Industrial - Arca Continental'),
         centerTitle: true,
       ),
       body: isLoading
@@ -84,13 +112,36 @@ class _WindowsTableScreenState extends State<WindowsTableScreen> {
                   width: MediaQuery.of(context).size.width * 0.95,
                   child: Column(
                     children: [
-                      const Text(
-                        "Historial de Consumo Operativo (Lo más reciente arriba)",
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      // --- UI DE FILTRO ---
+                      Card(
+                        color: Colors.white.withOpacity(0.05),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.calendar_month, color: Colors.blueAccent),
+                              const SizedBox(width: 15),
+                              const Text("Seleccionar Mes:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                              const SizedBox(width: 20),
+                              DropdownButton<String>(
+                                value: _mesSeleccionado,
+                                underline: Container(height: 2, color: Colors.blueAccent),
+                                items: _meses.map((String mes) {
+                                  return DropdownMenuItem<String>(value: mes, child: Text(mes));
+                                }).toList(),
+                                onChanged: (value) => _filtrarPorMes(value),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 30),
 
-                      // --- TABLA DE 500PX ---
+                      const Text("Historial de Consumo (Tabla)", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 15),
+
+                      // --- TABLA ---
                       SizedBox(
                         height: 500,
                         child: SfDataGrid(
@@ -100,7 +151,6 @@ class _WindowsTableScreenState extends State<WindowsTableScreen> {
                           allowColumnsResizing: true,
                           gridLinesVisibility: GridLinesVisibility.both,
                           headerGridLinesVisibility: GridLinesVisibility.both,
-                          isScrollbarAlwaysShown: true,
                           columns: [
                             _buildColumn('fecha', 'Fecha'),
                             _buildColumn('cip', 'CIP'),
@@ -124,51 +174,32 @@ class _WindowsTableScreenState extends State<WindowsTableScreen> {
                       const Divider(color: Colors.blueAccent, thickness: 2),
                       const SizedBox(height: 30),
 
-                      // --- GRÁFICA DE BARRAS ---
-                      const Text(
-                        "Análisis de Consumo CIP (Tendencia Temporal)",
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
+                      // --- GRÁFICA ---
+                      const Text("Análisis de Consumo CIP", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                       const SizedBox(height: 20),
                       Container(
                         height: 450,
                         padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.05),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
+                        decoration: BoxDecoration(color: Colors.white.withOpacity(0.05), borderRadius: BorderRadius.circular(12)),
                         child: SfCartesianChart(
                           tooltipBehavior: TooltipBehavior(enable: true),
-                          zoomPanBehavior: ZoomPanBehavior(
-                            enablePanning: true, 
-                            zoomMode: ZoomMode.x,
-                          ),
+                          zoomPanBehavior: ZoomPanBehavior(enablePanning: true, zoomMode: ZoomMode.x),
                           primaryXAxis: CategoryAxis(
-                            title: const AxisTitle(text: 'Fecha'),
                             labelRotation: 45,
                             autoScrollingDelta: 14, 
-                            // Mode END asegura que inicie mostrando los datos de la derecha (más recientes)
                             autoScrollingMode: AutoScrollingMode.end, 
                           ),
                           primaryYAxis: const NumericAxis(
-                            title: AxisTitle(text: 'm³ Consumidos'),
                             plotBands: <PlotBand>[
                               PlotBand(
-                                isVisible: true,
-                                start: 300,
-                                end: 300,
-                                borderWidth: 3,
-                                borderColor: Colors.redAccent,
-                                dashArray: <double>[6, 6],
-                                text: 'ALERTA 300',
-                                textStyle: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold),
-                                horizontalTextAlignment: TextAnchor.end,
+                                isVisible: true, start: 300, end: 300, borderWidth: 3, 
+                                borderColor: Colors.redAccent, dashArray: <double>[6, 6],
+                                text: 'ALERTA 300', textStyle: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold),
                               )
                             ],
                           ),
                           series: <CartesianSeries<dynamic, String>>[
                             ColumnSeries<dynamic, String>(
-                              name: 'Consumo CIP',
                               dataSource: _rawData,
                               xValueMapper: (data, _) => data['fecha_operativa'].toString(),
                               yValueMapper: (data, _) => data['CIP'] ?? 0,
@@ -192,13 +223,9 @@ class _WindowsTableScreenState extends State<WindowsTableScreen> {
     return GridColumn(
       columnName: name,
       label: Container(
-        padding: const EdgeInsets.all(8),
         alignment: Alignment.center,
         color: isTotal ? Colors.blueAccent.withOpacity(0.2) : Colors.transparent,
-        child: Text(
-          label,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-        ),
+        child: Text(label, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
       ),
     );
   }
@@ -244,14 +271,7 @@ class _ConsumoDataSource extends DataGridSource {
           alignment: Alignment.center,
           padding: const EdgeInsets.all(8),
           color: isTotal ? Colors.blueAccent.withOpacity(0.1) : null,
-          child: Text(
-            cell.value.toString(),
-            style: TextStyle(
-              fontSize: 12,
-              color: isTotal ? Colors.blueAccent : Colors.white,
-              fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
-            ),
-          ),
+          child: Text(cell.value.toString(), style: TextStyle(fontSize: 12, color: isTotal ? Colors.blueAccent : Colors.white, fontWeight: isTotal ? FontWeight.bold : FontWeight.normal)),
         );
       }).toList(),
     );
