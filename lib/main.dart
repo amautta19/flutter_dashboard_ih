@@ -146,7 +146,7 @@ class _WindowsTableScreenState extends State<WindowsTableScreen> {
                             labelRotation: 45,
                             // Muestra las primeras 15 barras y habilita el scroll
                             autoScrollingDelta: 14, 
-                            autoScrollingMode: AutoScrollingMode.start, // Empieza desde el inicio (ascendente)
+                            autoScrollingMode: AutoScrollingMode.end, // Empieza con el final, la ultima fecha
                           ),
                           primaryYAxis: const NumericAxis(
                             title: AxisTitle(text: 'm³ Consumidos'),
