@@ -119,6 +119,7 @@ class _WindowsTableScreenState extends State<WindowsTableScreen> {
                         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 20),
+                      // --- GRÁFICA DE BARRAS CIP CORREGIDA ---
                       Container(
                         height: 450,
                         padding: const EdgeInsets.all(10),
@@ -128,13 +129,25 @@ class _WindowsTableScreenState extends State<WindowsTableScreen> {
                         ),
                         child: SfCartesianChart(
                           tooltipBehavior: TooltipBehavior(enable: true),
-                          primaryXAxis: const CategoryAxis(
-                            title: AxisTitle(text: 'Fecha'),
-                            labelRotation: 45,
+                          
+                          // 1. ZoomPan es obligatorio para que el scroll funcione al arrastrar
+                          zoomPanBehavior: ZoomPanBehavior(
+                            enablePanning: true, // Esto permite el "scroll" lateral
+                            zoomMode: ZoomMode.x,
                           ),
+
+                          primaryXAxis: CategoryAxis(
+                            title: const AxisTitle(text: 'Fecha'),
+                            labelRotation: 45,
+                            
+                            // 2. Esta es la forma moderna de decir "solo muestra 7 barras"
+                            // Delta de 6 significa: desde el primer dato + 6 más = 7 barras visibles
+                            autoScrollingDelta: 14, 
+                            autoScrollingMode: AutoScrollingMode.end, // Empieza mostrando lo último (lo más nuevo)
+                          ),
+                          
                           primaryYAxis: const NumericAxis(
                             title: AxisTitle(text: 'm³ Consumidos'),
-                            // LÍNEA DE REFERENCIA 500
                             plotBands: <PlotBand>[
                               PlotBand(
                                 isVisible: true,
@@ -143,11 +156,10 @@ class _WindowsTableScreenState extends State<WindowsTableScreen> {
                                 borderWidth: 3,
                                 borderColor: Colors.redAccent,
                                 dashArray: <double>[6, 6],
-                                text: 'ALERTA 500',
+                                text: 'ALERTA 300',
                                 textStyle: TextStyle(
-                                  color: Colors.redAccent,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12,
+                                  color: Colors.redAccent, 
+                                  fontWeight: FontWeight.bold
                                 ),
                                 horizontalTextAlignment: TextAnchor.end,
                               )
@@ -159,7 +171,7 @@ class _WindowsTableScreenState extends State<WindowsTableScreen> {
                               dataSource: _rawData,
                               xValueMapper: (data, _) => data['fecha_operativa'].toString(),
                               yValueMapper: (data, _) => data['CIP'] ?? 0,
-                              // Lógica de color: Rojo si pasa de 500, Azul si no.
+                              // Tu lógica de colores que ya funcionaba
                               pointColorMapper: (data, _) {
                                 num valor = data['CIP'] ?? 0;
                                 return valor > 300 ? Colors.redAccent : Colors.blueAccent;
