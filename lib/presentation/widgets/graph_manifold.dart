@@ -51,9 +51,6 @@ class _GraphManifoldWidgetState extends State<GraphManifoldWidget> {
             dataSource: widget.allData,
             xValueMapper: (data, _) => data['fecha_operativa'].toString(), 
               yValueMapper: (data, _) {
-                // if (_campoGrafica == 'total') {
-                //   return (data['CIP'] ?? 0) + (data['DesaireadorA'] ?? 0) + (data['DesaireadorB'] ?? 0) + (data['DesaireadorC'] ?? 0) + (data['Fuerza'] ?? 0) + (data['Lavadoras'] ?? 0) + (data['LineasPET'] ?? 0) + (data['Multimix'] ?? 0) + (data['Potable'] ?? 0) + (data['Quasy'] ?? 0) + (data['Servicios'] ?? 0) + (data['Contisiolv'] ?? 0);
-                // }
                 return data['CIP'] ?? 0;
               }
           )
