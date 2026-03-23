@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dashboard_ih/defaults/color_defaults.dart';
 import 'package:flutter_dashboard_ih/defaults/text_global.dart';
+import 'package:flutter_dashboard_ih/presentation/widgets/filter_month.dart';
+import 'package:flutter_dashboard_ih/presentation/widgets/graph_manifold.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/tables_manifold.dart';
+import 'package:flutter_dashboard_ih/providers/filter_month_provider.dart';
 import 'package:flutter_dashboard_ih/supabase_services.dart';
+import 'package:provider/provider.dart';
 
 class MainView extends StatefulWidget {
   const MainView({super.key});
@@ -41,6 +45,7 @@ class _MainViewState extends State<MainView> {
 
   @override
   Widget build(BuildContext context) {
+    final providerMotn = Provider.of<FilterMonthProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: GlobalText('Consumo de agua de Manifold'),
@@ -52,7 +57,12 @@ class _MainViewState extends State<MainView> {
             padding: const EdgeInsets.all(15),
             child: Column(
               children: [
-                TableManifoldWidget(allData: _allData,)
+                Text(providerMotn.getMonth),
+                FilterMonth(),
+                const SizedBox(height: 10),
+                TableManifoldWidget(allData: _allData,),
+                const SizedBox(height: 20,),
+                GraphManifoldWidget(allData: _allData,)
               ],
             ),
           )
