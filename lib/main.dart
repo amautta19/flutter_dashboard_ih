@@ -46,6 +46,15 @@ class _WindowsTableScreenState extends State<WindowsTableScreen> {
   Future<void> _fetchData() async {
     try {
       final data = await _services.getData(); 
+      
+      // --- ORDENAMIENTO ASCENDENTE POR FECHA ---
+      // Esto asegura que tanto la tabla como la gráfica empiecen desde lo más antiguo
+      data.sort((a, b) {
+        DateTime fechaA = DateTime.parse(a['fecha_operativa'].toString());
+        DateTime fechaB = DateTime.parse(b['fecha_operativa'].toString());
+        return fechaA.compareTo(fechaB); 
+      });
+
       setState(() {
         _rawData = data; 
         _dataSource = _ConsumoDataSource(data: data);
@@ -79,7 +88,7 @@ class _WindowsTableScreenState extends State<WindowsTableScreen> {
                       ),
                       const SizedBox(height: 20),
 
-                      // --- TABLA DE 500PX ---
+                      // --- TABLA ---
                       SizedBox(
                         height: 500,
                         child: SfDataGrid(
@@ -113,13 +122,12 @@ class _WindowsTableScreenState extends State<WindowsTableScreen> {
                       const Divider(color: Colors.blueAccent, thickness: 2),
                       const SizedBox(height: 30),
 
-                      // --- GRÁFICA DE BARRAS CIP CON LÍMITE ---
+                      // --- GRÁFICA DE BARRAS ORDENADA ---
                       const Text(
-                        "Análisis de Consumo CIP (Límite: 500)",
+                        "Análisis de Consumo CIP (Orden Ascendente)",
                         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 20),
-                      // --- GRÁFICA DE BARRAS CIP CORREGIDA ---
                       Container(
                         height: 450,
                         padding: const EdgeInsets.all(10),
@@ -129,23 +137,17 @@ class _WindowsTableScreenState extends State<WindowsTableScreen> {
                         ),
                         child: SfCartesianChart(
                           tooltipBehavior: TooltipBehavior(enable: true),
-                          
-                          // 1. ZoomPan es obligatorio para que el scroll funcione al arrastrar
                           zoomPanBehavior: ZoomPanBehavior(
-                            enablePanning: true, // Esto permite el "scroll" lateral
+                            enablePanning: true, 
                             zoomMode: ZoomMode.x,
                           ),
-
                           primaryXAxis: CategoryAxis(
                             title: const AxisTitle(text: 'Fecha'),
                             labelRotation: 45,
-                            
-                            // 2. Esta es la forma moderna de decir "solo muestra 7 barras"
-                            // Delta de 6 significa: desde el primer dato + 6 más = 7 barras visibles
+                            // Muestra las primeras 15 barras y habilita el scroll
                             autoScrollingDelta: 14, 
-                            autoScrollingMode: AutoScrollingMode.end, // Empieza mostrando lo último (lo más nuevo)
+                            autoScrollingMode: AutoScrollingMode.start, // Empieza desde el inicio (ascendente)
                           ),
-                          
                           primaryYAxis: const NumericAxis(
                             title: AxisTitle(text: 'm³ Consumidos'),
                             plotBands: <PlotBand>[
@@ -157,10 +159,7 @@ class _WindowsTableScreenState extends State<WindowsTableScreen> {
                                 borderColor: Colors.redAccent,
                                 dashArray: <double>[6, 6],
                                 text: 'ALERTA 300',
-                                textStyle: TextStyle(
-                                  color: Colors.redAccent, 
-                                  fontWeight: FontWeight.bold
-                                ),
+                                textStyle: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold),
                                 horizontalTextAlignment: TextAnchor.end,
                               )
                             ],
@@ -171,16 +170,9 @@ class _WindowsTableScreenState extends State<WindowsTableScreen> {
                               dataSource: _rawData,
                               xValueMapper: (data, _) => data['fecha_operativa'].toString(),
                               yValueMapper: (data, _) => data['CIP'] ?? 0,
-                              // Tu lógica de colores que ya funcionaba
-                              pointColorMapper: (data, _) {
-                                num valor = data['CIP'] ?? 0;
-                                return valor > 300 ? Colors.redAccent : Colors.blueAccent;
-                              },
+                              pointColorMapper: (data, _) => (data['CIP'] ?? 0) > 300 ? Colors.redAccent : Colors.blueAccent,
                               borderRadius: const BorderRadius.vertical(top: Radius.circular(5)),
-                              dataLabelSettings: const DataLabelSettings(
-                                isVisible: true,
-                                textStyle: TextStyle(fontSize: 10, color: Colors.white),
-                              ),
+                              dataLabelSettings: const DataLabelSettings(isVisible: true),
                             )
                           ],
                         ),
@@ -210,7 +202,6 @@ class _WindowsTableScreenState extends State<WindowsTableScreen> {
   }
 }
 
-// MOTOR DE LA TABLA
 class _ConsumoDataSource extends DataGridSource {
   _ConsumoDataSource({required List<dynamic> data}) {
     _rows = data.map<DataGridRow>((item) {
@@ -239,7 +230,6 @@ class _ConsumoDataSource extends DataGridSource {
   }
 
   List<DataGridRow> _rows = [];
-
   @override
   List<DataGridRow> get rows => _rows;
 
