@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class FilterMonthProvider extends ChangeNotifier{
-  String _month = '';
+  String _month = 'Enero';
   
   String get getMonth => _month;
 
