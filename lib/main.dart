@@ -47,17 +47,19 @@ class _WindowsTableScreenState extends State<WindowsTableScreen> {
     try {
       final data = await _services.getData(); 
       
-      // --- ORDENAMIENTO ASCENDENTE POR FECHA ---
-      // Esto asegura que tanto la tabla como la gráfica empiecen desde lo más antiguo
+      // 1. Ordenamos ASCENDENTE para la gráfica (Pasado -> Presente)
       data.sort((a, b) {
         DateTime fechaA = DateTime.parse(a['fecha_operativa'].toString());
         DateTime fechaB = DateTime.parse(b['fecha_operativa'].toString());
         return fechaA.compareTo(fechaB); 
       });
 
+      // 2. Creamos una versión REVERSA (Descendente) solo para la tabla
+      final dataParaTabla = List.from(data.reversed);
+
       setState(() {
-        _rawData = data; 
-        _dataSource = _ConsumoDataSource(data: data);
+        _rawData = data; // La gráfica usa el orden cronológico
+        _dataSource = _ConsumoDataSource(data: dataParaTabla); // La tabla muestra lo nuevo arriba
         isLoading = false;
       });
     } catch (e) {
@@ -83,12 +85,12 @@ class _WindowsTableScreenState extends State<WindowsTableScreen> {
                   child: Column(
                     children: [
                       const Text(
-                        "Historial de Consumo Operativo",
+                        "Historial de Consumo Operativo (Lo más reciente arriba)",
                         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 20),
 
-                      // --- TABLA ---
+                      // --- TABLA DE 500PX ---
                       SizedBox(
                         height: 500,
                         child: SfDataGrid(
@@ -122,9 +124,9 @@ class _WindowsTableScreenState extends State<WindowsTableScreen> {
                       const Divider(color: Colors.blueAccent, thickness: 2),
                       const SizedBox(height: 30),
 
-                      // --- GRÁFICA DE BARRAS ORDENADA ---
+                      // --- GRÁFICA DE BARRAS ---
                       const Text(
-                        "Análisis de Consumo CIP (Orden Ascendente)",
+                        "Análisis de Consumo CIP (Tendencia Temporal)",
                         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 20),
@@ -144,9 +146,9 @@ class _WindowsTableScreenState extends State<WindowsTableScreen> {
                           primaryXAxis: CategoryAxis(
                             title: const AxisTitle(text: 'Fecha'),
                             labelRotation: 45,
-                            // Muestra las primeras 15 barras y habilita el scroll
                             autoScrollingDelta: 14, 
-                            autoScrollingMode: AutoScrollingMode.end, // Empieza con el final, la ultima fecha
+                            // Mode END asegura que inicie mostrando los datos de la derecha (más recientes)
+                            autoScrollingMode: AutoScrollingMode.end, 
                           ),
                           primaryYAxis: const NumericAxis(
                             title: AxisTitle(text: 'm³ Consumidos'),
