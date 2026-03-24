@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dashboard_ih/defaults/color_defaults.dart';
 import 'package:flutter_dashboard_ih/providers/filter_element_provider.dart';
 import 'package:provider/provider.dart'; // Importante para escuchar el cambio
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -36,14 +37,14 @@ class _GraphManifoldWidgetState extends State<GraphManifoldWidget> {
       height: 450,
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white10),
+        color: ColorDefaults.whitePrimary,
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: ColorDefaults.whitePrimary),
       ),
       child: SfCartesianChart(
         title: ChartTitle(
           // Título dinámico según la variable
-          text: 'Análisis de Consumo: $selectedCol',
+          text: 'Tendencia de consumo: $selectedCol',
           textStyle: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white70)
         ),
         tooltipBehavior: TooltipBehavior(enable: true, header: selectedCol),
@@ -52,16 +53,16 @@ class _GraphManifoldWidgetState extends State<GraphManifoldWidget> {
           zoomMode: ZoomMode.x,
         ),
         primaryXAxis: CategoryAxis(
-          labelRotation: 45,
+          labelRotation: 0,
           autoScrollingDelta: 14,
           autoScrollingMode: AutoScrollingMode.end,
           majorGridLines: const MajorGridLines(width: 0),
-          labelStyle: const TextStyle(color: Colors.white70),
+          labelStyle: TextStyle(color: ColorDefaults.darkPrimary, fontSize: 14, fontWeight: FontWeight.bold),
         ),
         primaryYAxis: NumericAxis(
           title: AxisTitle(
             text: 'Consumo (m³)', 
-            textStyle: const TextStyle(color: Colors.white70)
+            textStyle: TextStyle(color: ColorDefaults.darkPrimary, fontWeight: FontWeight.bold)
           ),
           labelStyle: const TextStyle(color: Colors.white70),
           plotBands: <PlotBand>[
@@ -86,21 +87,17 @@ class _GraphManifoldWidgetState extends State<GraphManifoldWidget> {
           ColumnSeries<dynamic, String>(
             name: selectedCol,
             dataSource: widget.allData,
-            // Usamos la fecha operativa para el eje X
             xValueMapper: (data, _) => data['fecha_operativa']?.toString() ?? '',
-            // 3. MAPEADO DINÁMICO: Extraemos el valor usando la variable selectedCol
             yValueMapper: (data, _) => data[selectedCol] ?? 0,
-            
-            // Colores dinámicos: Si supera el promedio de la variable actual
             pointColorMapper: (data, _) {
               final valor = data[selectedCol] ?? 0;
               return valor > promedio ? Colors.redAccent : Colors.blueAccent;
             },
             
             borderRadius: const BorderRadius.vertical(top: Radius.circular(6)),
-            dataLabelSettings: const DataLabelSettings(
+            dataLabelSettings: DataLabelSettings(
               isVisible: true,
-              textStyle: TextStyle(fontSize: 9, color: Colors.white70)
+              textStyle: TextStyle(fontSize: 14, color: ColorDefaults.darkPrimary)
             ),
             enableTooltip: true,
             // Animación suave al cambiar entre variables
