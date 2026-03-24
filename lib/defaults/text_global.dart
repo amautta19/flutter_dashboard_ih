@@ -33,7 +33,7 @@ class GlobalText extends StatelessWidget {
       style: GoogleFonts.roboto(
         fontSize: fontSize,
         fontWeight: fontWeight,
-        color: color ?? ColorDefaults.darkPrimary,
+        color: color ?? ColorDefaults.whitePrimary,
       ),
     );
   }
