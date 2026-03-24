@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dashboard_ih/presentation/main_view.dart';
+import 'package:flutter_dashboard_ih/providers/filter_element_provider.dart';
 import 'package:flutter_dashboard_ih/providers/filter_month_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -19,7 +20,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => FilterMonthProvider())
+        ChangeNotifierProvider(create: (_) => FilterMonthProvider()),
+        ChangeNotifierProvider(create: (_) => FilterElement()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
