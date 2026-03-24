@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dashboard_ih/defaults/color_defaults.dart';
+import 'package:flutter_dashboard_ih/defaults/text_global.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 class TableManifoldWidget extends StatefulWidget {
-  final List<dynamic> allData;
+  final List<dynamic> allData; // Lista obtenida de los datos 
   const TableManifoldWidget({super.key, required this.allData});
 
   @override
@@ -31,23 +33,22 @@ class _TableManifoldWidgetState extends State<TableManifoldWidget> {
 }
 List<GridColumn> _getColumns() {
   return [
-    _buildColumn('fecha', 'Fecha'), _buildColumn('cip', 'CIP'), _buildColumn('desaireadorA', 'Des. A'), _buildColumn('desaireadorB', 'Des. B'),
-    _buildColumn('desaireadorC', 'Des. C'), _buildColumn('fuerza', 'Fuerza'), _buildColumn('lavadoras', 'Lavadoras'), _buildColumn('lineasPET', 'Líneas PET'),
+    _buildColumn('fecha', 'Fecha'), _buildColumn('cip', 'CIP'), _buildColumn('desaireadorA', 'Desaireador A'), _buildColumn('desaireadorB', 'Desaireador B'),
+    _buildColumn('desaireadorC', 'Desaireador C'), _buildColumn('fuerza', 'Fuerza'), _buildColumn('lavadoras', 'Lavadoras'), _buildColumn('lineasPET', 'Líneas PET'),
     _buildColumn('multimix', 'Multimix'), _buildColumn('potable', 'Potable'), _buildColumn('quasy', 'Quasy'), _buildColumn('servicios', 'Servicios'),
-    _buildColumn('contisolv', 'Contisolv'), _buildColumn('total', 'TOTAL', isTotal: true),
+    _buildColumn('contisolv', 'Contisolv'), _buildColumn('total', 'Total Día', isTotal: true),
   ];
 }
 
+// Diseño de las cabeceras de la tabla
 GridColumn _buildColumn(String name, String label, {bool isTotal = false}) {
   return GridColumn(
     columnName: name, 
     label: Container(
       alignment: Alignment.center, 
-      color: isTotal ? Colors.blueAccent.withOpacity(0.2) : Colors.transparent, 
-      child: Text(
-        label, 
-        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)
-      )
+      // color: isTotal ? Colors.blueAccent.withOpacity(0.9) : Colors.transparent, 
+      color: ColorDefaults.primaryBlue,
+      child: GlobalText(label, fontWeight: FontWeight.bold, fontSize: 16, color: ColorDefaults.darkPrimary,),
     )
   );
 }
@@ -84,14 +85,9 @@ class _ConsumoDataSource extends DataGridSource {
       return Container(
         alignment: Alignment.center, 
         padding: const EdgeInsets.all(8), 
-        color: isTotal ? Colors.blueAccent.withOpacity(0.1) : null, 
-        child: Text(cell.value.toString(), 
-          style: TextStyle(
-            fontSize: 12, 
-            color: isTotal ? Colors.blueAccent : Colors.white, 
-            fontWeight: isTotal ? FontWeight.bold : FontWeight.normal
-          )
-        )
+        color: isTotal ? ColorDefaults.secundaryBlue : ColorDefaults.whitePrimary, 
+        child: GlobalText(cell.value.toString(), fontSize: 14, color: ColorDefaults.darkPrimary,
+          fontWeight: isTotal ? FontWeight.bold : FontWeight.normal),
       );
     }).toList());
   }
