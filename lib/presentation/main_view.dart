@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/tables_manifold.dart';
+import 'package:flutter_dashboard_ih/providers/filter_month_provider.dart';
 import 'package:flutter_dashboard_ih/supabase_services.dart';
 import 'package:provider/provider.dart';
-import '../providers/filter_month_provider.dart';
-
 import 'widgets/filter_month.dart';
 import 'widgets/graph_manifold.dart';
 
@@ -43,9 +42,9 @@ class MainView extends StatelessWidget {
             child: Column(
               children: [
                 // Pasamos la data filtrada a los widgets que ya tienes
-                GraphManifoldWidget(allData: filteredData),
-                const SizedBox(height: 20),
                 TableManifoldWidget(allData: filteredData),
+                const SizedBox(height: 20),
+                GraphManifoldWidget(allData: filteredData),
               ],
             ),
           );
