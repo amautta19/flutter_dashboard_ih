@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dashboard_ih/defaults/color_defaults.dart';
 import 'package:flutter_dashboard_ih/presentation/main_view.dart';
 import 'package:flutter_dashboard_ih/providers/filter_element_provider.dart';
 import 'package:flutter_dashboard_ih/providers/filter_month_provider.dart';
@@ -20,12 +21,15 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => FilterMonthProvider()),
-        ChangeNotifierProvider(create: (_) => FilterElement()),
+        // Llamando a los providers
+        ChangeNotifierProvider(create: (_) => FilterMonthProvider()), // Filtro por mes
+        ChangeNotifierProvider(create: (_) => FilterElement()), // Filtro por elemento del manifold
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        theme: ThemeData.dark(),
+        theme: ThemeData(
+          scaffoldBackgroundColor: ColorDefaults.darkPrimary
+        ),
         home: const WindowsTableScreen(),
       ),
     );
