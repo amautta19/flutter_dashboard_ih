@@ -19,11 +19,9 @@ class MainView extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: ColorDefaults.primaryBlue,
         elevation: 0,
-        title: const Text(
-          'Dashboard Arca Continental',
-          style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w500),
-        ),
+        title: GlobalText('Consumo Planta Pucusana', fontSize: 18, fontWeight: FontWeight.bold,),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -48,7 +46,7 @@ class MainView extends StatelessWidget {
                   }
               
                   if (snapshot.hasError) {
-                    return const Center(child: Text("Error de conexión", style: TextStyle(color: Colors.red)));
+                    return const Center(child: GlobalText('Error al obtener los datos!', fontSize: 24, color: Colors.red,));
                   }
               
                   if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -79,11 +77,11 @@ class MainView extends StatelessWidget {
                         const SizedBox(height: 30),
                         
                         // Tabla de detalles
-                        const Padding(
+                        Padding(
                           padding: EdgeInsets.only(left: 4, bottom: 12),
-                          child: Text(
-                            "Registro de Lecturas - Planta",
-                            style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                          child: GlobalText(
+                            'Registro de Consumo Diario Manifold - Planta Pucusana', fontSize: 16, fontWeight: FontWeight.bold,
+                            color: ColorDefaults.secundaryBlue
                           ),
                         ),
                         // Pasamos los datos filtrados a la tabla
