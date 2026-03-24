@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-class FilterMonthProvider extends ChangeNotifier{
-  String _month = 'Enero';
-  
-  String get getMonth => _month;
+class FilterMonthProvider extends ChangeNotifier {
+  int _selectedMonth = DateTime.now().month;
 
-  void updateMonth(String month){
-    _month = month;
-    notifyListeners();
+  int get selectedMonth => _selectedMonth;
+
+  void updateMonth(int newMonth) {
+    _selectedMonth = newMonth;
+    notifyListeners(); // Esto activa el redibujado de la UI
   }
 }

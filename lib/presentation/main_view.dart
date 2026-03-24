@@ -1,71 +1,56 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dashboard_ih/defaults/color_defaults.dart';
-import 'package:flutter_dashboard_ih/defaults/text_global.dart';
-import 'package:flutter_dashboard_ih/presentation/widgets/filter_month.dart';
-import 'package:flutter_dashboard_ih/presentation/widgets/graph_manifold.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/tables_manifold.dart';
-import 'package:flutter_dashboard_ih/providers/filter_month_provider.dart';
 import 'package:flutter_dashboard_ih/supabase_services.dart';
 import 'package:provider/provider.dart';
+import '../providers/filter_month_provider.dart';
 
-class MainView extends StatefulWidget {
+import 'widgets/filter_month.dart';
+import 'widgets/graph_manifold.dart';
+
+
+class MainView extends StatelessWidget {
   const MainView({super.key});
 
   @override
-  State<MainView> createState() => _MainViewState();
-}
-
-class _MainViewState extends State<MainView> {
-  final SupabaseServices _services = SupabaseServices();
-  List<dynamic> _allData = [];
-  List<dynamic> _rawData = [];
-  bool isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchData();
-  }
-
-  Future<void> _fetchData() async{
-    try{
-      final data = await _services.getData();
-      data.sort((a, b) => DateTime.parse(a['fecha_operativa'].toString()).compareTo(DateTime.parse(b['fecha_operativa'].toString())));
-      setState(() {
-        _allData = data;
-        _rawData = data;
-        isLoading = false;
-      });
-    } catch (e){
-      setState(() {
-        isLoading = false;
-      });
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final providerMotn = Provider.of<FilterMonthProvider>(context);
+    // Escuchamos el mes seleccionado
+    final selectedMonth = context.watch<FilterMonthProvider>().selectedMonth;
+
     return Scaffold(
+      backgroundColor: const Color(0xFF121212),
       appBar: AppBar(
-        title: GlobalText('Consumo de agua de Manifold'),
-        centerTitle: true,
+        title: const Text('Dashboard Arca Continental'),
+        actions: const [FilterMonthWidget(), SizedBox(width: 16)],
       ),
-      body:isLoading
-          ? Center(child: CircularProgressIndicator(color: ColorDefaults.primaryBlue,))
-          : SingleChildScrollView(
-            padding: const EdgeInsets.all(15),
+      body: FutureBuilder<List<dynamic>>(
+        future: SupabaseServices().getData(), // Tu función de Supabase
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text("No hay datos disponibles"));
+          }
+
+          // --- FILTRADO EN TIEMPO REAL ---
+          final filteredData = snapshot.data!.where((item) {
+            final fecha = DateTime.parse(item['fecha_operativa']);
+            return fecha.month == selectedMonth;
+          }).toList();
+
+          return SingleChildScrollView(
             child: Column(
               children: [
-                Text(providerMotn.getMonth),
-                FilterMonth(),
-                const SizedBox(height: 10),
-                TableManifoldWidget(allData: _allData,),
-                const SizedBox(height: 20,),
-                GraphManifoldWidget(allData: _allData,)
+                // Pasamos la data filtrada a los widgets que ya tienes
+                GraphManifoldWidget(allData: filteredData),
+                const SizedBox(height: 20),
+                TableManifoldWidget(allData: filteredData),
               ],
             ),
-          )
+          );
+        },
+      ),
     );
   }
 }
