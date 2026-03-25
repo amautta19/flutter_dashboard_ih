@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dashboard_ih/defaults/color_defaults.dart';
 import 'package:flutter_dashboard_ih/defaults/text_global.dart';
+import 'package:flutter_dashboard_ih/presentation/widgets/distribution_chart.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/filter_element.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_dashboard_ih/providers/filter_month_provider.dart';
@@ -28,14 +29,14 @@ class MainView extends StatelessWidget {
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  GlobalText('Filtrar por Mes', color: ColorDefaults.whitePrimary,fontSize: 16,),
-                  const SizedBox(width: 10,),
-                  FilterMonthWidget(),
-                ],
-              ),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.center,
+              //   children: [
+              //     GlobalText('Filtrar por Mes', color: ColorDefaults.whitePrimary,fontSize: 16,),
+              //     const SizedBox(width: 10,),
+              //     FilterMonthWidget(),
+              //   ],
+              // ),
               // const SizedBox(height: 20,),
               FutureBuilder<List<dynamic>>(
                 // El build se dispara cuando cambian los providers, refrescando el Future si es necesario
@@ -69,24 +70,35 @@ class MainView extends StatelessWidget {
                     );
                   }
                   return SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Tabla de detalles
-                        Padding(
-                          padding: EdgeInsets.only(left: 4, bottom: 12),
-                          child: GlobalText(
-                            'Registro de Consumo Diario Manifold - Planta Pucusana', fontSize: 16, fontWeight: FontWeight.bold,
-                            color: ColorDefaults.secundaryBlue
-                          ),
+                        Row(
+                          children: [
+                            GlobalText('Registro de Consumo Diario Manifold - Planta Pucusana', fontSize: 16, fontWeight: FontWeight.bold, color: ColorDefaults.secundaryBlue,),
+                            const SizedBox(width: 200,),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                GlobalText('Filtrar por Mes', color: ColorDefaults.whitePrimary,fontSize: 16,),
+                                const SizedBox(width: 10,),
+                                FilterMonthWidget(),
+                              ],
+                            ),
+                          ],
                         ),
-                        // Pasamos los datos filtrados a la tabla
-                        TableManifoldWidget(allData: filteredData),
-                        const SizedBox(height: 20,),
-                        Center(child: GraphColumnSelector()),
-                        const SizedBox(height: 20,),
-                        GraphManifoldWidget(allData: filteredData,), 
+                        const SizedBox(height: 5,),
+                        Row(
+                          children: [
+                            TableManifoldWidget(allData: filteredData),
+                            const SizedBox(width: 5,),
+                            DistributionBarChart(allData: filteredData)
+                          ],
+                        ),
+                        Center(child: GraphColumnSelector(),),
+                        const SizedBox(height: 10,),
+                        GraphManifoldWidget(allData: filteredData)
                       ],
                     ),
                   );
