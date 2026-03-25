@@ -3,6 +3,7 @@ import 'package:flutter_dashboard_ih/defaults/color_defaults.dart';
 import 'package:flutter_dashboard_ih/defaults/text_global.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/distribution_chart.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/filter_element.dart';
+import 'package:flutter_dashboard_ih/presentation/widgets/line_chart.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_dashboard_ih/providers/filter_month_provider.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/tables_manifold.dart';
@@ -47,15 +48,12 @@ class MainView extends StatelessWidget {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: CircularProgressIndicator(color: ColorDefaults.primaryBlue));
                   }
-              
                   if (snapshot.hasError) {
                     return const Center(child: GlobalText('Error al obtener los datos!', fontSize: 24, color: Colors.red,));
                   }
-              
                   if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return Center(child: GlobalText('Sin datos disponibles', fontSize: 24));
                   }
-              
                   // Filtrado por mes (Lógica operativa)
                   final filteredData = snapshot.data!.where((item) {
                     try {
@@ -80,14 +78,6 @@ class MainView extends StatelessWidget {
                           children: [
                             GlobalText('Registro de Consumo Diario Manifold - Planta Pucusana', fontSize: 16, fontWeight: FontWeight.bold, color: ColorDefaults.secundaryBlue,),
                             const SizedBox(width: 200,),
-                            // Row(
-                            //   mainAxisAlignment: MainAxisAlignment.center,
-                            //   children: [
-                            //     GlobalText('Filtrar por Mes', color: ColorDefaults.whitePrimary,fontSize: 16,),
-                            //     const SizedBox(width: 10,),
-                            //     FilterMonthWidget(),
-                            //   ],
-                            // ),
                           ],
                         ),
                         const SizedBox(height: 5,),
@@ -101,7 +91,28 @@ class MainView extends StatelessWidget {
                         const SizedBox(height: 10,),
                         Center(child: GraphColumnSelector(),),
                         const SizedBox(height: 10,),
-                        GraphManifoldWidget(allData: filteredData)
+                        Row(
+                          children: [
+                            GraphManifoldWidget(allData: filteredData),
+                            const Spacer(),
+                            FutureBuilder(
+                              future: SupabaseServices().getDataHour(), 
+                              builder: (context, snapshot){
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return Center(child: CircularProgressIndicator(color: ColorDefaults.primaryBlue));
+                                }
+                                if (snapshot.hasError) {
+                                  return const Center(child: GlobalText('Error al obtener los datos!', fontSize: 24, color: Colors.red,));
+                                }
+                                if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                                  return Center(child: GlobalText('Sin datos disponibles', fontSize: 24));
+                                }
+                                final dataHour = snapshot.data!;
+                                return LineTrendChart(allData: dataHour);
+                              }
+                            )
+                          ],
+                        )
                       ],
                     ),
                   );
