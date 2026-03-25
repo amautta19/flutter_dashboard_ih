@@ -64,20 +64,22 @@ class _GraphManifoldWidgetState extends State<GraphManifoldWidget> {
             text: 'Consumo (m³)', 
             textStyle: TextStyle(color: ColorDefaults.darkPrimary, fontWeight: FontWeight.bold)
           ),
-          labelStyle: const TextStyle(color: Colors.white70),
+          labelStyle: TextStyle(color: ColorDefaults.darkPrimary),
           plotBands: <PlotBand>[
             PlotBand(
               isVisible: true,
               start: promedio,
               end: promedio,
-              borderWidth: 2,
+              borderWidth: 3,
               borderColor: Colors.orangeAccent,
               dashArray: <double>[6, 6],
-              text: 'PROM. $selectedCol: ${promedio.toStringAsFixed(2)}',
-              textStyle: const TextStyle(
+              verticalTextAlignment: TextAnchor.end,
+              // text: 'PROM. $selectedCol: ${promedio.toStringAsFixed(2)}',
+              text: promedio.toStringAsFixed(2),
+              textStyle: TextStyle(
                 color: Colors.orangeAccent, 
                 fontWeight: FontWeight.bold,
-                fontSize: 10,
+                fontSize: 12,
               ),
               horizontalTextAlignment: TextAnchor.end,
             )
@@ -91,13 +93,15 @@ class _GraphManifoldWidgetState extends State<GraphManifoldWidget> {
             yValueMapper: (data, _) => data[selectedCol] ?? 0,
             pointColorMapper: (data, _) {
               final valor = data[selectedCol] ?? 0;
-              return valor > promedio ? Colors.redAccent : Colors.blueAccent;
+              return valor > promedio ? Colors.red : ColorDefaults.primaryBlue;
             },
             
             borderRadius: const BorderRadius.vertical(top: Radius.circular(6)),
             dataLabelSettings: DataLabelSettings(
+              borderRadius:  5,
+              color: Colors.amberAccent,
               isVisible: true,
-              textStyle: TextStyle(fontSize: 14, color: ColorDefaults.darkPrimary)
+              textStyle: TextStyle(fontSize: 14, color: ColorDefaults.darkPrimary, fontWeight: FontWeight.bold)
             ),
             enableTooltip: true,
             // Animación suave al cambiar entre variables
