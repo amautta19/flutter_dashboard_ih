@@ -46,8 +46,8 @@ class _GraphManifoldWidgetState extends State<GraphManifoldWidget> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               GlobalText(
-                'Consumo histórico: $selectedCol',
-                color: ColorDefaults.darkPrimary,
+                'Consumo de Agua (m³) : $selectedCol',
+                color: ColorDefaults.primaryBlue,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
@@ -62,14 +62,20 @@ class _GraphManifoldWidgetState extends State<GraphManifoldWidget> {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  Text(
-                    'Promedio: ${promedio.toStringAsFixed(2)} m³',
-                    style: const TextStyle(
-                      color: Colors.orangeAccent,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 13,
-                    ),
-                  ),
+                  GlobalText(
+                    'Promedio: ${promedio.toStringAsFixed(1)} m³',
+                    color: Colors.orangeAccent,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  )
+                  // Text(
+                  //   'Promedio: ${promedio.toStringAsFixed(2)} m³',
+                  //   style: const TextStyle(
+                  //     color: Colors.orangeAccent,
+                  //     fontWeight: FontWeight.bold,
+                  //     fontSize: 13,
+                  //   ),
+                  // ),
                 ],
               ),
             ],
@@ -97,10 +103,10 @@ class _GraphManifoldWidgetState extends State<GraphManifoldWidget> {
                 ),
               ),
               primaryYAxis: NumericAxis(
-                title: AxisTitle(
-                  text: 'Consumo (m³)', 
-                  textStyle: TextStyle(color: ColorDefaults.darkPrimary, fontWeight: FontWeight.bold, fontSize: 10)
-                ),
+                // title: AxisTitle(
+                //   text: 'Consumo (m³)', 
+                //   textStyle: TextStyle(color: ColorDefaults.darkPrimary, fontWeight: FontWeight.bold, fontSize: 10)
+                // ),
                 labelStyle: TextStyle(color: ColorDefaults.darkPrimary, fontWeight: FontWeight.bold),
                 plotBands: <PlotBand>[
                   PlotBand(
