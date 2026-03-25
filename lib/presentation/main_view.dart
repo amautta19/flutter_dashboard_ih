@@ -85,7 +85,7 @@ class MainView extends StatelessWidget {
                           DistributionBarChart(allData: filteredData)
                         ],
                       ),
-                      const SizedBox(height: 20,),
+                      const SizedBox(height: 30,),
                       Column(
                         children: [
                           Row(
