@@ -92,7 +92,7 @@ class MainView extends StatelessWidget {
                         Row(
                           children: [
                             TableManifoldWidget(allData: filteredData),
-                            const SizedBox(width: 5,),
+                            const Spacer(),
                             DistributionBarChart(allData: filteredData)
                           ],
                         ),
