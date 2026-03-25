@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SupabaseServices {
@@ -9,10 +10,21 @@ class SupabaseServices {
       .order('fecha_operativa', ascending: false);
     return response;
   }
-  Future<List<Map<String, dynamic>>> getDataHour() async{
-    final response = await supabase
+Future<List<Map<String, dynamic>>> getDataByDayOperative(DateTime selectedDate) async {
+  // Formateamos el inicio: 07:00:00 del día seleccionado
+  final String start = "${DateFormat('yyyy-MM-dd').format(selectedDate)} 08:00:00";
+  
+  // Calculamos el final: 07:00:00 del día siguiente
+  final DateTime nextDay = selectedDate.add(const Duration(days: 1));
+  final String end = "${DateFormat('yyyy-MM-dd').format(nextDay)} 08:00:00";
+
+  final response = await supabase
       .from('agua_manifold')
-      .select();
-    return response;
-  }
+      .select()
+      .filter('_time_lima', 'gte', start)
+      .filter('_time_lima', 'lt', end) // 'lt' es "menor que" para no repetir las 07:00
+      .order('_time_lima', ascending: true);
+      
+  return response;
+}
 }
