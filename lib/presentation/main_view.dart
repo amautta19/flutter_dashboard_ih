@@ -6,26 +6,31 @@ import 'package:flutter_dashboard_ih/presentation/widgets/filter_day.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/filter_element.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_dashboard_ih/providers/filter_month_provider.dart';
-import 'package:flutter_dashboard_ih/providers/filter_day_provider.dart'; // Agregado
+import 'package:flutter_dashboard_ih/providers/filter_day_provider.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/tables_manifold.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/graph_manifold.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/filter_month.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/line_chart.dart';
 import 'package:flutter_dashboard_ih/supabase_services.dart';
+
 class MainView extends StatelessWidget {
   const MainView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final windowSize = MediaQuery.of(context).size;
+    // Escuchamos el mes. Si cambia el mes, se refresca todo (esto es correcto).
     final selectedMonth = context.watch<FilterMonthProvider>().selectedMonth;
-    // Obtenemos el día seleccionado para el filtro de horas
-    final selectedDate = context.watch<FilterDayProvider>().selectedDate;
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: ColorDefaults.darkPrimary,
         elevation: 0,
-        title: GlobalText('Consumo Planta Pucusana', fontSize: 28, fontWeight: FontWeight.bold, color: ColorDefaults.primaryBlue,),
+        title: GlobalText(
+          'Consumo Planta Pucusana', 
+          fontSize: 28, 
+          fontWeight: FontWeight.bold, 
+          color: ColorDefaults.primaryBlue,
+        ),
         actions: [
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -43,6 +48,7 @@ class MainView extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
           child: Column(
             children: [
+              // --- FUTURE BUILDER PRINCIPAL (DEPENDE DEL MES) ---
               FutureBuilder<List<dynamic>>(
                 future: SupabaseServices().getData(),
                 builder: (context, snapshot) {
@@ -85,43 +91,60 @@ class MainView extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 10,),
-                      Center(child: GraphColumnSelector(),),
-                      const SizedBox(height: 10,),
                       Row(
                         children: [
-                          GraphManifoldWidget(allData: filteredData),
-                          const Spacer(),
-                          // --- SECCIÓN DE LA GRÁFICA POR HORAS CON SU FILTRO ---
                           Column(
                             children: [
-                              Row(
-                                children: [
-                                  GlobalText('Filtrar Día: ', color: ColorDefaults.darkPrimary, fontSize: 14, fontWeight: FontWeight.bold),
-                                  FilterDayWidget(), // Botón para elegir el día
-                                ],
-                              ),
-                              const SizedBox(height: 5),
-                              FutureBuilder(
-                                future: SupabaseServices().getDataByDayOperative(selectedDate), 
-                                builder: (context, snapshotHour) {
-                                  if (snapshotHour.connectionState == ConnectionState.waiting) {
-                                    return SizedBox(
-                                      width: MediaQuery.of(context).size.width * 0.33,
-                                      height: 400,
-                                      child: Center(child: CircularProgressIndicator(color: ColorDefaults.primaryBlue))
-                                    );
-                                  }
-                                  if (!snapshotHour.hasData || snapshotHour.data!.isEmpty) {
-                                    return Container(
-                                      width: MediaQuery.of(context).size.width * 0.33,
-                                      height: 400,
-                                      alignment: Alignment.center,
-                                      child: const GlobalText('No hay datos para esta fecha'),
-                                    );
-                                  }
-                                  return LineTrendChart(allData: snapshotHour.data!);
+                              GraphColumnSelector(),
+                              const SizedBox( height: 5,),
+                              GraphManifoldWidget(allData: filteredData)
+                            ],
+                          ),
+                          const SizedBox(width: 5,),
+                          Column(
+                            children: [
+                              Consumer<FilterDayProvider>(
+                                builder: (context, dayProvider, child){
+                                  return Column(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          GlobalText('Filtrar Día', fontSize: 16,),
+                                          FilterDayWidget()
+                                        ],
+                                      ),
+                                      FutureBuilder(
+                                        future: SupabaseServices().getDataByDayOperative(dayProvider.selectedDate), 
+                                        builder: (context, snapshot){
+                                          if (snapshot.connectionState == ConnectionState.waiting) {
+                                            return SizedBox(
+                                              height: windowSize.height * 0.42,
+                                              width: windowSize.width * 0.33,
+                                              child: Center(child: CircularProgressIndicator(color: ColorDefaults.primaryBlue,),),
+                                            );
+                                          }
+                                          if (snapshot.hasError) {
+                                            return SizedBox(
+                                             height: windowSize.height * 0.42,
+                                              width: windowSize.width * 0.33,
+                                              child: Center(child: GlobalText('Error al obtener los datos! ${snapshot.error}', fontSize: 24, color: Colors.red,),),
+                                            );
+                                          }
+                                          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                                            // return Center(child: GlobalText('Sin datos disponibles entre ese rango de fechas', fontSize: 24));
+                                            return SizedBox(
+                                              height: windowSize.height * 0.42,
+                                              width: windowSize.width * 0.33,
+                                              child: Center(child: GlobalText('Sin datos disponibles para el día seleccionado', fontSize: 24,)),
+                                            );
+                                          }
+                                          return LineTrendChart(allData: snapshot.data!);
+                                        }
+                                      )
+                                    ],
+                                  );
                                 }
-                              ),
+                              )
                             ],
                           )
                         ],
