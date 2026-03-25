@@ -36,7 +36,7 @@ class MainView extends StatelessWidget {
                   FilterMonthWidget(),
                 ],
               ),
-              const SizedBox(height: 20,),
+              // const SizedBox(height: 20,),
               FutureBuilder<List<dynamic>>(
                 // El build se dispara cuando cambian los providers, refrescando el Future si es necesario
                 future: SupabaseServices().getData(),
@@ -73,9 +73,6 @@ class MainView extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        
-                        const SizedBox(height: 30),
-                        
                         // Tabla de detalles
                         Padding(
                           padding: EdgeInsets.only(left: 4, bottom: 12),

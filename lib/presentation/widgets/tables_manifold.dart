@@ -15,7 +15,7 @@ class _TableManifoldWidgetState extends State<TableManifoldWidget> {
   late _ConsumoDataSource _dataSource;
   @override
   void initState() {
-    super.initState();
+    super.initState();  
     _dataSource = _ConsumoDataSource(data: List.from(widget.allData.reversed));
   }
   @override
@@ -86,7 +86,7 @@ class _ConsumoDataSource extends DataGridSource {
       final bool isTotal = cell.columnName == 'total';
       return Container(
         alignment: Alignment.center, 
-        padding: const EdgeInsets.all(8), 
+        padding: const EdgeInsets.symmetric(horizontal: 8), 
         color: isTotal ? ColorDefaults.secundaryBlue : ColorDefaults.whitePrimary, 
         child: GlobalText(cell.value.toString(), fontSize: 12, color: ColorDefaults.darkPrimary,
           fontWeight: isTotal ? FontWeight.bold : FontWeight.normal),
