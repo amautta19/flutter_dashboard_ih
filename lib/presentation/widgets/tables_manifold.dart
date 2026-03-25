@@ -20,8 +20,10 @@ class _TableManifoldWidgetState extends State<TableManifoldWidget> {
   }
   @override
   Widget build(BuildContext context) {
+    final windowSize = MediaQuery.of(context).size;
     return SizedBox(
-      height: 400,
+      height: windowSize.height * 0.4,
+      width: windowSize.width * 0.6,
       child: SfDataGrid(
         source: _dataSource,
         columnWidthMode: ColumnWidthMode.fill, 
@@ -33,8 +35,8 @@ class _TableManifoldWidgetState extends State<TableManifoldWidget> {
 }
 List<GridColumn> _getColumns() {
   return [
-    _buildColumn('fecha', 'Fecha'), _buildColumn('cip', 'CIP'), _buildColumn('desaireadorA', 'Desaireador A'), _buildColumn('desaireadorB', 'Desaireador B'),
-    _buildColumn('desaireadorC', 'Desaireador C'), _buildColumn('fuerza', 'Fuerza'), _buildColumn('lavadoras', 'Lavadoras'), _buildColumn('lineasPET', 'Líneas PET'),
+    _buildColumn('fecha', 'Fecha'), _buildColumn('cip', 'CIP'), _buildColumn('desaireadorA', 'Des. A'), _buildColumn('desaireadorB', 'Des. B'),
+    _buildColumn('desaireadorC', 'Des. C'), _buildColumn('fuerza', 'Fuerza'), _buildColumn('lavadoras', 'Lavadoras'), _buildColumn('lineasPET', 'Líneas PET'),
     _buildColumn('multimix', 'Multimix'), _buildColumn('potable', 'Potable'), _buildColumn('quasy', 'Quasy'), _buildColumn('servicios', 'Servicios'),
     _buildColumn('contisolv', 'Contisolv'), _buildColumn('total', 'Total Día', isTotal: true),
   ];
@@ -48,7 +50,7 @@ GridColumn _buildColumn(String name, String label, {bool isTotal = false}) {
       alignment: Alignment.center, 
       // color: isTotal ? Colors.blueAccent.withOpacity(0.9) : Colors.transparent, 
       color: ColorDefaults.primaryBlue,
-      child: GlobalText(label, fontWeight: FontWeight.bold, fontSize: 16, color: ColorDefaults.darkPrimary,),
+      child: GlobalText(label, fontWeight: FontWeight.bold, fontSize: 14, color: ColorDefaults.darkPrimary,),
     )
   );
 }
@@ -86,7 +88,7 @@ class _ConsumoDataSource extends DataGridSource {
         alignment: Alignment.center, 
         padding: const EdgeInsets.all(8), 
         color: isTotal ? ColorDefaults.secundaryBlue : ColorDefaults.whitePrimary, 
-        child: GlobalText(cell.value.toString(), fontSize: 14, color: ColorDefaults.darkPrimary,
+        child: GlobalText(cell.value.toString(), fontSize: 12, color: ColorDefaults.darkPrimary,
           fontWeight: isTotal ? FontWeight.bold : FontWeight.normal),
       );
     }).toList());
