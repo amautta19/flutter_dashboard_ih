@@ -100,7 +100,7 @@ class MainView extends StatelessWidget {
                               GraphManifoldWidget(allData: filteredData)
                             ],
                           ),
-                          const SizedBox(width: 5,),
+                          const Spacer(),
                           Column(
                             children: [
                               Consumer<FilterDayProvider>(
@@ -113,6 +113,7 @@ class MainView extends StatelessWidget {
                                           FilterDayWidget()
                                         ],
                                       ),
+                                      const SizedBox(height: 5,),
                                       FutureBuilder(
                                         future: SupabaseServices().getDataByDayOperative(dayProvider.selectedDate), 
                                         builder: (context, snapshot){
