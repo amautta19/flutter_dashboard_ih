@@ -68,14 +68,6 @@ class _GraphManifoldWidgetState extends State<GraphManifoldWidget> {
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
                   )
-                  // Text(
-                  //   'Promedio: ${promedio.toStringAsFixed(2)} m³',
-                  //   style: const TextStyle(
-                  //     color: Colors.orangeAccent,
-                  //     fontWeight: FontWeight.bold,
-                  //     fontSize: 13,
-                  //   ),
-                  // ),
                 ],
               ),
             ],
@@ -99,7 +91,7 @@ class _GraphManifoldWidgetState extends State<GraphManifoldWidget> {
                 labelStyle: TextStyle(
                   color: ColorDefaults.darkPrimary, 
                   fontSize: 12, 
-                  fontWeight: FontWeight.bold
+                  // fontWeight: FontWeight.bold
                 ),
               ),
               primaryYAxis: NumericAxis(
@@ -107,7 +99,7 @@ class _GraphManifoldWidgetState extends State<GraphManifoldWidget> {
                 //   text: 'Consumo (m³)', 
                 //   textStyle: TextStyle(color: ColorDefaults.darkPrimary, fontWeight: FontWeight.bold, fontSize: 10)
                 // ),
-                labelStyle: TextStyle(color: ColorDefaults.darkPrimary, fontWeight: FontWeight.bold),
+                labelStyle: TextStyle(color: ColorDefaults.darkPrimary),
                 plotBands: <PlotBand>[
                   PlotBand(
                     isVisible: true,
