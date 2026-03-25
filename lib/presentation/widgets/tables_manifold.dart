@@ -23,7 +23,7 @@ class _TableManifoldWidgetState extends State<TableManifoldWidget> {
     final windowSize = MediaQuery.of(context).size;
     return SizedBox(
       height: windowSize.height * 0.4,
-      width: windowSize.width * 0.6,
+      width: windowSize.width * 0.7,
       child: SfDataGrid(
         source: _dataSource,
         columnWidthMode: ColumnWidthMode.fill, 
