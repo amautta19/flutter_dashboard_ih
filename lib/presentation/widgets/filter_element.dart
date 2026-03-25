@@ -22,7 +22,6 @@ class GraphColumnSelector extends StatelessWidget {
       children: [
         Container(
           height: 50,
-          padding: const EdgeInsets.all(4),
           decoration: BoxDecoration(
             color: ColorDefaults.darkPrimary,
             borderRadius: BorderRadius.circular(12),
@@ -50,12 +49,6 @@ class GraphColumnSelector extends StatelessWidget {
                 onSelected: (bool selected) {
                   if (selected) provider.updateColumn(value);
                 },
-                // --- ESTILO BASADO EN TU PALETA ---
-                // labelStyle: TextStyle(
-                //   color: isSelected ? Colors.white : ColorDefaults.darkPrimary,
-                //   fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                //   fontSize: 14,
-                // ),
                 selectedColor: ColorDefaults.primaryBlue, // Tu azul principal
                 backgroundColor: ColorDefaults.whitePrimary,
                 shape: RoundedRectangleBorder(
