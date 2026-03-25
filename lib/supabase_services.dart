@@ -9,4 +9,10 @@ class SupabaseServices {
       .order('fecha_operativa', ascending: false);
     return response;
   }
+  Future<List<Map<String, dynamic>>> getDataHour() async{
+    final response = await supabase
+      .from('agua_manifold')
+      .select();
+    return response;
+  }
 }
