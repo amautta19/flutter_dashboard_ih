@@ -20,9 +20,20 @@ class MainView extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: ColorDefaults.primaryBlue,
+        backgroundColor: ColorDefaults.darkPrimary,
         elevation: 0,
-        title: GlobalText('Consumo Planta Pucusana', fontSize: 18, fontWeight: FontWeight.bold,),
+        title: GlobalText('Consumo Planta Pucusana', fontSize: 28, fontWeight: FontWeight.bold, color: ColorDefaults.primaryBlue,),
+        actions: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              GlobalText('Filtrar por Mes', color: ColorDefaults.whitePrimary,fontSize: 16,),
+              const SizedBox(width: 10,),
+              FilterMonthWidget(),
+              const SizedBox(width: 200,)
+            ],
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -69,14 +80,14 @@ class MainView extends StatelessWidget {
                           children: [
                             GlobalText('Registro de Consumo Diario Manifold - Planta Pucusana', fontSize: 16, fontWeight: FontWeight.bold, color: ColorDefaults.secundaryBlue,),
                             const SizedBox(width: 200,),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                GlobalText('Filtrar por Mes', color: ColorDefaults.whitePrimary,fontSize: 16,),
-                                const SizedBox(width: 10,),
-                                FilterMonthWidget(),
-                              ],
-                            ),
+                            // Row(
+                            //   mainAxisAlignment: MainAxisAlignment.center,
+                            //   children: [
+                            //     GlobalText('Filtrar por Mes', color: ColorDefaults.whitePrimary,fontSize: 16,),
+                            //     const SizedBox(width: 10,),
+                            //     FilterMonthWidget(),
+                            //   ],
+                            // ),
                           ],
                         ),
                         const SizedBox(height: 5,),
