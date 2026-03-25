@@ -43,7 +43,7 @@ class DistributionBarChart extends StatelessWidget {
     return Container(
       height: windowsSize.height * 0.35,
       width: windowsSize.width * 0.27,
-      padding: const EdgeInsets.only(right: 15, top: 10, bottom: 10),
+      // padding: const EdgeInsets.only(right: 15, top: 10, bottom: 10),
       decoration: BoxDecoration(
         color: ColorDefaults.whitePrimary,
         borderRadius: BorderRadius.circular(15),
