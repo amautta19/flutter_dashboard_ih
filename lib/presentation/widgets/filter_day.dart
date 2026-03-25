@@ -36,7 +36,7 @@ class FilterDayWidget extends StatelessWidget {
         }
       },
       child: Container(
-        height: 45,
+        height: 50,
         padding: const EdgeInsets.symmetric(horizontal: 12),
         decoration: BoxDecoration(
           color: ColorDefaults.whitePrimary,
@@ -50,7 +50,7 @@ class FilterDayWidget extends StatelessWidget {
             Text(
               'Fecha Operativa:',
               style: TextStyle(
-                fontSize: 11,
+                fontSize: 12,
                 fontWeight: FontWeight.bold,
                 color: ColorDefaults.darkPrimary.withOpacity(0.7),
               ),

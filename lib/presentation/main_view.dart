@@ -85,38 +85,40 @@ class MainView extends StatelessWidget {
                           DistributionBarChart(allData: filteredData)
                         ],
                       ),
-                      const SizedBox(height: 30,),
-                      Row(
+                      const SizedBox(height: 20,),
+                      Column(
                         children: [
-                          Column(
+                          Row(
                             children: [
                               GraphColumnSelector(),
-                              GraphManifoldWidget(allData: filteredData)
+                              const Spacer(),
+                              FilterDayWidget(),
+                              const SizedBox(width: 100,)
                             ],
                           ),
-                          const Spacer(),
-                          Column(
+                          SizedBox(height: 5,),
+                          Row(
                             children: [
+                              GraphManifoldWidget(allData: filteredData,),
+                              const Spacer(),
                               Consumer<FilterDayProvider>(
                                 builder: (context, dayProvider, child){
                                   return Column(
                                     children: [
-                                      FilterDayWidget(),
-                                      const SizedBox(height: 5,),
                                       FutureBuilder(
                                         future: SupabaseServices().getDataByDayOperative(dayProvider.selectedDate), 
                                         builder: (context, snapshot){
                                           if (snapshot.connectionState == ConnectionState.waiting) {
                                             return SizedBox(
                                               height: windowSize.height * 0.42,
-                                              width: windowSize.width * 0.33,
+                                              width: windowSize.width * 0.38,
                                               child: Center(child: CircularProgressIndicator(color: ColorDefaults.primaryBlue,),),
                                             );
                                           }
                                           if (snapshot.hasError) {
                                             return SizedBox(
                                              height: windowSize.height * 0.42,
-                                              width: windowSize.width * 0.33,
+                                              width: windowSize.width * 0.38,
                                               child: Center(child: GlobalText('Error al obtener los datos! ${snapshot.error}', fontSize: 24, color: Colors.red,),),
                                             );
                                           }
@@ -124,7 +126,7 @@ class MainView extends StatelessWidget {
                                             // return Center(child: GlobalText('Sin datos disponibles entre ese rango de fechas', fontSize: 24));
                                             return SizedBox(
                                               height: windowSize.height * 0.42,
-                                              width: windowSize.width * 0.33,
+                                              width: windowSize.width * 0.38,
                                               child: Center(child: GlobalText('Sin datos disponibles para el día seleccionado', fontSize: 24,)),
                                             );
                                           }
@@ -134,11 +136,66 @@ class MainView extends StatelessWidget {
                                     ],
                                   );
                                 }
-                              )
+                              ),
+                              // LineTrendChart(allData: snapshot.data!)
                             ],
                           )
                         ],
-                      )
+                      ),
+                      // Row(
+                      //   children: [
+                      //     Column(
+                      //       children: [
+                      //         GraphColumnSelector(),
+                      //         const SizedBox(height: 5,),
+                      //         GraphManifoldWidget(allData: filteredData)
+                      //       ],
+                      //     ),
+                      //     const Spacer(),
+                      //     Column(
+                      //       children: [
+                      //         Consumer<FilterDayProvider>(
+                      //           builder: (context, dayProvider, child){
+                      //             return Column(
+                      //               children: [
+                      //                 FilterDayWidget(),
+                      //                 const SizedBox(height: 5,),
+                      //                 FutureBuilder(
+                      //                   future: SupabaseServices().getDataByDayOperative(dayProvider.selectedDate), 
+                      //                   builder: (context, snapshot){
+                      //                     if (snapshot.connectionState == ConnectionState.waiting) {
+                      //                       return SizedBox(
+                      //                         height: windowSize.height * 0.42,
+                      //                         width: windowSize.width * 0.38,
+                      //                         child: Center(child: CircularProgressIndicator(color: ColorDefaults.primaryBlue,),),
+                      //                       );
+                      //                     }
+                      //                     if (snapshot.hasError) {
+                      //                       return SizedBox(
+                      //                        height: windowSize.height * 0.42,
+                      //                         width: windowSize.width * 0.38,
+                      //                         child: Center(child: GlobalText('Error al obtener los datos! ${snapshot.error}', fontSize: 24, color: Colors.red,),),
+                      //                       );
+                      //                     }
+                      //                     if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      //                       // return Center(child: GlobalText('Sin datos disponibles entre ese rango de fechas', fontSize: 24));
+                      //                       return SizedBox(
+                      //                         height: windowSize.height * 0.42,
+                      //                         width: windowSize.width * 0.38,
+                      //                         child: Center(child: GlobalText('Sin datos disponibles para el día seleccionado', fontSize: 24,)),
+                      //                       );
+                      //                     }
+                      //                     return LineTrendChart(allData: snapshot.data!);
+                      //                   }
+                      //                 )
+                      //               ],
+                      //             );
+                      //           }
+                      //         )
+                      //       ],
+                      //     )
+                      //   ],
+                      // )
                     ],
                   );
                 },

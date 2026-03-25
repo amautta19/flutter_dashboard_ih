@@ -12,14 +12,12 @@ class LineTrendChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final windowsSize = MediaQuery.of(context).size;
-    
-    // 1. Escuchamos qué columna queremos graficar (CIP, Lavadoras, etc.)
     final String selectedCol = context.watch<FilterElement>().selectedColumn;
 
     return Container(
       height: windowsSize.height * 0.42,
-      width: windowsSize.width * 0.33, // Un poco más ancho que el de barras
-      padding: const EdgeInsets.all(15),
+      width: windowsSize.width * 0.38,
+      padding: const EdgeInsets.all(0),
       decoration: BoxDecoration(
         color: ColorDefaults.whitePrimary,
         borderRadius: BorderRadius.circular(15),
@@ -30,57 +28,66 @@ class LineTrendChart extends StatelessWidget {
           alignment: ChartAlignment.near,
           textStyle: TextStyle(
             fontWeight: FontWeight.bold, 
-            color: ColorDefaults.darkPrimary,
+            color: ColorDefaults.primaryBlue,
             fontSize: 14
           )
         ),
-        // Tooltip para ver el valor exacto al pasar el mouse/dedo
+        
         tooltipBehavior: TooltipBehavior(
           enable: true,
-          header: 'Lectura',
-          canShowMarker: true,
+          header: 'Hora', // Cambiado para que coincida con el eje
         ),
-        // Permite hacer zoom en el tiempo si hay muchos datos
+
         zoomPanBehavior: ZoomPanBehavior(
           enablePanning: true,
           enablePinching: true,
           zoomMode: ZoomMode.x,
         ),
+
         primaryXAxis: CategoryAxis(
           majorGridLines: const MajorGridLines(width: 0),
-          labelStyle: const TextStyle(color: Colors.black54, fontSize: 10),
-          labelRotation: 45, // Rotamos las fechas para que no se amontonen
+          labelStyle: TextStyle(color: ColorDefaults.darkPrimary, fontSize: 12),
+          labelRotation: 0, // Labels horizontales
+          labelIntersectAction: AxisLabelIntersectAction.hide, // Oculta si chocan
+          interval: null, 
         ),
+
         primaryYAxis: NumericAxis(
-          title: AxisTitle(
-            text: 'm³',
-            textStyle: TextStyle(color: ColorDefaults.darkPrimary, fontSize: 10)
-          ),
           majorGridLines: const MajorGridLines(
             width: 0.5,
             dashArray: <double>[5, 5],
           ),
+          labelStyle: TextStyle(color: ColorDefaults.darkPrimary, fontSize: 12),
         ),
+
         series: <CartesianSeries<dynamic, String>>[
-          SplineSeries<dynamic, String>( // Spline crea una línea curva más suave
+          ColumnSeries<dynamic, String>(
             name: selectedCol,
             dataSource: allData,
-            xValueMapper: (data, _) => data['_time_lima']?.toString() ?? '',
+            // --- EXTRACCIÓN DE LA HORA ---
+            xValueMapper: (data, _) {
+              final fullTime = data['_time_lima']?.toString() ?? '';
+              // Si el formato es '2026-03-25 14:30:00', esto devuelve '14:30'
+              if (fullTime.length >= 16) {
+                return fullTime.substring(11, 16); 
+              }
+              return fullTime;
+            },
             yValueMapper: (data, _) => data[selectedCol] ?? 0,
-            color: ColorDefaults.primaryBlue, // Tu color preferido
-            width: 3,
-            // Añadimos puntos (markers) en cada lectura
-            markerSettings: MarkerSettings(
+            color: ColorDefaults.primaryBlue,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(5)),
+            spacing: 0.2,
+            width: 0.8,
+            animationDuration: 1000,
+            dataLabelSettings: DataLabelSettings(
               isVisible: true,
-              height: 6,
-              width: 6,
-              shape: DataMarkerType.circle,
-              color: Colors.white,
-              borderWidth: 2,
-              borderColor: ColorDefaults.primaryBlue,
+              textStyle: TextStyle(
+                fontSize: 12, 
+                fontWeight: FontWeight.bold,
+                color: ColorDefaults.darkPrimary
+              ),
+              labelAlignment: ChartDataLabelAlignment.outer
             ),
-            // Animación al cargar o cambiar de variable
-            animationDuration: 1200,
           )
         ],
       ),

@@ -17,53 +17,48 @@ class GraphColumnSelector extends StatelessWidget {
       'Potable', 'Quasy', 'Servicios', 'Contisiolv'
     ];
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          height: 50,
-          decoration: BoxDecoration(
+    return Container(
+      height: 50,
+      decoration: BoxDecoration(
+        color: ColorDefaults.darkPrimary,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: ColorDefaults.darkPrimary),
+        boxShadow: [
+          BoxShadow(
             color: ColorDefaults.darkPrimary,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: ColorDefaults.darkPrimary),
-            boxShadow: [
-              BoxShadow(
-                color: ColorDefaults.darkPrimary,
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              )
-            ]
-          ),
-          child: Wrap( // Wrap para que si hay muchas opciones no se rompa la pantalla
-            spacing: 8,
-            runSpacing: 8,
-            children: columns.map((String value) {
-              final isSelected = provider.selectedColumn == value;
-              
-              return ChoiceChip(
-                label: GlobalText(value, 
-                  color: isSelected ? ColorDefaults.whitePrimary : ColorDefaults.darkPrimary,
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                  fontSize: 14,),
-                selected: isSelected,
-                onSelected: (bool selected) {
-                  if (selected) provider.updateColumn(value);
-                },
-                selectedColor: ColorDefaults.primaryBlue, // Tu azul principal
-                backgroundColor: ColorDefaults.whitePrimary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  side: BorderSide(
-                    color: isSelected ? ColorDefaults.primaryBlue : ColorDefaults.darkPrimary.withOpacity(0.3),
-                  ),
-                ),
-                elevation: isSelected ? 4 : 0,
-                pressElevation: 2,
-              );
-            }).toList(),
-          ),
-        ),
-      ],
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          )
+        ]
+      ),
+      child: Wrap( // Wrap para que si hay muchas opciones no se rompa la pantalla
+        spacing: 8,
+        runSpacing: 8,
+        children: columns.map((String value) {
+          final isSelected = provider.selectedColumn == value;
+          
+          return ChoiceChip(
+            label: GlobalText(value, 
+              color: isSelected ? ColorDefaults.whitePrimary : ColorDefaults.darkPrimary,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              fontSize: 14,),
+            selected: isSelected,
+            onSelected: (bool selected) {
+              if (selected) provider.updateColumn(value);
+            },
+            selectedColor: ColorDefaults.primaryBlue, // Tu azul principal
+            backgroundColor: ColorDefaults.whitePrimary,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+              side: BorderSide(
+                color: isSelected ? ColorDefaults.primaryBlue : ColorDefaults.darkPrimary.withOpacity(0.3),
+              ),
+            ),
+            elevation: isSelected ? 4 : 0,
+            pressElevation: 2,
+          );
+        }).toList(),
+      ),
     );
   }
 }

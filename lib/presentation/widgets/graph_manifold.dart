@@ -32,7 +32,7 @@ class _GraphManifoldWidgetState extends State<GraphManifoldWidget> {
 
     return Container(
       height: windowSize.height * 0.42,
-      width: windowSize.width * 0.65,
+      width: windowSize.width * 0.60,
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
         color: ColorDefaults.whitePrimary,
