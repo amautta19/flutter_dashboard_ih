@@ -65,7 +65,7 @@ class LineTrendChart extends StatelessWidget {
           SplineSeries<dynamic, String>( // Spline crea una línea curva más suave
             name: selectedCol,
             dataSource: allData,
-            xValueMapper: (data, _) => data['fecha_operativa']?.toString() ?? '',
+            xValueMapper: (data, _) => data['_time_lima']?.toString() ?? '',
             yValueMapper: (data, _) => data[selectedCol] ?? 0,
             color: ColorDefaults.primaryBlue, // Tu color preferido
             width: 3,
