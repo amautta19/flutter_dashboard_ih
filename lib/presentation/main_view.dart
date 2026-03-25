@@ -76,12 +76,7 @@ class MainView extends StatelessWidget {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          GlobalText('Registro de Consumo Diario Manifold - Planta Pucusana', fontSize: 16, fontWeight: FontWeight.bold, color: ColorDefaults.secundaryBlue,),
-                          const SizedBox(width: 200,),
-                        ],
-                      ),
+                      GlobalText('Registro de Consumo Diario Manifold - Planta Pucusana', fontSize: 16, fontWeight: FontWeight.bold, color: ColorDefaults.secundaryBlue,),
                       const SizedBox(height: 5,),
                       Row(
                         children: [
@@ -90,13 +85,12 @@ class MainView extends StatelessWidget {
                           DistributionBarChart(allData: filteredData)
                         ],
                       ),
-                      const SizedBox(height: 10,),
+                      const SizedBox(height: 30,),
                       Row(
                         children: [
                           Column(
                             children: [
                               GraphColumnSelector(),
-                              const SizedBox( height: 5,),
                               GraphManifoldWidget(allData: filteredData)
                             ],
                           ),
@@ -107,12 +101,7 @@ class MainView extends StatelessWidget {
                                 builder: (context, dayProvider, child){
                                   return Column(
                                     children: [
-                                      Row(
-                                        children: [
-                                          GlobalText('Filtrar Día', fontSize: 16,),
-                                          FilterDayWidget()
-                                        ],
-                                      ),
+                                      FilterDayWidget(),
                                       const SizedBox(height: 5,),
                                       FutureBuilder(
                                         future: SupabaseServices().getDataByDayOperative(dayProvider.selectedDate), 
