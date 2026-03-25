@@ -41,7 +41,7 @@ class DistributionBarChart extends StatelessWidget {
     final chartData = _procesarDistribucion();
 
     return Container(
-      height: windowsSize.height * 0.4,
+      height: windowsSize.height * 0.35,
       width: windowsSize.width * 0.27,
       // padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(

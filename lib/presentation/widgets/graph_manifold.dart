@@ -28,9 +28,10 @@ class _GraphManifoldWidgetState extends State<GraphManifoldWidget> {
   Widget build(BuildContext context) {
     final String selectedCol = context.watch<FilterElement>().selectedColumn;
     final double promedio = _calcularPromedio(selectedCol);
+    final windowSize = MediaQuery.of(context).size;
 
     return Container(
-      height: 480, // Aumentamos un poco el alto para el encabezado manual
+      height: windowSize.height * 0.42,
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
         color: ColorDefaults.whitePrimary,

@@ -26,18 +26,9 @@ class MainView extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
           child: Column(
             children: [
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.center,
-              //   children: [
-              //     GlobalText('Filtrar por Mes', color: ColorDefaults.whitePrimary,fontSize: 16,),
-              //     const SizedBox(width: 10,),
-              //     FilterMonthWidget(),
-              //   ],
-              // ),
-              // const SizedBox(height: 20,),
               FutureBuilder<List<dynamic>>(
                 // El build se dispara cuando cambian los providers, refrescando el Future si es necesario
                 future: SupabaseServices().getData(),
@@ -70,7 +61,7 @@ class MainView extends StatelessWidget {
                     );
                   }
                   return SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    // padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
