@@ -42,7 +42,7 @@ class DistributionBarChart extends StatelessWidget {
 
     return Container(
       height: windowsSize.height * 0.4,
-      width: windowsSize.width * 0.25,
+      width: windowsSize.width * 0.27,
       // padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
         color: ColorDefaults.whitePrimary,
@@ -56,6 +56,7 @@ class DistributionBarChart extends StatelessWidget {
         ),
         // Eje X ahora es el vertical en un BarChart
         primaryXAxis: CategoryAxis(
+          isInversed: true,
           majorGridLines: const MajorGridLines(width: 0),
           labelStyle: const TextStyle(color: Colors.black54, fontWeight: FontWeight.bold),
         ),
