@@ -4,6 +4,7 @@ import 'package:flutter_dashboard_ih/presentation/main_view.dart';
 import 'package:flutter_dashboard_ih/providers/filter_day_provider.dart';
 import 'package:flutter_dashboard_ih/providers/filter_element_provider.dart';
 import 'package:flutter_dashboard_ih/providers/filter_month_provider.dart';
+import 'package:flutter_dashboard_ih/providers/index_screen_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -25,7 +26,8 @@ class MyApp extends StatelessWidget {
         // Llamando a los providers
         ChangeNotifierProvider(create: (_) => FilterMonthProvider()), // Filtro por mes
         ChangeNotifierProvider(create: (_) => FilterElement()), // Filtro por elemento del manifold
-        ChangeNotifierProvider(create: (_) => FilterDayProvider())
+        ChangeNotifierProvider(create: (_) => FilterDayProvider()),
+        ChangeNotifierProvider(create: (_) => IndexScreenProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
