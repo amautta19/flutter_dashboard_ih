@@ -4,6 +4,7 @@ import 'package:flutter_dashboard_ih/defaults/text_global.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/distribution_chart.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/filter_day.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/filter_element.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_dashboard_ih/providers/filter_month_provider.dart';
 import 'package:flutter_dashboard_ih/providers/filter_day_provider.dart';
@@ -23,13 +24,35 @@ class MainView extends StatelessWidget {
     final selectedMonth = context.watch<FilterMonthProvider>().selectedMonth;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: ColorDefaults.darkPrimary,
+        backgroundColor: ColorDefaults.primaryBlue,
         elevation: 0,
-        title: GlobalText(
-          'Consumo Planta Pucusana', 
-          fontSize: 28, 
-          fontWeight: FontWeight.bold, 
-          color: ColorDefaults.primaryBlue,
+        title: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Row(
+            children: [
+              GlobalText(
+                'Consumo Planta Pucusana', 
+                fontSize: 28, 
+                fontWeight: FontWeight.bold, 
+                color: ColorDefaults.darkPrimary,
+              ),
+              const Spacer(),
+              FutureBuilder(
+                future: SupabaseServices().getLastUpdate(), 
+                builder: (context, snapshot){
+                  if(snapshot.hasData && snapshot.data != null){
+                    DateTime dt = DateTime.parse(snapshot.data!['_time_lima']);
+                    String formattedDate = DateFormat('yyy/MM/dd HH:mm').format(dt);
+                    return GlobalText(
+                      'Actualizado: $formattedDate',
+                      fontSize: 20, color: ColorDefaults.whitePrimary, fontWeight: FontWeight.bold,
+                    );
+                  }
+                  return GlobalText('Sin actualización registrada');
+                }
+              )
+            ],
+          ),
         ),
         actions: [
           Row(
