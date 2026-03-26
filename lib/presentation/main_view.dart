@@ -35,7 +35,6 @@ class MainView extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              GlobalText('Filtrar por Mes', color: ColorDefaults.whitePrimary, fontSize: 16,),
               const SizedBox(width: 10,),
               FilterMonthWidget(),
               const SizedBox(width: 200,)
@@ -142,60 +141,6 @@ class MainView extends StatelessWidget {
                           )
                         ],
                       ),
-                      // Row(
-                      //   children: [
-                      //     Column(
-                      //       children: [
-                      //         GraphColumnSelector(),
-                      //         const SizedBox(height: 5,),
-                      //         GraphManifoldWidget(allData: filteredData)
-                      //       ],
-                      //     ),
-                      //     const Spacer(),
-                      //     Column(
-                      //       children: [
-                      //         Consumer<FilterDayProvider>(
-                      //           builder: (context, dayProvider, child){
-                      //             return Column(
-                      //               children: [
-                      //                 FilterDayWidget(),
-                      //                 const SizedBox(height: 5,),
-                      //                 FutureBuilder(
-                      //                   future: SupabaseServices().getDataByDayOperative(dayProvider.selectedDate), 
-                      //                   builder: (context, snapshot){
-                      //                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      //                       return SizedBox(
-                      //                         height: windowSize.height * 0.42,
-                      //                         width: windowSize.width * 0.38,
-                      //                         child: Center(child: CircularProgressIndicator(color: ColorDefaults.primaryBlue,),),
-                      //                       );
-                      //                     }
-                      //                     if (snapshot.hasError) {
-                      //                       return SizedBox(
-                      //                        height: windowSize.height * 0.42,
-                      //                         width: windowSize.width * 0.38,
-                      //                         child: Center(child: GlobalText('Error al obtener los datos! ${snapshot.error}', fontSize: 24, color: Colors.red,),),
-                      //                       );
-                      //                     }
-                      //                     if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      //                       // return Center(child: GlobalText('Sin datos disponibles entre ese rango de fechas', fontSize: 24));
-                      //                       return SizedBox(
-                      //                         height: windowSize.height * 0.42,
-                      //                         width: windowSize.width * 0.38,
-                      //                         child: Center(child: GlobalText('Sin datos disponibles para el día seleccionado', fontSize: 24,)),
-                      //                       );
-                      //                     }
-                      //                     return LineTrendChart(allData: snapshot.data!);
-                      //                   }
-                      //                 )
-                      //               ],
-                      //             );
-                      //           }
-                      //         )
-                      //       ],
-                      //     )
-                      //   ],
-                      // )
                     ],
                   );
                 },
