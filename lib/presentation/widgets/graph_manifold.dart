@@ -14,14 +14,41 @@ class GraphManifoldWidget extends StatefulWidget {
 }
 
 class _GraphManifoldWidgetState extends State<GraphManifoldWidget> {
+  late List<dynamic> _sortedData;
+  @override
+  void initState() {
+    super.initState();
+    _prepararDatos();
+  }
+
+  @override
+  void didUpdateWidget (GraphManifoldWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if(oldWidget.allData != widget.allData){
+      _prepararDatos();
+    }
+  }
+
+  void _prepararDatos(){
+    _sortedData = List.from(widget.allData);
+    _sortedData.sort((a,b){
+      try{
+        DateTime fechaA = DateTime.parse(a['fecha_operativa']);
+        DateTime fechaB = DateTime.parse(b['fecha_operativa']);
+        return fechaA.compareTo(fechaB);
+      } catch (e){
+        return 0;
+      }
+    });
+  }
   
   double _calcularPromedio(String column) {
-    if (widget.allData.isEmpty) return 0;
+    if (_sortedData.isEmpty) return 0;
     double suma = 0;
-    for (var item in widget.allData) {
+    for (var item in _sortedData) {
       suma += (item[column] ?? 0).toDouble();
     }
-    return suma / widget.allData.length;
+    return suma / _sortedData.length;
   }
 
   @override
@@ -114,7 +141,7 @@ class _GraphManifoldWidgetState extends State<GraphManifoldWidget> {
               series: <CartesianSeries<dynamic, String>>[
                 ColumnSeries<dynamic, String>(
                   name: selectedCol,
-                  dataSource: widget.allData,
+                  dataSource: _sortedData,
                   xValueMapper: (data, _) => data['fecha_operativa']?.toString() ?? '',
                   yValueMapper: (data, _) => data[selectedCol] ?? 0,
                   pointColorMapper: (data, _) {
