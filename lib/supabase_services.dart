@@ -33,13 +33,19 @@ class SupabaseServices {
           }).toList();
         });
 }
-  Future<Map<String, dynamic>?> getLastUpdate() async{
-    final response = await supabase
+  Stream<Map<String, dynamic>?> getLastUpdate() {
+    final streamQuery = supabase
       .from('agua_manifold')
-      .select('_time_lima')
+      .stream(primaryKey: ['id'])
       .order('_time_lima', ascending: false)
-      .limit(1)
-      .single();
+      .limit(1);
+    final Stream<Map<String, dynamic>?> response = streamQuery.map((data){
+      if(data.isNotEmpty){
+        return data.first;
+      }
+      return null;
+    });
     return response;
+
   }
 }
