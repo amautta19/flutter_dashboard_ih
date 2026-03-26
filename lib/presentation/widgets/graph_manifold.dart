@@ -106,7 +106,6 @@ class _GraphManifoldWidgetState extends State<GraphManifoldWidget> {
           Expanded(
             child: SfCartesianChart(
               // Quitamos el title de aquí para usar el Row de arriba
-              tooltipBehavior: TooltipBehavior(enable: true, header: selectedCol),
               zoomPanBehavior: ZoomPanBehavior(
                 enablePanning: true,
                 zoomMode: ZoomMode.x,
@@ -144,6 +143,7 @@ class _GraphManifoldWidgetState extends State<GraphManifoldWidget> {
                   dataSource: _sortedData,
                   xValueMapper: (data, _) => data['fecha_operativa']?.toString() ?? '',
                   yValueMapper: (data, _) => data[selectedCol] ?? 0,
+                  // enableTooltip: true,
                   pointColorMapper: (data, _) {
                     final valor = data[selectedCol] ?? 0;
                     return valor > promedio ? Colors.red : ColorDefaults.primaryBlue;
@@ -159,8 +159,9 @@ class _GraphManifoldWidgetState extends State<GraphManifoldWidget> {
                       fontWeight: FontWeight.bold
                     )
                   ),
-                  enableTooltip: true,
-                  animationDuration: 800, 
+                  // enableTooltip: true,
+                  animationDuration: 80
+                  //0, 
                 )
               ],
             ),
