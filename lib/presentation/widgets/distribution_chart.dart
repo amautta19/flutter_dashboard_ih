@@ -49,6 +49,9 @@ class DistributionBarChart extends StatelessWidget {
         borderRadius: BorderRadius.circular(15),
       ),
       child: SfCartesianChart(
+        tooltipBehavior: TooltipBehavior(
+          enable: true
+        ),
         title: ChartTitle(
           text: 'Consumo Total Agua (m³)',
           alignment: ChartAlignment.near,
@@ -84,6 +87,7 @@ class DistributionBarChart extends StatelessWidget {
         series: <CartesianSeries<_ChartData, String>>[
           BarSeries<_ChartData, String>(
             dataSource: chartData,
+            enableTooltip: true,
             xValueMapper: (_ChartData data, _) => data.label,
             yValueMapper: (_ChartData data, _) => data.value,
             color: ColorDefaults.primaryBlue,
