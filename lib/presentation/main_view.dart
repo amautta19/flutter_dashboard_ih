@@ -37,8 +37,8 @@ class MainView extends StatelessWidget {
                 color: ColorDefaults.darkPrimary,
               ),
               const Spacer(),
-              FutureBuilder(
-                future: SupabaseServices().getLastUpdate(), 
+              StreamBuilder(
+                stream: SupabaseServices().getLastUpdate(), 
                 builder: (context, snapshot){
                   if(snapshot.hasData && snapshot.data != null){
                     DateTime dt = DateTime.parse(snapshot.data!['_time_lima']);
