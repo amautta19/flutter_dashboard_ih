@@ -4,6 +4,7 @@ import 'package:flutter_dashboard_ih/defaults/text_global.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/distribution_chart.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/filter_day.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/filter_element.dart';
+import 'package:flutter_dashboard_ih/presentation/widgets/navbar_disgn.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_dashboard_ih/providers/filter_month_provider.dart';
@@ -65,6 +66,7 @@ class MainView extends StatelessWidget {
           ),
         ],
       ),
+      drawer: NavbarDisgn(),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
