@@ -127,8 +127,8 @@ class MainView extends StatelessWidget {
                                 builder: (context, dayProvider, child){
                                   return Column(
                                     children: [
-                                      FutureBuilder(
-                                        future: SupabaseServices().getDataByDayOperative(dayProvider.selectedDate), 
+                                      StreamBuilder(
+                                        stream: SupabaseServices().getDataByDayOperative(dayProvider.selectedDate), 
                                         builder: (context, snapshot){
                                           if (snapshot.connectionState == ConnectionState.waiting) {
                                             return SizedBox(
