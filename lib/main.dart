@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dashboard_ih/defaults/color_defaults.dart';
 import 'package:flutter_dashboard_ih/presentation/main_view.dart';
+import 'package:flutter_dashboard_ih/presentation/widget_tree.dart';
 import 'package:flutter_dashboard_ih/providers/filter_day_provider.dart';
 import 'package:flutter_dashboard_ih/providers/filter_element_provider.dart';
 import 'package:flutter_dashboard_ih/providers/filter_month_provider.dart';
@@ -50,7 +51,8 @@ class _WindowsTableScreenState extends State<WindowsTableScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return MainView();
+    // return MainView();
+    return WidgetTree();
   }
 
 }
