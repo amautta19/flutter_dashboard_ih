@@ -71,8 +71,8 @@ class MainView extends StatelessWidget {
           child: Column(
             children: [
               // --- FUTURE BUILDER PRINCIPAL (DEPENDE DEL MES) ---
-              FutureBuilder<List<dynamic>>(
-                future: SupabaseServices().getData(),
+              StreamBuilder<List<dynamic>>(
+                stream: SupabaseServices().getData(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: CircularProgressIndicator(color: ColorDefaults.primaryBlue));
