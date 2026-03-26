@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dashboard_ih/defaults/color_defaults.dart';
 import 'package:flutter_dashboard_ih/presentation/main_view.dart';
-import 'package:flutter_dashboard_ih/presentation/widget_tree.dart';
+import 'package:flutter_dashboard_ih/presentation/pozos_vista/pozo_screen.dart';
 import 'package:flutter_dashboard_ih/providers/filter_day_provider.dart';
 import 'package:flutter_dashboard_ih/providers/filter_element_provider.dart';
 import 'package:flutter_dashboard_ih/providers/filter_month_provider.dart';
@@ -48,11 +48,15 @@ class WindowsTableScreen extends StatefulWidget {
 }
 
 class _WindowsTableScreenState extends State<WindowsTableScreen> {
-
+  final screens = [
+    PozoScreen(),
+    MainView()
+  ];
   @override
   Widget build(BuildContext context) {
-    // return MainView();
-    return WidgetTree();
+    final indexScreenProvider = Provider.of<IndexScreenProvider>(context);
+    
+    return screens[indexScreenProvider.getIndexClicked];
   }
 
 }
