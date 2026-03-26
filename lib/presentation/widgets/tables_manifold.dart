@@ -14,20 +14,32 @@ class TableManifoldWidget extends StatefulWidget {
 class _TableManifoldWidgetState extends State<TableManifoldWidget> {
   late _ConsumoDataSource _dataSource;
   @override
+  void didUpdateWidget(TableManifoldWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if(oldWidget.allData != widget.allData){
+      _actualizarDataSource();
+    }
+  }
+  void _actualizarDataSource() {
+    setState(() {
+      List<dynamic> sortedData = List.from(widget.allData);
+      
+      sortedData.sort((a, b) {
+        DateTime fechaA = DateTime.parse(a['fecha_operativa']);
+        DateTime fechaB = DateTime.parse(b['fecha_operativa']);
+        return fechaB.compareTo(fechaA); // Descendente
+      });
+
+      // IMPORTANTE: Creamos un nuevo DataSource con la data fresca
+      _dataSource = _ConsumoDataSource(data: sortedData);
+    });
+  }
+  @override
   void initState() {
     super.initState();
-    // Creamos una copia para no modificar la lista original
-    List<dynamic> sortedData = List.from(widget.allData);
-    
-    // Ordenar por fecha (asumiendo que se puede parsear a DateTime)
-    sortedData.sort((a, b) {
-      DateTime fechaA = DateTime.parse(a['fecha_operativa']);
-      DateTime fechaB = DateTime.parse(b['fecha_operativa']);
-      return fechaB.compareTo(fechaA); // Descendente
-    });
-
-    _dataSource = _ConsumoDataSource(data: sortedData);
+    _actualizarDataSource();
   }
+
   @override
   Widget build(BuildContext context) {
     final windowSize = MediaQuery.of(context).size;
