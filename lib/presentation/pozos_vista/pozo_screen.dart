@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dashboard_ih/defaults/color_defaults.dart';
 import 'package:flutter_dashboard_ih/defaults/text_global.dart';
+import 'package:flutter_dashboard_ih/presentation/pozos_vista/filter_pozo.dart';
 import 'package:flutter_dashboard_ih/presentation/pozos_vista/table_pozos.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/filter_month.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/navbar_disgn.dart';
@@ -66,8 +67,20 @@ class PozoScreen extends StatelessWidget {
                   }
 
                   return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      TablePozos(pozosData: filteredData)
+                      GlobalText('Registro de Consumo Diario Pozos',fontSize: 16,fontWeight: FontWeight.bold, color: ColorDefaults.secundaryBlue,),
+                      Row(
+                        children: [
+                          TablePozos(pozosData: filteredData),
+                        ],
+                      ),
+                      const SizedBox(height: 30,),
+                      Column(
+                        children: [
+                          FilterPozo(columns: ['Pozo1', 'Pozo3'])
+                        ],
+                      )
                     ],
                   );
                 }
