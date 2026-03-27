@@ -1,21 +1,79 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dashboard_ih/defaults/color_defaults.dart';
+import 'package:flutter_dashboard_ih/defaults/text_global.dart';
+import 'package:flutter_dashboard_ih/presentation/pozos_vista/table_pozos.dart';
+import 'package:flutter_dashboard_ih/presentation/widgets/filter_month.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/navbar_disgn.dart';
+import 'package:flutter_dashboard_ih/providers/filter_month_provider.dart';
+import 'package:flutter_dashboard_ih/supabase_services.dart';
+import 'package:provider/provider.dart';
 
 class PozoScreen extends StatelessWidget {
   const PozoScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final selectedMonth = context.watch<FilterMonthProvider>().selectedMonth;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Consumo Pozos'),
+        backgroundColor: Colors.deepOrangeAccent,
+        title: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              GlobalText(
+                'Consumo Pozos - Planta Pucusana',
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                color: ColorDefaults.darkPrimary,
+              ),
+              const Spacer()
+            ],
+          ),
+        ),
+        actions: [
+          FilterMonthWidget(),
+          const SizedBox(width: 200,)
+        ],
       ),
       drawer: NavbarDisgn(),
-      body: Center(
-        child: Column(
-          children: [
-            Text('data')
-          ],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+          child: Column(
+            children: [
+              StreamBuilder<List<dynamic>>(
+                stream: SupabaseServices().getData(), 
+                builder: (context, snapshot){
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator(color: ColorDefaults.primaryBlue));
+                  }
+                  if (snapshot.hasError) {
+                    return const Center(child: GlobalText('Error al obtener los datos!', fontSize: 24, color: Colors.red,));
+                  }
+                  if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return Center(child: GlobalText('Sin datos disponibles', fontSize: 24));
+                  }
+
+                  final filteredData = snapshot.data!.where((item){
+                    try{
+                      final fecha = DateTime.parse(item['fecha_operativa']);
+                      return fecha.month == selectedMonth;
+                    } catch(e) {return false;}
+                  }).toList();
+                  if (filteredData.isEmpty){
+                    return const Center(child: GlobalText('No hay datos para este mes seleccionado', fontSize: 24,));
+                  }
+
+                  return Column(
+                    children: [
+                      TablePozos(pozosData: filteredData)
+                    ],
+                  );
+                }
+              )
+            ],
+          ),
         ),
       ),
     );
