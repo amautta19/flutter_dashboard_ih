@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dashboard_ih/defaults/color_defaults.dart';
 import 'package:flutter_dashboard_ih/defaults/text_global.dart';
+import 'package:flutter_dashboard_ih/presentation/pozos_vista/filter_pozo.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/distribution_chart.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/filter_day.dart';
-import 'package:flutter_dashboard_ih/presentation/widgets/filter_element.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/navbar_disgn.dart';
+import 'package:flutter_dashboard_ih/providers/filter_element_provider.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_dashboard_ih/providers/filter_month_provider.dart';
@@ -15,9 +16,21 @@ import 'package:flutter_dashboard_ih/presentation/widgets/filter_month.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/line_chart.dart';
 import 'package:flutter_dashboard_ih/supabase_services.dart';
 
-class MainView extends StatelessWidget {
+class MainView extends StatefulWidget {
   const MainView({super.key});
 
+  @override
+  State<MainView> createState() => _MainViewState();
+}
+
+class _MainViewState extends State<MainView> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+    context.read<FilterElement>().updateColumn('CIP'); 
+  });
+  }
   @override
   Widget build(BuildContext context) {
     final windowSize = MediaQuery.of(context).size;
@@ -114,7 +127,7 @@ class MainView extends StatelessWidget {
                         children: [
                           Row(
                             children: [
-                              GraphColumnSelector(),
+                              FilterPozo(columns: ['CIP', 'DesaireadorA', 'DesaireadorB', 'DesaireadorC', 'Fuerza', 'Lavadoras', 'LineasPET', 'Multimix', 'Potable', 'Quasy', 'Servicios', 'Contisiolv']),
                               const Spacer(),
                               FilterDayWidget(),
                               const SizedBox(width: 100,)
