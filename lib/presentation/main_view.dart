@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dashboard_ih/defaults/color_defaults.dart';
 import 'package:flutter_dashboard_ih/defaults/text_global.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/filter_elements.dart';
-import 'package:flutter_dashboard_ih/presentation/widgets/distribution_chart.dart';
+import 'package:flutter_dashboard_ih/presentation/manifold/distribution_chart.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/filter_day.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/navbar_disgn.dart';
 import 'package:flutter_dashboard_ih/providers/filter_element_provider.dart';
@@ -10,10 +10,10 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_dashboard_ih/providers/filter_month_provider.dart';
 import 'package:flutter_dashboard_ih/providers/filter_day_provider.dart';
-import 'package:flutter_dashboard_ih/presentation/widgets/tables_manifold.dart';
-import 'package:flutter_dashboard_ih/presentation/widgets/graph_manifold.dart';
+import 'package:flutter_dashboard_ih/presentation/manifold/tables_manifold.dart';
+import 'package:flutter_dashboard_ih/presentation/manifold/graph_manifold.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/filter_month.dart';
-import 'package:flutter_dashboard_ih/presentation/widgets/line_chart.dart';
+import 'package:flutter_dashboard_ih/presentation/manifold/line_chart.dart';
 import 'package:flutter_dashboard_ih/supabase_services.dart';
 
 class MainView extends StatefulWidget {
