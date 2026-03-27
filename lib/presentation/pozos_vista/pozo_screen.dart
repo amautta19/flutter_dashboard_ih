@@ -1,17 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dashboard_ih/defaults/color_defaults.dart';
 import 'package:flutter_dashboard_ih/defaults/text_global.dart';
-import 'package:flutter_dashboard_ih/presentation/pozos_vista/filter_pozo.dart';
+import 'package:flutter_dashboard_ih/presentation/widgets/filter_elements.dart';
 import 'package:flutter_dashboard_ih/presentation/pozos_vista/table_pozos.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/filter_month.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/navbar_disgn.dart';
+import 'package:flutter_dashboard_ih/providers/filter_element_provider.dart';
 import 'package:flutter_dashboard_ih/providers/filter_month_provider.dart';
 import 'package:flutter_dashboard_ih/supabase_services.dart';
 import 'package:provider/provider.dart';
 
-class PozoScreen extends StatelessWidget {
+class PozoScreen extends StatefulWidget {
   const PozoScreen({super.key});
 
+  @override
+  State<PozoScreen> createState() => _PozoScreenState();
+}
+
+class _PozoScreenState extends State<PozoScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<FilterElement>().updateColumn('Pozo1'); 
+    });
+  }
   @override
   Widget build(BuildContext context) {
     final selectedMonth = context.watch<FilterMonthProvider>().selectedMonth;
