@@ -2,27 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dashboard_ih/defaults/color_defaults.dart';
 import 'package:flutter_dashboard_ih/defaults/text_global.dart';
 import 'package:flutter_dashboard_ih/providers/filter_element_provider.dart';
-import 'package:provider/provider.dart'; 
+import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
-class GraphManifoldWidget extends StatefulWidget {
+class BarGraphDiary extends StatefulWidget {
   final List<dynamic> allData;
-  const GraphManifoldWidget({super.key, required this.allData});
+  const BarGraphDiary({super.key, required this.allData});
 
   @override
-  State<GraphManifoldWidget> createState() => _GraphManifoldWidgetState();
+  State<BarGraphDiary> createState() => _BarGraphDiaryState();
 }
 
-class _GraphManifoldWidgetState extends State<GraphManifoldWidget> {
+class _BarGraphDiaryState extends State<BarGraphDiary> {
   late List<dynamic> _sortedData;
   @override
   void initState() {
+    // TODO: implement initState
     super.initState();
     _prepararDatos();
   }
-
   @override
-  void didUpdateWidget (GraphManifoldWidget oldWidget) {
+  void didUpdateWidget(covariant BarGraphDiary oldWidget) {
+    // TODO: implement didUpdateWidget
     super.didUpdateWidget(oldWidget);
     if(oldWidget.allData != widget.allData){
       _prepararDatos();
@@ -41,20 +42,18 @@ class _GraphManifoldWidgetState extends State<GraphManifoldWidget> {
       }
     });
   }
-  
-  double _calcularPromedio(String column) {
-    if (_sortedData.isEmpty) return 0;
+  double _calcularPromedio(String column){
+    if(_sortedData.isEmpty) return 0;
     double suma = 0;
-    for (var item in _sortedData) {
+    for(var item in _sortedData){
       suma += (item[column] ?? 0).toDouble();
     }
     return suma / _sortedData.length;
   }
-
   @override
   Widget build(BuildContext context) {
-    final String selectedCol = context.watch<FilterElementProvider>().getElement;
-    final double promedio = _calcularPromedio(selectedCol);
+    final String selectedFilter = context.watch<FilterElementProvider>().getElement;
+    final double promedio = _calcularPromedio(selectedFilter);
     final windowSize = MediaQuery.of(context).size;
 
     return Container(
@@ -64,16 +63,15 @@ class _GraphManifoldWidgetState extends State<GraphManifoldWidget> {
       decoration: BoxDecoration(
         color: ColorDefaults.whitePrimary,
         borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: ColorDefaults.whitePrimary),
+        border: Border.all(color: ColorDefaults.whitePrimary)
       ),
       child: Column(
         children: [
-          // --- ENCABEZADO MANUAL (REEMPLAZA AL CHARTTITLE) ---
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               GlobalText(
-                'Consumo de Agua (m³) : $selectedCol',
+                'Consumo de Agua (m³): $selectedFilter',
                 color: ColorDefaults.primaryBlue,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -85,10 +83,10 @@ class _GraphManifoldWidgetState extends State<GraphManifoldWidget> {
                     height: 10,
                     decoration: const BoxDecoration(
                       color: Colors.orangeAccent,
-                      shape: BoxShape.circle,
+                      shape: BoxShape.circle
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 8,),
                   GlobalText(
                     'Promedio: ${promedio.toStringAsFixed(1)} m³',
                     color: Colors.orangeAccent,
@@ -96,35 +94,25 @@ class _GraphManifoldWidgetState extends State<GraphManifoldWidget> {
                     fontSize: 14,
                   )
                 ],
-              ),
+              )
             ],
           ),
-          
-          const SizedBox(height: 10),
-
-          // --- GRÁFICO ---
+          const SizedBox(height: 10,),
           Expanded(
             child: SfCartesianChart(
-              // Quitamos el title de aquí para usar el Row de arriba
               zoomPanBehavior: ZoomPanBehavior(
                 enablePanning: true,
-                zoomMode: ZoomMode.x,
+                zoomMode: ZoomMode.x
               ),
               primaryXAxis: CategoryAxis(
                 autoScrollingDelta: 14,
                 autoScrollingMode: AutoScrollingMode.end,
                 majorGridLines: const MajorGridLines(width: 0),
                 labelStyle: TextStyle(
-                  color: ColorDefaults.darkPrimary, 
-                  fontSize: 12, 
-                  // fontWeight: FontWeight.bold
+                  color: ColorDefaults.darkPrimary, fontSize: 12
                 ),
               ),
               primaryYAxis: NumericAxis(
-                // title: AxisTitle(
-                //   text: 'Consumo (m³)', 
-                //   textStyle: TextStyle(color: ColorDefaults.darkPrimary, fontWeight: FontWeight.bold, fontSize: 10)
-                // ),
                 labelStyle: TextStyle(color: ColorDefaults.darkPrimary),
                 plotBands: <PlotBand>[
                   PlotBand(
@@ -133,19 +121,19 @@ class _GraphManifoldWidgetState extends State<GraphManifoldWidget> {
                     end: promedio,
                     borderWidth: 2,
                     borderColor: Colors.orangeAccent,
-                    dashArray: <double>[6, 6],
+                    dashArray: <double>[6, 6]
                   )
                 ],
               ),
               series: <CartesianSeries<dynamic, String>>[
                 ColumnSeries<dynamic, String>(
-                  name: selectedCol,
+                  name: selectedFilter,
                   dataSource: _sortedData,
-                  xValueMapper: (data, _) => data['fecha_operativa']?.toString() ?? '',
-                  yValueMapper: (data, _) => data[selectedCol] ?? 0,
-                  // enableTooltip: true,
-                  pointColorMapper: (data, _) {
-                    final valor = data[selectedCol] ?? 0;
+                  xValueMapper: (data, _) => data['fecha_operativa']?.toString() ?? '', 
+                  yValueMapper: (data, _) => data[selectedFilter] ?? 0,
+
+                  pointColorMapper: (data, _){
+                    final valor = data[selectedFilter] ?? 0;
                     return valor > promedio ? Colors.red : ColorDefaults.primaryBlue;
                   },
                   borderRadius: const BorderRadius.vertical(top: Radius.circular(6)),
@@ -154,18 +142,16 @@ class _GraphManifoldWidgetState extends State<GraphManifoldWidget> {
                     borderRadius: 5,
                     color: Colors.amberAccent,
                     textStyle: TextStyle(
-                      fontSize: 11, 
-                      color: ColorDefaults.darkPrimary, 
+                      fontSize: 11,
+                      color: ColorDefaults.darkPrimary,
                       fontWeight: FontWeight.bold
                     )
                   ),
-                  // enableTooltip: true,
-                  animationDuration: 80
-                  //0, 
+                  animationDuration: 90,
                 )
               ],
-            ),
-          ),
+            )
+          )
         ],
       ),
     );

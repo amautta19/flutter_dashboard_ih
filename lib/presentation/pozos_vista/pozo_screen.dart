@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dashboard_ih/defaults/color_defaults.dart';
 import 'package:flutter_dashboard_ih/defaults/text_global.dart';
 import 'package:flutter_dashboard_ih/presentation/pozos_vista/graph_hour_pozos.dart';
-import 'package:flutter_dashboard_ih/presentation/pozos_vista/graph_pozos.dart';
 import 'package:flutter_dashboard_ih/presentation/pozos_vista/piechar_pozos.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/appbar_design.dart';
+import 'package:flutter_dashboard_ih/presentation/widgets/bar_graph_diary.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/filter_day.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/filter_elements.dart';
 import 'package:flutter_dashboard_ih/presentation/pozos_vista/table_pozos.dart';
@@ -93,7 +93,7 @@ class _PozoScreenState extends State<PozoScreen> {
                           const SizedBox(height: 5,),
                           Row(
                             children: [
-                              GraphPozos(pozosData: filteredData),
+                              BarGraphDiary(allData: filteredData),
                               const Spacer(),
                               Consumer<FilterDayProvider>(
                                 builder: (context, dayProvider, child){
