@@ -4,7 +4,7 @@ import 'package:flutter_dashboard_ih/defaults/text_global.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/filter_elements.dart';
 import 'package:flutter_dashboard_ih/presentation/manifold/distribution_chart.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/filter_day.dart';
-import 'package:flutter_dashboard_ih/presentation/widgets/navbar_disgn.dart';
+import 'package:flutter_dashboard_ih/presentation/widgets/navbar_design.dart';
 import 'package:flutter_dashboard_ih/providers/filter_element_provider.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
