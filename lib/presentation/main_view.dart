@@ -28,14 +28,14 @@ class _MainViewState extends State<MainView> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-    context.read<FilterElement>().updateColumn('CIP'); 
+    context.read<FilterElementProvider>().updateColumn('CIP'); 
   });
   }
   @override
   Widget build(BuildContext context) {
     final windowSize = MediaQuery.of(context).size;
     // Escuchamos el mes. Si cambia el mes, se refresca todo (esto es correcto).
-    final selectedMonth = context.watch<FilterMonthProvider>().selectedMonth;
+    final selectedMonth = context.watch<FilterMonthProvider>().getMonth;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: ColorDefaults.primaryBlue,
@@ -143,7 +143,7 @@ class _MainViewState extends State<MainView> {
                                   return Column(
                                     children: [
                                       StreamBuilder(
-                                        stream: SupabaseServices().getDataByDayOperative(dayProvider.selectedDate), 
+                                        stream: SupabaseServices().getDataByDayOperative(dayProvider.getDate), 
                                         builder: (context, snapshot){
                                           if (snapshot.connectionState == ConnectionState.waiting) {
                                             return SizedBox(

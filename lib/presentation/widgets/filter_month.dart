@@ -52,7 +52,7 @@ class FilterMonthWidget extends StatelessWidget {
               // --- DROPDOWN DE MESES ---
               DropdownButtonHideUnderline(
                 child: DropdownButton<int>(
-                  value: monthProvider.selectedMonth,
+                  value: monthProvider.getMonth,
                   dropdownColor: ColorDefaults.whitePrimary,
                   icon: const Icon(Icons.arrow_drop_down, color: Colors.black87),
                   style: const TextStyle(

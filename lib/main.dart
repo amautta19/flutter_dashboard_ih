@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
       providers: [
         // Llamando a los providers
         ChangeNotifierProvider(create: (_) => FilterMonthProvider()), // Filtro por mes
-        ChangeNotifierProvider(create: (_) => FilterElement()), // Filtro por elemento del manifold
+        ChangeNotifierProvider(create: (_) => FilterElementProvider()), // Filtro por elemento del manifold
         ChangeNotifierProvider(create: (_) => FilterDayProvider()),
         ChangeNotifierProvider(create: (_) => IndexScreenProvider()),
       ],

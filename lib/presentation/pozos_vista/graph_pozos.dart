@@ -52,7 +52,7 @@ class _GraphPozosState extends State<GraphPozos> {
   }
   @override
   Widget build(BuildContext context) {
-    final String selectedFilter = context.watch<FilterElement>().selectedColumn;
+    final String selectedFilter = context.watch<FilterElementProvider>().getElement;
     final double promedio = _calcularPromedio(selectedFilter);
     final windowSize = MediaQuery.of(context).size;
 

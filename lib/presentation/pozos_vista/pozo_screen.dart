@@ -27,12 +27,12 @@ class _PozoScreenState extends State<PozoScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<FilterElement>().updateColumn('Pozo1'); 
+      context.read<FilterElementProvider>().updateColumn('Pozo1'); 
     });
   }
   @override
   Widget build(BuildContext context) {
-    final selectedMonth = context.watch<FilterMonthProvider>().selectedMonth;
+    final selectedMonth = context.watch<FilterMonthProvider>().getMonth;
     final windowSize =  MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
@@ -117,7 +117,7 @@ class _PozoScreenState extends State<PozoScreen> {
                                   return Column(
                                     children: [
                                       StreamBuilder(
-                                        stream: SupabaseServices().getDataByDayOperative(dayProvider.selectedDate), 
+                                        stream: SupabaseServices().getDataByDayOperative(dayProvider.getDate), 
                                         builder:(context, snapshot){
                                           if (snapshot.connectionState == ConnectionState.waiting) {
                                             return SizedBox(

@@ -11,7 +11,7 @@ class GraphHourPozos extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final windowsSize = MediaQuery.of(context).size;
-    final filterElementProvider = Provider.of<FilterElement>(context);
+    final filterElementProvider = Provider.of<FilterElementProvider>(context);
 
     return Container(
       height: windowsSize.height * 0.42,
@@ -23,7 +23,7 @@ class GraphHourPozos extends StatelessWidget {
       ),
       child: SfCartesianChart(
         title: ChartTitle(
-          text: 'Evolución Temporal: ${filterElementProvider.selectedColumn}',
+          text: 'Evolución Temporal: ${filterElementProvider.getElement}',
           alignment: ChartAlignment.near,
           textStyle: TextStyle(
             fontWeight: FontWeight.bold, 
@@ -61,7 +61,7 @@ class GraphHourPozos extends StatelessWidget {
 
         series: <CartesianSeries<dynamic, String>>[
           ColumnSeries<dynamic, String>(
-            name: filterElementProvider.selectedColumn,
+            name: filterElementProvider.getElement,
             dataSource: pozosData,
             // --- EXTRACCIÓN DE LA HORA ---
             xValueMapper: (data, _) {
@@ -72,7 +72,7 @@ class GraphHourPozos extends StatelessWidget {
               }
               return fullTime;
             },
-            yValueMapper: (data, _) => data[filterElementProvider.selectedColumn] ?? 0,
+            yValueMapper: (data, _) => data[filterElementProvider.getElement] ?? 0,
             color: ColorDefaults.primaryBlue,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(5)),
             spacing: 0.2,

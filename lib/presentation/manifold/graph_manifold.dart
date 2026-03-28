@@ -53,7 +53,7 @@ class _GraphManifoldWidgetState extends State<GraphManifoldWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final String selectedCol = context.watch<FilterElement>().selectedColumn;
+    final String selectedCol = context.watch<FilterElementProvider>().getElement;
     final double promedio = _calcularPromedio(selectedCol);
     final windowSize = MediaQuery.of(context).size;
 

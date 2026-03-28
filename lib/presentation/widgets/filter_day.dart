@@ -15,7 +15,7 @@ class FilterDayWidget extends StatelessWidget {
       onTap: () async {
         final DateTime? picked = await showDatePicker(
           context: context,
-          initialDate: dayProvider.selectedDate,
+          initialDate: dayProvider.getDate,
           firstDate: DateTime(2025),
           lastDate: DateTime.now(),
           builder: (context, child) {
@@ -67,7 +67,7 @@ class FilterDayWidget extends StatelessWidget {
                 color: ColorDefaults.primaryBlue),
             const SizedBox(width: 8),
             Text(
-              DateFormat('dd/MM/yyyy').format(dayProvider.selectedDate),
+              DateFormat('dd/MM/yyyy').format(dayProvider.getDate),
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,

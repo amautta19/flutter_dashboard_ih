@@ -1,13 +1,13 @@
 
 import 'package:flutter/material.dart';
 
-class FilterElement extends ChangeNotifier{
-  String _selectedColumn = 'CIP'; // Columna por defecto
+class FilterElementProvider extends ChangeNotifier{
+  String _element = 'CIP'; // Columna por defecto
 
-  String get selectedColumn => _selectedColumn;
+  String get getElement => _element;
 
   void updateColumn(String column) {
-    _selectedColumn = column;
+    _element = column;
     notifyListeners();
   }
 }

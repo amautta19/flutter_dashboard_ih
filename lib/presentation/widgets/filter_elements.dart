@@ -15,7 +15,7 @@ class FilterPozo extends StatefulWidget {
 class _FilterPozoState extends State<FilterPozo> {
   @override
   Widget build(BuildContext context) {
-    final filterelementProvider = context.watch<FilterElement>();
+    final filterelementProvider = context.watch<FilterElementProvider>();
     return Container(
       height: 50,
       decoration: BoxDecoration(
@@ -25,7 +25,7 @@ class _FilterPozoState extends State<FilterPozo> {
         spacing: 8,
         runSpacing: 8,
         children: widget.columns.map((String value) {
-          final isSelected = filterelementProvider.selectedColumn == value;
+          final isSelected = filterelementProvider.getElement == value;
           
           return ChoiceChip(
             label: GlobalText(value, 

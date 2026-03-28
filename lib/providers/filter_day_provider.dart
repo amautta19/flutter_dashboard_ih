@@ -4,7 +4,7 @@ class FilterDayProvider extends ChangeNotifier {
   // Inicializamos con el día de hoy o una fecha por defecto
   DateTime _selectedDate = DateTime.now();
 
-  DateTime get selectedDate => _selectedDate;
+  DateTime get getDate => _selectedDate;
 
   void updateDate(DateTime newDate) {
     _selectedDate = newDate;

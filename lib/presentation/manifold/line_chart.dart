@@ -12,7 +12,7 @@ class LineTrendChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final windowsSize = MediaQuery.of(context).size;
-    final String selectedCol = context.watch<FilterElement>().selectedColumn;
+    final String selectedCol = context.watch<FilterElementProvider>().getElement;
 
     return Container(
       height: windowsSize.height * 0.42,
