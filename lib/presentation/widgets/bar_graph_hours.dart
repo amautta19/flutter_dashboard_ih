@@ -4,14 +4,40 @@ import 'package:flutter_dashboard_ih/providers/filter_element_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
-class BarGraphHours extends StatelessWidget {
+class BarGraphHours extends StatefulWidget {
   final List<dynamic> allData;
   const BarGraphHours({super.key, required this.allData});
 
   @override
+  State<BarGraphHours> createState() => _BarGraphHoursState();
+}
+
+class _BarGraphHoursState extends State<BarGraphHours> {
+  // Guardamos la data procesada en el estado
+  List<dynamic> _currentData = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _currentData = widget.allData;
+  }
+
+  @override
+  void didUpdateWidget(BarGraphHours oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Solo actualizamos si la lista de datos realmente cambió
+    if (oldWidget.allData != widget.allData) {
+      setState(() {
+        _currentData = widget.allData;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final windowsSize = MediaQuery.of(context).size;
-    final filterElementProvider = Provider.of<FilterElementProvider>(context);
+    // Usamos watch aquí para que reaccione cuando cambies el filtro (CIP, Pozos, etc)
+    final filterElementProvider = context.watch<FilterElementProvider>();
 
     return Container(
       height: windowsSize.height * 0.42,
@@ -34,7 +60,9 @@ class BarGraphHours extends StatelessWidget {
         
         tooltipBehavior: TooltipBehavior(
           enable: true,
-          header: 'Hora', // Cambiado para que coincida con el eje
+          header: 'Hora',
+          activationMode: ActivationMode.singleTap,
+          duration: 150, // Que desaparezca rápido
         ),
 
         zoomPanBehavior: ZoomPanBehavior(
@@ -46,9 +74,8 @@ class BarGraphHours extends StatelessWidget {
         primaryXAxis: CategoryAxis(
           majorGridLines: const MajorGridLines(width: 0),
           labelStyle: TextStyle(color: ColorDefaults.darkPrimary, fontSize: 12),
-          labelRotation: 0, // Labels horizontales
-          labelIntersectAction: AxisLabelIntersectAction.hide, // Oculta si chocan
-          interval: null, 
+          labelRotation: 0,
+          labelIntersectAction: AxisLabelIntersectAction.hide,
         ),
 
         primaryYAxis: NumericAxis(
@@ -62,11 +89,9 @@ class BarGraphHours extends StatelessWidget {
         series: <CartesianSeries<dynamic, String>>[
           ColumnSeries<dynamic, String>(
             name: filterElementProvider.getElement,
-            dataSource: allData,
-            // --- EXTRACCIÓN DE LA HORA ---
+            dataSource: _currentData, // Usamos la data del estado
             xValueMapper: (data, _) {
               final fullTime = data['_time_lima']?.toString() ?? '';
-              // Si el formato es '2026-03-25 14:30:00', esto devuelve '14:30'
               if (fullTime.length >= 16) {
                 return fullTime.substring(11, 16); 
               }
@@ -77,11 +102,11 @@ class BarGraphHours extends StatelessWidget {
             borderRadius: const BorderRadius.vertical(top: Radius.circular(5)),
             spacing: 0.2,
             width: 0.8,
-            animationDuration: 1000,
+            animationDuration: 800, // Animación sutil al cambiar valores
             dataLabelSettings: DataLabelSettings(
               isVisible: true,
               textStyle: TextStyle(
-                fontSize: 12, 
+                fontSize: 11, // Un poco más pequeño para que no se amontone
                 fontWeight: FontWeight.bold,
                 color: ColorDefaults.darkPrimary
               ),
