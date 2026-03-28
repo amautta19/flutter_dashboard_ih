@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dashboard_ih/defaults/color_defaults.dart';
 import 'package:flutter_dashboard_ih/defaults/text_global.dart';
-import 'package:flutter_dashboard_ih/presentation/pozos_vista/graph_hour_pozos.dart';
+import 'package:flutter_dashboard_ih/presentation/widgets/bar_graph_hours.dart';
 import 'package:flutter_dashboard_ih/presentation/pozos_vista/piechar_pozos.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/appbar_design.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/bar_graph_diary.dart';
@@ -124,7 +124,7 @@ class _PozoScreenState extends State<PozoScreen> {
                                               child: Center(child: GlobalText('Sin datos disponibles para el día seleccionado', fontSize: 24,)),
                                             );
                                           }
-                                          return GraphHourPozos(pozosData: snapshot.data!);
+                                          return BarGraphHours(allData: snapshot.data!);
                                         } 
                                       )
                                     ],

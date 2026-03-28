@@ -4,9 +4,9 @@ import 'package:flutter_dashboard_ih/providers/filter_element_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
-class GraphHourPozos extends StatelessWidget {
-  final List<dynamic> pozosData;
-  const GraphHourPozos({super.key, required this.pozosData});
+class BarGraphHours extends StatelessWidget {
+  final List<dynamic> allData;
+  const BarGraphHours({super.key, required this.allData});
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +62,7 @@ class GraphHourPozos extends StatelessWidget {
         series: <CartesianSeries<dynamic, String>>[
           ColumnSeries<dynamic, String>(
             name: filterElementProvider.getElement,
-            dataSource: pozosData,
+            dataSource: allData,
             // --- EXTRACCIÓN DE LA HORA ---
             xValueMapper: (data, _) {
               final fullTime = data['_time_lima']?.toString() ?? '';
