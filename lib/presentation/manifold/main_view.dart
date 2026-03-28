@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dashboard_ih/defaults/color_defaults.dart';
 import 'package:flutter_dashboard_ih/defaults/text_global.dart';
+import 'package:flutter_dashboard_ih/presentation/widgets/appbar_design.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/filter_elements.dart';
 import 'package:flutter_dashboard_ih/presentation/manifold/distribution_chart.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/filter_day.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/navbar_design.dart';
 import 'package:flutter_dashboard_ih/providers/filter_element_provider.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_dashboard_ih/providers/filter_month_provider.dart';
 import 'package:flutter_dashboard_ih/providers/filter_day_provider.dart';
 import 'package:flutter_dashboard_ih/presentation/manifold/tables_manifold.dart';
 import 'package:flutter_dashboard_ih/presentation/manifold/graph_manifold.dart';
-import 'package:flutter_dashboard_ih/presentation/widgets/filter_month.dart';
 import 'package:flutter_dashboard_ih/presentation/manifold/line_chart.dart';
 import 'package:flutter_dashboard_ih/services/supabase_services.dart';
 
@@ -37,47 +36,9 @@ class _MainViewState extends State<MainView> {
     // Escuchamos el mes. Si cambia el mes, se refresca todo (esto es correcto).
     final selectedMonth = context.watch<FilterMonthProvider>().getMonth;
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: ColorDefaults.primaryBlue,
-        elevation: 0,
-        title: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Row(
-            children: [
-              GlobalText(
-                'Consumo Planta Pucusana', 
-                fontSize: 28, 
-                fontWeight: FontWeight.bold, 
-                color: ColorDefaults.darkPrimary,
-              ),
-              const Spacer(),
-              StreamBuilder(
-                stream: SupabaseServices().getLastUpdate(), 
-                builder: (context, snapshot){
-                  if(snapshot.hasData && snapshot.data != null){
-                    DateTime dt = DateTime.parse(snapshot.data!['_time_lima']);
-                    String formattedDate = DateFormat('yyy/MM/dd HH:mm').format(dt);
-                    return GlobalText(
-                      'Actualizado: $formattedDate',
-                      fontSize: 20, color: ColorDefaults.whitePrimary, fontWeight: FontWeight.bold,
-                    );
-                  }
-                  return GlobalText('Sin actualización registrada');
-                }
-              )
-            ],
-          ),
-        ),
-        actions: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const SizedBox(width: 10,),
-              FilterMonthWidget(),
-              const SizedBox(width: 200,)
-            ],
-          ),
-        ],
+      appBar: AppbarDesign(
+        title: 'Consumo Agua Manifold - Planta Pucusana',
+        colorBar: ColorDefaults.primaryBlue,
       ),
       drawer: NavbarDisgn(),
       body: SingleChildScrollView(

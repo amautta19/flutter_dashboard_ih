@@ -4,6 +4,7 @@ import 'package:flutter_dashboard_ih/defaults/text_global.dart';
 import 'package:flutter_dashboard_ih/presentation/pozos_vista/graph_hour_pozos.dart';
 import 'package:flutter_dashboard_ih/presentation/pozos_vista/graph_pozos.dart';
 import 'package:flutter_dashboard_ih/presentation/pozos_vista/piechar_pozos.dart';
+import 'package:flutter_dashboard_ih/presentation/widgets/appbar_design.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/filter_day.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/filter_elements.dart';
 import 'package:flutter_dashboard_ih/presentation/pozos_vista/table_pozos.dart';
@@ -35,26 +36,9 @@ class _PozoScreenState extends State<PozoScreen> {
     final selectedMonth = context.watch<FilterMonthProvider>().getMonth;
     final windowSize =  MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.deepOrangeAccent,
-        title: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            children: [
-              GlobalText(
-                'Consumo Pozos - Planta Pucusana',
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: ColorDefaults.darkPrimary,
-              ),
-              const Spacer()
-            ],
-          ),
-        ),
-        actions: [
-          FilterMonthWidget(),
-          const SizedBox(width: 200,)
-        ],
+      appBar: AppbarDesign(
+        title: 'Consumo Agua Pozos - Planta Pucusana', 
+        colorBar: Colors.orangeAccent
       ),
       drawer: NavbarDisgn(),
       body: SingleChildScrollView(
