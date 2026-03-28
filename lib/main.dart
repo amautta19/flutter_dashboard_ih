@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dashboard_ih/defaults/color_defaults.dart';
-import 'package:flutter_dashboard_ih/presentation/main_view.dart';
+import 'package:flutter_dashboard_ih/presentation/manifold/main_view.dart';
 import 'package:flutter_dashboard_ih/presentation/pozos_vista/pozo_screen.dart';
 import 'package:flutter_dashboard_ih/providers/filter_day_provider.dart';
 import 'package:flutter_dashboard_ih/providers/filter_element_provider.dart';
