@@ -12,7 +12,7 @@ import 'package:flutter_dashboard_ih/presentation/widgets/navbar_disgn.dart';
 import 'package:flutter_dashboard_ih/providers/filter_day_provider.dart';
 import 'package:flutter_dashboard_ih/providers/filter_element_provider.dart';
 import 'package:flutter_dashboard_ih/providers/filter_month_provider.dart';
-import 'package:flutter_dashboard_ih/supabase_services.dart';
+import 'package:flutter_dashboard_ih/services/supabase_services.dart';
 import 'package:provider/provider.dart';
 
 class PozoScreen extends StatefulWidget {

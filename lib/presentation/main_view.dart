@@ -14,7 +14,7 @@ import 'package:flutter_dashboard_ih/presentation/manifold/tables_manifold.dart'
 import 'package:flutter_dashboard_ih/presentation/manifold/graph_manifold.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/filter_month.dart';
 import 'package:flutter_dashboard_ih/presentation/manifold/line_chart.dart';
-import 'package:flutter_dashboard_ih/supabase_services.dart';
+import 'package:flutter_dashboard_ih/services/supabase_services.dart';
 
 class MainView extends StatefulWidget {
   const MainView({super.key});
