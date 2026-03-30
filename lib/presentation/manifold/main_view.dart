@@ -5,7 +5,7 @@ import 'package:flutter_dashboard_ih/presentation/widgets/appbar_design.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/bar_graph_diary.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/bar_graph_hours.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/filter_elements.dart';
-import 'package:flutter_dashboard_ih/presentation/manifold/distribution_chart.dart';
+import 'package:flutter_dashboard_ih/presentation/widgets/distribution_chart.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/filter_day.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/navbar_design.dart';
 import 'package:flutter_dashboard_ih/providers/filter_element_provider.dart';
@@ -81,7 +81,7 @@ class _MainViewState extends State<MainView> {
                         children: [
                           TableManifoldWidget(allData: filteredData),
                           const Spacer(),
-                          DistributionBarChart(allData: filteredData)
+                          DistributionBarChart(allData: filteredData, columns: ['CIP', 'DesaireadorA', 'DesaireadorB', 'DesaireadorC', 'Fuerza', 'Lavadoras', 'LineasPET', 'Multimix', 'Potable', 'Quasy', 'Servicios', 'Contisiolv'],)
                         ],
                       ),
                       const SizedBox(height: 30,),

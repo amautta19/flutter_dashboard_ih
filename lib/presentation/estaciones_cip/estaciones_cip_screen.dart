@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dashboard_ih/defaults/color_defaults.dart';
 import 'package:flutter_dashboard_ih/defaults/text_global.dart';
 import 'package:flutter_dashboard_ih/presentation/estaciones_cip/table_estaciones_cip.dart';
+import 'package:flutter_dashboard_ih/presentation/widgets/distribution_chart.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/appbar_design.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/bar_graph_diary.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/bar_graph_hours.dart';
@@ -73,6 +74,7 @@ class _EstacionesCipScreenState extends State<EstacionesCipScreen> {
                         children: [
                           TablaEstacionesCIP(cipData: filteredData),
                           const Spacer(),
+                          DistributionBarChart(allData: filteredData, columns: ['cip_a', 'cip_b', 'cip_c', 'cip_d', 'cip_e', 'cip_f'])
                         ],
                       ),
                       const SizedBox(height: 30,),
