@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dashboard_ih/defaults/color_defaults.dart';
+import 'package:flutter_dashboard_ih/presentation/estaciones_cip/estaciones_cip_screen.dart';
 import 'package:flutter_dashboard_ih/presentation/manifold/main_view.dart';
 import 'package:flutter_dashboard_ih/presentation/pozos_vista/pozo_screen.dart';
 import 'package:flutter_dashboard_ih/providers/filter_day_provider.dart';
@@ -50,7 +51,8 @@ class WindowsTableScreen extends StatefulWidget {
 class _WindowsTableScreenState extends State<WindowsTableScreen> {
   final screens = [
     PozoScreen(),
-    MainView()
+    MainView(),
+    EstacionesCipScreen()
   ];
   @override
   Widget build(BuildContext context) {
