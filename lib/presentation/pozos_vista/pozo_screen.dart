@@ -36,6 +36,7 @@ class _PozoScreenState extends State<PozoScreen> {
     final windowSize =  MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppbarDesign(
+        table: 'agua_manifold',
         title: 'Consumo Agua Pozos - Planta Pucusana', 
         colorBar: Colors.orangeAccent
       ),
@@ -46,7 +47,7 @@ class _PozoScreenState extends State<PozoScreen> {
           child: Column(
             children: [
               StreamBuilder<List<dynamic>>(
-                stream: SupabaseServices().getData(), 
+                stream: SupabaseServices().getData('agua_manifold_diario_v2'), 
                 builder: (context, snapshot){
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: CircularProgressIndicator(color: ColorDefaults.primaryBlue));
@@ -100,7 +101,7 @@ class _PozoScreenState extends State<PozoScreen> {
                                   return Column(
                                     children: [
                                       StreamBuilder(
-                                        stream: SupabaseServices().getDataByDayOperative(dayProvider.getDate), 
+                                        stream: SupabaseServices().getDataByDayOperative('agua_manifold' ,dayProvider.getDate), 
                                         builder:(context, snapshot){
                                           if (snapshot.connectionState == ConnectionState.waiting) {
                                             return SizedBox(

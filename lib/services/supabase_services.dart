@@ -3,14 +3,14 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SupabaseServices {
   final supabase = Supabase.instance.client;
-  Stream<List<Map<String, dynamic>>> getData() {
+  Stream<List<Map<String, dynamic>>> getData(String table) {
     return supabase
-        .from('agua_manifold_diario_v2')
+        .from(table)
         .stream(primaryKey: ['id']) // Asegúrate que 'id' sea tu PK
         .order('fecha_operativa', ascending: false);
   }
 
-  Stream<List<Map<String, dynamic>>> getDataByDayOperative(DateTime selectedDate) {
+  Stream<List<Map<String, dynamic>>> getDataByDayOperative(String table, DateTime selectedDate) {
     // 1. Definimos los límites de tiempo igual que antes
     final String startStr = "${DateFormat('yyyy-MM-dd').format(selectedDate)} 08:00:00";
     final DateTime nextDay = selectedDate.add(const Duration(days: 1));
@@ -21,7 +21,7 @@ class SupabaseServices {
     final DateTime endTime = DateTime.parse(endStr);
 
     return supabase
-        .from('agua_manifold')
+        .from(table)
         .stream(primaryKey: ['id']) // Asegúrate de que 'id' sea tu PK
         .order('_time_lima', ascending: true)
         .map((List<Map<String, dynamic>> event) {
@@ -33,9 +33,9 @@ class SupabaseServices {
           }).toList();
         });
 }
-  Stream<Map<String, dynamic>?> getLastUpdate() {
+  Stream<Map<String, dynamic>?> getLastUpdate(String table) {
     final streamQuery = supabase
-      .from('agua_manifold')
+      .from(table)
       .stream(primaryKey: ['id'])
       .order('_time_lima', ascending: false)
       .limit(1);

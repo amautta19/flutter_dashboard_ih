@@ -7,8 +7,9 @@ import 'package:intl/intl.dart';
 
 class AppbarDesign extends StatelessWidget implements PreferredSizeWidget{
   final String title;
+  final String table;
   final Color colorBar;
-  const AppbarDesign({super.key, required this.title, required this.colorBar});
+  const AppbarDesign({super.key, required this.title, required this.colorBar, required this.table});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +28,7 @@ class AppbarDesign extends StatelessWidget implements PreferredSizeWidget{
             ),
             const Spacer(),
             StreamBuilder(
-              stream: SupabaseServices().getLastUpdate(), 
+              stream: SupabaseServices().getLastUpdate(table), 
               builder: (context, snapshot){
                 if(snapshot.hasData && snapshot.data != null){
                   DateTime dt = DateTime.parse(snapshot.data!['_time_lima']);

@@ -37,6 +37,7 @@ class _MainViewState extends State<MainView> {
     final selectedMonth = context.watch<FilterMonthProvider>().getMonth;
     return Scaffold(
       appBar: AppbarDesign(
+        table: 'agua_manifold',
         title: 'Consumo Agua Manifold - Planta Pucusana',
         colorBar: ColorDefaults.primaryBlue,
       ),
@@ -48,7 +49,7 @@ class _MainViewState extends State<MainView> {
             children: [
               // --- FUTURE BUILDER PRINCIPAL (DEPENDE DEL MES) ---
               StreamBuilder<List<dynamic>>(
-                stream: SupabaseServices().getData(),
+                stream: SupabaseServices().getData('agua_manifold_diario_v2'),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: CircularProgressIndicator(color: ColorDefaults.primaryBlue));
@@ -104,7 +105,7 @@ class _MainViewState extends State<MainView> {
                                   return Column(
                                     children: [
                                       StreamBuilder(
-                                        stream: SupabaseServices().getDataByDayOperative(dayProvider.getDate), 
+                                        stream: SupabaseServices().getDataByDayOperative('agua_manifold',dayProvider.getDate), 
                                         builder: (context, snapshot){
                                           if (snapshot.connectionState == ConnectionState.waiting) {
                                             return SizedBox(
