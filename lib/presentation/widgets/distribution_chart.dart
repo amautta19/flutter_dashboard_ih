@@ -3,24 +3,25 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:flutter_dashboard_ih/defaults/color_defaults.dart';
 
 class DistributionBarChart extends StatelessWidget {
+  final List<String> columns;
   final List<dynamic> allData;
   
-  const DistributionBarChart({super.key, required this.allData});
+  const DistributionBarChart({super.key, required this.allData, required this.columns});
 
   List<_ChartData> _procesarDistribucion() {
     if (allData.isEmpty) return [];
 
     // 1. Definimos las columnas que queremos sumar (Zonas del Manifold)
-    final List<String> columnas = [
-      'CIP', 'DesaireadorA', 'DesaireadorB', 'DesaireadorC', 
-      'Fuerza', 'Lavadoras', 'LineasPET', 'Multimix', 
-      'Potable', 'Quasy', 'Servicios', 'Contisiolv'
-    ];
+    // final List<String> columnas = [
+    //   'CIP', 'DesaireadorA', 'DesaireadorB', 'DesaireadorC', 
+    //   'Fuerza', 'Lavadoras', 'LineasPET', 'Multimix', 
+    //   'Potable', 'Quasy', 'Servicios', 'Contisiolv'
+    // ];
 
     Map<String, double> totales = {};
 
     // 2. Sumamos los valores de cada columna en toda la data filtrada
-    for (var col in columnas) {
+    for (var col in columns) {
       double suma = 0;
       for (var item in allData) {
         suma += (item[col] ?? 0).toDouble();
