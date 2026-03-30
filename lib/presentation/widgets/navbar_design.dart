@@ -26,6 +26,8 @@ class _NavbarDisgnState extends State<NavbarDisgn> {
             items('Pozos', indexScreenProvider, context, 0),
             const SizedBox(height: 20,),
             items('Manifold',indexScreenProvider, context,1),
+            const SizedBox(height: 20,),
+            items('Estaciones CIP', indexScreenProvider, context, 2)
 
           ],
         ),
