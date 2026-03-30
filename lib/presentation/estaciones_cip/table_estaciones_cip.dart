@@ -101,16 +101,16 @@ GridColumn _buildColumn(String name, String label, BorderSide border, {bool isTo
 class _PozosDataSource extends DataGridSource {
   _PozosDataSource({required List<dynamic> data}) {
     _rows = data.map<DataGridRow>((item) {
-      final total = (item['CIP_A'] ?? 0) + (item['CIP_B'] ?? 0) + (item['CIP_C'] ?? 0) + (item['CIP_D'] ?? 0) + (item['CIP_E'] ?? 0) + (item['CIP_F'] ?? 0);
+      final total = (item['cip_a'] ?? 0) + (item['cip_b'] ?? 0) + (item['cip_c'] ?? 0) + (item['cip_d'] ?? 0) + (item['cip_e'] ?? 0) + (item['cip_f'] ?? 0);
       
       return DataGridRow(cells: [
         DataGridCell<String>(columnName: 'fecha', value: item['fecha_operativa'].toString()),
-        DataGridCell<num>(columnName: 'cip_a', value: item['CIP_A'] ?? 0),
-        DataGridCell<num>(columnName: 'cip_b', value: item['CIP_B'] ?? 0),
-        DataGridCell<num>(columnName: 'cip_c', value: item['CIP_C'] ?? 0),
-        DataGridCell<num>(columnName: 'cip_d', value: item['CIP_D'] ?? 0),
-        DataGridCell<num>(columnName: 'cip_e', value: item['CIP_E'] ?? 0),
-        DataGridCell<num>(columnName: 'cip_f', value: item['CIP_F'] ?? 0),
+        DataGridCell<num>(columnName: 'cip_a', value: item['cip_a'] ?? 0),
+        DataGridCell<num>(columnName: 'cip_b', value: item['cip_b'] ?? 0),
+        DataGridCell<num>(columnName: 'cip_c', value: item['cip_c'] ?? 0),
+        DataGridCell<num>(columnName: 'cip_d', value: item['cip_d'] ?? 0),
+        DataGridCell<num>(columnName: 'cip_e', value: item['cip_e'] ?? 0),
+        DataGridCell<num>(columnName: 'cip_f', value: item['cip_f'] ?? 0),
         DataGridCell<num>(columnName: 'total_estaciones', value: total),
       ]);
     }).toList();
