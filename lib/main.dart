@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dashboard_ih/defaults/color_defaults.dart';
 import 'package:flutter_dashboard_ih/presentation/estaciones_cip/estaciones_cip_screen.dart';
+import 'package:flutter_dashboard_ih/presentation/fiiltros_pulidores/filtros_pulidores_screen.dart';
 import 'package:flutter_dashboard_ih/presentation/manifold/main_view.dart';
 import 'package:flutter_dashboard_ih/presentation/osmosis/osmosis_screen.dart';
 import 'package:flutter_dashboard_ih/presentation/pozos_vista/pozo_screen.dart';
@@ -54,7 +55,8 @@ class _WindowsTableScreenState extends State<WindowsTableScreen> {
     PozoScreen(),
     MainView(),
     EstacionesCipScreen(),
-    OsmosisScreen()
+    OsmosisScreen(),
+    FiltrosPulidoresScreen()
   ];
   @override
   Widget build(BuildContext context) {
