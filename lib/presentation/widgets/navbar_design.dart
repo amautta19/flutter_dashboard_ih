@@ -17,7 +17,7 @@ class _NavbarDisgnState extends State<NavbarDisgn> {
   final indexScreenProvider = Provider.of<IndexScreenProvider>(context);
     return Drawer(
       child: Container(
-        color: ColorDefaults.whitePrimary,
+        color: Color(0xFFF5F5F5),
         child: Column(
           children: [
             DrawerHeader(
