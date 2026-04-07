@@ -72,19 +72,25 @@ List<GridColumn> _getColumns(BorderSide border){
     _buildColumn('fecha', 'Fecha', border),
     _buildColumn('MF01_in', 'MF01_in', border),
     _buildColumn('MF01_out', 'MF01_out', border),
+    _buildColumn('MF01_pc', 'MF01 %', border),
     _buildColumn('MF02_in', 'MF02_in', border),
     _buildColumn('MF02_out', 'MF02_out', border),
+    _buildColumn('MF02_pc', 'MF02 %', border),
     _buildColumn('MF04_in', 'MF04_in', border),
     _buildColumn('MF04_out', 'MF04_out', border),
+    _buildColumn('MF04_pc', 'MF04 %', border),
     _buildColumn('MF05_in', 'MF05_in', border),
     _buildColumn('MF05_out', 'MF05_out', border),
+    _buildColumn('MF05_pc', 'MF05 %', border),
     _buildColumn('MF06_in', 'MF06_in', border),
     _buildColumn('MF06_out', 'MF06_out', border),
+    _buildColumn('MF06_pc', 'MF06 %', border),
+
     // _buildColumn('total_estaciones', 'Total Pozos', border, isTotal: true)
   ];
 }
 
-GridColumn _buildColumn(String name, String label, BorderSide border, {bool isTotal = false}){
+GridColumn _buildColumn(String name, String label, BorderSide border){
   return GridColumn(
     columnName: name, 
     label: Container(
@@ -92,8 +98,8 @@ GridColumn _buildColumn(String name, String label, BorderSide border, {bool isTo
       decoration: BoxDecoration(
         color: ColorDefaults.primaryBlue,
         border: Border(
-          right: name == 'fecha' ? border : BorderSide.none,
-          left: name == 'total_estaciones' ? border : BorderSide.none
+          right: name == 'fecha' || name.contains('pc') ? border : BorderSide.none,
+          left: name.contains('pc') ? border : BorderSide.none
         )
       ),
       child: GlobalText(label, fontWeight: FontWeight.bold, fontSize: 14, color: ColorDefaults.darkPrimary,),
@@ -111,14 +117,19 @@ class _PozosDataSource extends DataGridSource {
         DataGridCell<String>(columnName: 'fecha', value: item['fecha_operativa'].toString()),
         DataGridCell<num>(columnName: 'MF01_in', value: item['MF01_in'] ?? 0),
         DataGridCell<num>(columnName: 'MF01_out', value: item['MF01_out'] ?? 0),
+        DataGridCell<num>(columnName: 'MF01_pc', value: item['MF01_pc'] ?? 0),
         DataGridCell<num>(columnName: 'MF02_in', value: item['MF02_in'] ?? 0),
         DataGridCell<num>(columnName: 'MF02_out', value: item['MF02_out'] ?? 0),
+        DataGridCell<num>(columnName: 'MF02_pc', value: item['MF02_pc'] ?? 0),
         DataGridCell<num>(columnName: 'MF04_in', value: item['MF04_in'] ?? 0),
         DataGridCell<num>(columnName: 'MF04_out', value: item['MF04_out'] ?? 0),
+        DataGridCell<num>(columnName: 'MF04_pc', value: item['MF04_pc'] ?? 0),
         DataGridCell<num>(columnName: 'MF05_in', value: item['MF05_in'] ?? 0),
         DataGridCell<num>(columnName: 'MF05_out', value: item['MF05_out'] ?? 0),
+        DataGridCell<num>(columnName: 'MF05_pc', value: item['MF05_pc'] ?? 0),
         DataGridCell<num>(columnName: 'MF06_in', value: item['MF06_in'] ?? 0),
         DataGridCell<num>(columnName: 'MF06_out', value: item['MF06_out'] ?? 0),
+        DataGridCell<num>(columnName: 'MF06_pc', value: item['MF06_pc'] ?? 0),
 
         // DataGridCell<num>(columnName: 'total_estaciones', value: total),
       ]);
@@ -137,21 +148,22 @@ class _PozosDataSource extends DataGridSource {
     return DataGridRowAdapter(
       color: ColorDefaults.whitePrimary,
       cells: row.getCells().map<Widget>((cell) {
-        final bool isTotal = cell.columnName == 'total_estaciones';
+        final bool isPC = cell.columnName.contains('pc');
         final bool isFecha = cell.columnName == 'fecha';
 
         return Container(
           alignment: Alignment.center, 
           padding: const EdgeInsets.symmetric(horizontal: 8), 
           decoration: BoxDecoration(
-            color: isTotal ? ColorDefaults.secundaryBlue : Colors.transparent,
+            color: isPC ? ColorDefaults.secundaryBlue : Colors.transparent,
             border: Border(
-              right: isFecha ? customBorder : BorderSide.none,
-              left: isTotal ? customBorder : BorderSide.none,
+              right: isFecha || isPC ? customBorder : BorderSide.none,
+              left: isPC ? customBorder : BorderSide.none,
             ),
           ),
-          child: GlobalText(cell.value.toString(), fontSize: 12, color: ColorDefaults.darkPrimary,
-            fontWeight: isTotal ? FontWeight.bold : FontWeight.normal),
+          child: GlobalText(isPC ? '${cell.value.toString()} %' : cell.value.toString(), 
+          fontSize: 12, color: ColorDefaults.darkPrimary,
+            fontWeight: isPC ? FontWeight.bold : FontWeight.normal),
         );
       }).toList(),
     );
