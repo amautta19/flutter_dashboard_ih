@@ -89,7 +89,7 @@ class _MainViewState extends State<MainView> {
                         children: [
                           Row(
                             children: [
-                              FilterPozo(columns: ['CIP', 'DesaireadorA', 'DesaireadorB', 'DesaireadorC', 'Fuerza', 'Lavadoras', 'LineasPET', 'Multimix', 'Potable', 'Quasy', 'Servicios', 'Contisiolv']),
+                              FilterElementWidget(columns: ['CIP', 'DesaireadorA', 'DesaireadorB', 'DesaireadorC', 'Fuerza', 'Lavadoras', 'LineasPET', 'Multimix', 'Potable', 'Quasy', 'Servicios', 'Contisiolv']),
                               const Spacer(),
                               FilterDayWidget(),
                               const SizedBox(width: 100,)

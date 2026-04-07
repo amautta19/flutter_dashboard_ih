@@ -79,7 +79,7 @@ class _OsmosisScreenState extends State<OsmosisScreen> {
                         children: [
                           Row(
                             children: [
-                              FilterPozo(columns: ['MF01_pc', 'MF02_pc', 'MF04_pc', 'MF05_pc', 'MF06_pc']),
+                              FilterElementWidget(columns: ['MF01_pc', 'MF02_pc', 'MF04_pc', 'MF05_pc', 'MF06_pc']),
                               const Spacer(),
                               FilterDayWidget(),
                               const SizedBox(width: 100,)

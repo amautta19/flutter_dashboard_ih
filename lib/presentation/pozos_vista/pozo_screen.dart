@@ -85,7 +85,7 @@ class _PozoScreenState extends State<PozoScreen> {
                         children: [
                           Row(
                             children: [
-                              FilterPozo(columns: ['Pozo1', 'Pozo3']),
+                              FilterElementWidget(columns: ['Pozo1', 'Pozo3']),
                               const Spacer(),
                               FilterDayWidget(),
                               const SizedBox(width: 100,)

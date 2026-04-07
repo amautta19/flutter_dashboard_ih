@@ -82,7 +82,7 @@ class _EstacionesCipScreenState extends State<EstacionesCipScreen> {
                         children: [
                           Row(
                             children: [
-                              FilterPozo(columns: ['cip_a', 'cip_b', 'cip_c', 'cip_d', 'cip_e', 'cip_f']),
+                              FilterElementWidget(columns: ['cip_a', 'cip_b', 'cip_c', 'cip_d', 'cip_e', 'cip_f']),
                               const Spacer(),
                               FilterDayWidget(),
                               const SizedBox(width: 100,),

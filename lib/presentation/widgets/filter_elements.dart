@@ -4,15 +4,15 @@ import 'package:flutter_dashboard_ih/defaults/text_global.dart';
 import 'package:flutter_dashboard_ih/providers/filter_element_provider.dart';
 import 'package:provider/provider.dart';
 
-class FilterPozo extends StatefulWidget {
+class FilterElementWidget extends StatefulWidget {
   final List<String> columns;
-  const FilterPozo({super.key, required this.columns});
+  const FilterElementWidget({super.key, required this.columns});
 
   @override
-  State<FilterPozo> createState() => _FilterPozoState();
+  State<FilterElementWidget> createState() => _FilterElementWidgetState();
 }
 
-class _FilterPozoState extends State<FilterPozo> {
+class _FilterElementWidgetState extends State<FilterElementWidget> {
   @override
   Widget build(BuildContext context) {
     final filterelementProvider = context.watch<FilterElementProvider>();
