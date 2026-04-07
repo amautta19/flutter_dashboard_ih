@@ -17,11 +17,18 @@ class _NavbarDisgnState extends State<NavbarDisgn> {
   final indexScreenProvider = Provider.of<IndexScreenProvider>(context);
     return Drawer(
       child: Container(
-        color: ColorDefaults.darkPrimary,
+        color: ColorDefaults.whitePrimary,
         child: Column(
           children: [
             DrawerHeader(
-              child: GlobalText('Dashboard Procesos'),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  GlobalText('Dashboard Procesos', fontSize: 24, color: ColorDefaults.primaryBlue, fontWeight: FontWeight.bold,),
+                  const SizedBox(height: 10,),
+                  Expanded(child: Image.asset('assets/images/arca_logo.png')),
+                ],
+              ),
             ),
             items('Pozos', indexScreenProvider, context, 0),
             const SizedBox(height: 20,),
@@ -42,13 +49,16 @@ class _NavbarDisgnState extends State<NavbarDisgn> {
   ListTile items(String name,IndexScreenProvider indexScreenProvider, BuildContext context, int index) {
     return ListTile(
             dense: true,
-            contentPadding: EdgeInsets.symmetric(horizontal: 10),
+            contentPadding: EdgeInsets.symmetric(horizontal: 20),
             title: GlobalText(
               name,
               fontSize: 20,
               color: indexScreenProvider.getIndexClicked == index
                 ? ColorDefaults.primaryBlue
-                : ColorDefaults.whitePrimary
+                : ColorDefaults.darkPrimary,
+              fontWeight: indexScreenProvider.getIndexClicked == index
+                ? FontWeight.bold
+                : FontWeight.normal,
             ),
             onTap: (){
               indexScreenProvider.updateIndexClicked(index);
