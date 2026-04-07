@@ -49,7 +49,7 @@ class _TablaOsmosisState extends State<TablaOsmosis> {
     );
     return SizedBox(
       height: windowSize.height * 0.35,
-      width: windowSize.width * 0.98,
+      width: double.infinity,
       child: SfDataGridTheme(
         // Aplicamos el grosor y color a las líneas horizontales nativas
         data: SfDataGridThemeData(
@@ -105,7 +105,7 @@ GridColumn _buildColumn(String name, String label, BorderSide border, {bool isTo
 class _PozosDataSource extends DataGridSource {
   _PozosDataSource({required List<dynamic> data}) {
     _rows = data.map<DataGridRow>((item) {
-      final total = (item['cip_a'] ?? 0) + (item['cip_b'] ?? 0) + (item['cip_c'] ?? 0) + (item['cip_d'] ?? 0) + (item['cip_e'] ?? 0) + (item['cip_f'] ?? 0);
+      // final total = (item['cip_a'] ?? 0) + (item['cip_b'] ?? 0) + (item['cip_c'] ?? 0) + (item['cip_d'] ?? 0) + (item['cip_e'] ?? 0) + (item['cip_f'] ?? 0);
       
       return DataGridRow(cells: [
         DataGridCell<String>(columnName: 'fecha', value: item['fecha_operativa'].toString()),

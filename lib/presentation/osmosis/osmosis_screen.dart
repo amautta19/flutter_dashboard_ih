@@ -18,7 +18,7 @@ class _OsmosisScreenState extends State<OsmosisScreen> {
   @override
   Widget build(BuildContext context) {
     final selectedMonth = context.watch<FilterMonthProvider>().getMonth;
-    final windowsSize = MediaQuery.of(context).size;
+    // final windowsSize = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppbarDesign(
         title: 'Consumo Agua Ósmosis - Planta Pucusana', 
@@ -58,7 +58,7 @@ class _OsmosisScreenState extends State<OsmosisScreen> {
                       GlobalText('Registro de Consumo Diario Ósmosis', fontSize: 16, fontWeight: FontWeight.bold, color: ColorDefaults.secundaryBlue,),
                       Row(
                         children: [
-                          TablaOsmosis(osmosisData: filteredData)
+                          Expanded(child: TablaOsmosis(osmosisData: filteredData)) // acá está mi tabla el archivo
                         ],
                       )
                     ],
