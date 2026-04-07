@@ -10,6 +10,7 @@ import 'package:flutter_dashboard_ih/presentation/widgets/filter_day.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/filter_elements.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/navbar_design.dart';
 import 'package:flutter_dashboard_ih/providers/filter_day_provider.dart';
+import 'package:flutter_dashboard_ih/providers/filter_element_provider.dart';
 import 'package:flutter_dashboard_ih/providers/filter_month_provider.dart';
 import 'package:flutter_dashboard_ih/services/supabase_services.dart';
 import 'package:provider/provider.dart';
@@ -22,6 +23,13 @@ class FiltrosPulidoresScreen extends StatefulWidget {
 }
 
 class _FiltrosPulidoresScreenState extends State<FiltrosPulidoresScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      context.read<FilterElementProvider>().updateColumn('AF01'); 
+    });
+  }
   @override
   Widget build(BuildContext context) {
     final selectedMonth = context.watch<FilterMonthProvider>().getMonth;
