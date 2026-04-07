@@ -113,6 +113,7 @@ class _BarGraphDiaryState extends State<BarGraphDiary> {
                 ),
               ),
               primaryYAxis: NumericAxis(
+                minimum: 0,
                 labelStyle: TextStyle(color: ColorDefaults.darkPrimary),
                 plotBands: <PlotBand>[
                   PlotBand(
