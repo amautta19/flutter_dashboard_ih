@@ -38,7 +38,9 @@ class _NavbarDisgnState extends State<NavbarDisgn> {
             const SizedBox(height: 20,),
             items('Ósmosis', indexScreenProvider, context, 3),
             const SizedBox(height: 20,),
-            items('Filtros Pulidores', indexScreenProvider, context, 4)
+            items('Filtros Pulidores', indexScreenProvider, context, 4),
+            const SizedBox(height: 20,),
+            items('Lavadoras', indexScreenProvider, context, 5)
           ],
         ),
         
