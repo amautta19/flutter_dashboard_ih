@@ -91,7 +91,7 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
               ),
               tooltipBehavior: TooltipBehavior(enable: true),
               primaryXAxis: CategoryAxis(
-                autoScrollingDelta: 16, // Ajustado para ver mejor los grupos de 4
+                autoScrollingDelta: 12, // Ajustado para ver mejor los grupos de 4
                 majorGridLines: const MajorGridLines(width: 0),
                 labelStyle: TextStyle(color: ColorDefaults.darkPrimary, fontSize: 11),
               ),
@@ -109,6 +109,14 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
                   yValueMapper: (data, _) => data['linea1'] ?? 0,
                   color: ColorDefaults.primaryBlue,
                   borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
+                  dataLabelSettings: DataLabelSettings(
+                      isVisible: true,
+                      borderRadius: 5,
+                      color: Colors.amberAccent,
+                      textStyle: TextStyle(
+                          fontSize: 11,
+                          color: ColorDefaults.darkPrimary,
+                          fontWeight: FontWeight.bold)),
                 ),
                 // Barra 2
                 ColumnSeries<dynamic, String>(
@@ -118,6 +126,14 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
                   yValueMapper: (data, _) => data['linea2'] ?? 0,
                   color: Colors.teal,
                   borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
+                  dataLabelSettings: DataLabelSettings(
+                      isVisible: true,
+                      borderRadius: 5,
+                      color: Colors.amberAccent,
+                      textStyle: TextStyle(
+                          fontSize: 11,
+                          color: ColorDefaults.darkPrimary,
+                          fontWeight: FontWeight.bold)),
                 ),
                 // Barra 3
                 ColumnSeries<dynamic, String>(
@@ -127,6 +143,14 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
                   yValueMapper: (data, _) => data['linea10'] ?? 0,
                   color: Colors.orangeAccent,
                   borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
+                  dataLabelSettings: DataLabelSettings(
+                      isVisible: true,
+                      borderRadius: 5,
+                      color: Colors.amberAccent,
+                      textStyle: TextStyle(
+                          fontSize: 11,
+                          color: ColorDefaults.darkPrimary,
+                          fontWeight: FontWeight.bold)),
                 ),
                 // Barra 4
                 ColumnSeries<dynamic, String>(
@@ -136,6 +160,14 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
                   yValueMapper: (data, _) => data['linea11'] ?? 0,
                   color: Colors.redAccent,
                   borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
+                  dataLabelSettings: DataLabelSettings(
+                      isVisible: true,
+                      borderRadius: 5,
+                      color: Colors.amberAccent,
+                      textStyle: TextStyle(
+                          fontSize: 11,
+                          color: ColorDefaults.darkPrimary,
+                          fontWeight: FontWeight.bold)),
                 ),
               ],
             ),
