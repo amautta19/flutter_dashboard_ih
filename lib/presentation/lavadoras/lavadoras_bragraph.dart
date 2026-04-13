@@ -46,7 +46,7 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
     final windowSize = MediaQuery.of(context).size;
 
     return Container(
-      height: windowSize.height * 0.42,
+      height: windowSize.height * 0.55,
       width: double.infinity,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -59,12 +59,11 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               GlobalText(
-                'Tiempo Efectivo por Categoría',
+                'Tiempo Efectivo por Línea',
                 color: ColorDefaults.primaryBlue,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
-              // Indicador visual simple
               Row(
                 children: [
                   Container(
@@ -72,7 +71,7 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
                     decoration: const BoxDecoration(color: Colors.blue, shape: BoxShape.circle),
                   ),
                   const SizedBox(width: 4),
-                  GlobalText('Comparativo', color: ColorDefaults.darkPrimary, fontSize: 12),
+                  GlobalText('Grupos Compactos', color: ColorDefaults.darkPrimary, fontSize: 12),
                 ],
               )
             ],
@@ -83,6 +82,7 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
               legend: const Legend(
                 isVisible: true, 
                 position: LegendPosition.bottom,
+                overflowMode: LegendItemOverflowMode.wrap,
                 textStyle: TextStyle(fontSize: 10)
               ),
               zoomPanBehavior: ZoomPanBehavior(
@@ -91,7 +91,7 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
               ),
               tooltipBehavior: TooltipBehavior(enable: true),
               primaryXAxis: CategoryAxis(
-                autoScrollingDelta: 12, // Ajustado para ver mejor los grupos de 4
+                autoScrollingDelta: 12, 
                 majorGridLines: const MajorGridLines(width: 0),
                 labelStyle: TextStyle(color: ColorDefaults.darkPrimary, fontSize: 11),
               ),
@@ -100,79 +100,41 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
                 rangePadding: ChartRangePadding.additional,
                 labelStyle: TextStyle(color: ColorDefaults.darkPrimary, fontSize: 11),
               ),
-              series: <CartesianSeries<dynamic, String>>[
-                // Barra 1 - Reemplaza 'valor1' con el nombre real de tu columna
-                ColumnSeries<dynamic, String>(
-                  name: 'Línea 1',
-                  dataSource: _sortedData,
-                  xValueMapper: (data, _) => data['_time_lima']?.toString() ?? '',
-                  yValueMapper: (data, _) => data['linea1'] ?? 0,
-                  color: ColorDefaults.primaryBlue,
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
-                  dataLabelSettings: DataLabelSettings(
-                      isVisible: true,
-                      borderRadius: 5,
-                      color: Colors.amberAccent,
-                      textStyle: TextStyle(
-                          fontSize: 11,
-                          color: ColorDefaults.darkPrimary,
-                          fontWeight: FontWeight.bold)),
-                ),
-                // Barra 2
-                ColumnSeries<dynamic, String>(
-                  name: 'Línea 2',
-                  dataSource: _sortedData,
-                  xValueMapper: (data, _) => data['_time_lima']?.toString() ?? '',
-                  yValueMapper: (data, _) => data['linea2'] ?? 0,
-                  color: Colors.teal,
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
-                  dataLabelSettings: DataLabelSettings(
-                      isVisible: true,
-                      borderRadius: 5,
-                      color: Colors.amberAccent,
-                      textStyle: TextStyle(
-                          fontSize: 11,
-                          color: ColorDefaults.darkPrimary,
-                          fontWeight: FontWeight.bold)),
-                ),
-                // Barra 3
-                ColumnSeries<dynamic, String>(
-                  name: 'Línea 10',
-                  dataSource: _sortedData,
-                  xValueMapper: (data, _) => data['_time_lima']?.toString() ?? '',
-                  yValueMapper: (data, _) => data['linea10'] ?? 0,
-                  color: Colors.orangeAccent,
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
-                  dataLabelSettings: DataLabelSettings(
-                      isVisible: true,
-                      borderRadius: 5,
-                      color: Colors.amberAccent,
-                      textStyle: TextStyle(
-                          fontSize: 11,
-                          color: ColorDefaults.darkPrimary,
-                          fontWeight: FontWeight.bold)),
-                ),
-                // Barra 4
-                ColumnSeries<dynamic, String>(
-                  name: 'Línea 11',
-                  dataSource: _sortedData,
-                  xValueMapper: (data, _) => data['_time_lima']?.toString() ?? '',
-                  yValueMapper: (data, _) => data['linea11'] ?? 0,
-                  color: Colors.redAccent,
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
-                  dataLabelSettings: DataLabelSettings(
-                      isVisible: true,
-                      borderRadius: 5,
-                      color: Colors.amberAccent,
-                      textStyle: TextStyle(
-                          fontSize: 11,
-                          color: ColorDefaults.darkPrimary,
-                          fontWeight: FontWeight.bold)),
-                ),
+              series: <ColumnSeries<dynamic, String>>[
+                _buildColumnSeries('Línea 1', 'linea1', ColorDefaults.primaryBlue),
+                _buildColumnSeries('Línea 2', 'linea2', Colors.teal),
+                _buildColumnSeries('Línea 10', 'linea10', Colors.orangeAccent),
+                _buildColumnSeries('Línea 11', 'linea11', Colors.redAccent),
               ],
             ),
           )
         ],
+      ),
+    );
+  }
+
+  ColumnSeries<dynamic, String> _buildColumnSeries(String name, String key, Color color) {
+    return ColumnSeries<dynamic, String>(
+      name: name,
+      dataSource: _sortedData,
+      xValueMapper: (data, _) => data['_time_lima']?.toString() ?? '',
+      yValueMapper: (data, _) => data[key] ?? 0,
+      color: color,
+      // --- ESTAS DOS PROPIEDADES PEGAN LAS BARRAS ---
+      spacing: 0, // Elimina el espacio entre barras del mismo grupo
+      width: 0.8, // Controla el ancho del bloque total (0.8 deja un pequeño respiro entre FECHAS)
+      // ----------------------------------------------
+      borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
+      dataLabelSettings: DataLabelSettings(
+        isVisible: true,
+        showZeroValue: false,
+        // Rotamos los labels si quedan muy apretados
+        labelAlignment: ChartDataLabelAlignment.outer,
+        textStyle: TextStyle(
+          fontSize: 12,
+          color: ColorDefaults.darkPrimary,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }
