@@ -13,18 +13,15 @@ class BarGraphDiaryMulti extends StatefulWidget {
 }
 
 class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
-  late List<dynamic> _sortedData;
-  
-  // Definimos los comportamientos de Tooltip
+  late List<dynamic> _fullRangeData;
   late TooltipBehavior _tooltipUpper;
   late TooltipBehavior _tooltipLower;
 
   @override
   void initState() {
     super.initState();
-    _prepararDatos();
+    _generarRangoCompleto();
     
-    // Tooltip Superior: Texto fijo "Consumo Total Lavadoras"
     _tooltipUpper = TooltipBehavior(
       enable: true, 
       header: '',
@@ -32,7 +29,6 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
       canShowMarker: false
     );
     
-    // Tooltip Inferior: Dinámico por nombre de línea
     _tooltipLower = TooltipBehavior(
       enable: true,
       header: '', 
@@ -45,20 +41,44 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
   void didUpdateWidget(covariant BarGraphDiaryMulti oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.allData != widget.allData) {
-      _prepararDatos();
+      _generarRangoCompleto();
     }
   }
 
-  void _prepararDatos() {
-    _sortedData = List.from(widget.allData);
-    _sortedData.sort((a, b) {
+  void _generarRangoCompleto() {
+    List<dynamic> fullDay = [];
+    DateTime ahora = DateTime.now();
+    // Inicio del turno: Hoy a las 08:00 AM
+    DateTime inicioTurno = DateTime(ahora.year, ahora.month, ahora.day, 8, 0);
+
+    for (int i = 0; i < 24; i++) {
+      DateTime horaActual = inicioTurno.add(Duration(hours: i));
+      String label = DateFormat('HH:mm').format(horaActual);
+      
+      dynamic existingData;
       try {
-        DateTime fechaA = DateTime.parse(a['fecha_operativa']);
-        DateTime fechaB = DateTime.parse(b['fecha_operativa']);
-        return fechaA.compareTo(fechaB);
+        existingData = widget.allData.firstWhere(
+          (d) => _formatTime(d['_time_lima']) == label,
+        );
       } catch (e) {
-        return 0;
+        existingData = null;
       }
+
+      if (existingData != null) {
+        fullDay.add(existingData);
+      } else {
+        fullDay.add({
+          '_time_lima': horaActual.toIso8601String(),
+          'Lavadoras': 0,
+          'linea1': 0,
+          'linea2': 0,
+          'linea10': 0,
+          'linea11': 0,
+        });
+      }
+    }
+    setState(() {
+      _fullRangeData = fullDay;
     });
   }
 
@@ -86,7 +106,7 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
           
           // --- GRÁFICA SUPERIOR ---
           Expanded(
-            flex: 4,
+            flex: 3,
             child: SfCartesianChart(
               tooltipBehavior: _tooltipUpper,
               title: ChartTitle(
@@ -103,10 +123,10 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
               primaryYAxis: NumericAxis(
                 labelStyle: const TextStyle(fontSize: 0),
                 minimum: 0,
-                maximum: 80,
+                maximum: 60,
                 title: AxisTitle(
                   text: 'Consumo Total Lavadoras',
-                  textStyle: TextStyle(fontSize: 14, color: ColorDefaults.darkPrimary)
+                  textStyle: TextStyle(fontSize: 14, color: Colors.redAccent, fontWeight: FontWeight.bold)
                 ),
               ),
               series: <CartesianSeries<dynamic, String>>[
@@ -117,7 +137,7 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
 
           // --- GRÁFICA INFERIOR ---
           Expanded(
-            flex: 6,
+            flex: 7,
             child: SfCartesianChart(
               tooltipBehavior: _tooltipLower,
               legend: const Legend(
@@ -135,7 +155,7 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
               primaryYAxis: NumericAxis(
                 title: AxisTitle(
                   text: 'Minutos Efectivos por Línea',
-                  textStyle: TextStyle(fontSize: 14, color: ColorDefaults.darkPrimary)
+                  textStyle: TextStyle(fontSize: 14, color: Colors.redAccent, fontWeight: FontWeight.bold)
                 ),
                 minimum: 0,
                 maximum: 240, 
@@ -161,7 +181,7 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
       StackedColumnSeries<dynamic, String>(
         name: name,
         enableTooltip: true,
-        dataSource: _sortedData,
+        dataSource: _fullRangeData,
         xValueMapper: (data, _) => _formatTime(data['_time_lima']),
         yValueMapper: (data, _) => data[key] ?? 0,
         color: color,
@@ -171,7 +191,7 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
       StackedColumnSeries<dynamic, String>(
         name: '$name (Resto)',
         enableTooltip: false,
-        dataSource: _sortedData,
+        dataSource: _fullRangeData,
         xValueMapper: (data, _) => _formatTime(data['_time_lima']),
         yValueMapper: (data, _) {
           double valor = double.tryParse((data[key] ?? 0).toString()) ?? 0;
@@ -180,9 +200,11 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
         color: color.withOpacity(0.12),
         width: 0.8,
         isVisibleInLegend: false,
+        borderColor: color.withOpacity(0.3),
+        borderWidth: 1,
       ),
       ScatterSeries<dynamic, String>(
-        dataSource: _sortedData,
+        dataSource: _fullRangeData,
         enableTooltip: false,
         xValueMapper: (data, _) => _formatTime(data['_time_lima']),
         yValueMapper: (data, _) => fixedCenterY, 
@@ -208,7 +230,7 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
     return ColumnSeries<dynamic, String>(
       name: name,
       enableTooltip: true,
-      dataSource: _sortedData,
+      dataSource: _fullRangeData,
       xValueMapper: (data, _) => _formatTime(data['_time_lima']),
       yValueMapper: (data, _) => data[key] ?? 0,
       color: color,
