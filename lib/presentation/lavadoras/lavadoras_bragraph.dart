@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dashboard_ih/defaults/color_defaults.dart';
 import 'package:flutter_dashboard_ih/defaults/text_global.dart';
+import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class BarGraphDiaryMulti extends StatefulWidget {
@@ -117,7 +118,15 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
     return ColumnSeries<dynamic, String>(
       name: name,
       dataSource: _sortedData,
-      xValueMapper: (data, _) => data['_time_lima']?.toString() ?? '',
+      xValueMapper: (data, _){
+        final String fullTime = data['_time_lima']?.toString() ?? '';
+        try{
+          DateTime dt = DateTime.parse(fullTime);
+          return DateFormat('HH:mm').format(dt);
+        } catch (e){
+          return fullTime;
+        }
+      },
       yValueMapper: (data, _) => data[key] ?? 0,
       color: color,
       // --- ESTAS DOS PROPIEDADES PEGAN LAS BARRAS ---
