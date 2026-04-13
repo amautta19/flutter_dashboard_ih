@@ -92,9 +92,16 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
               ),
               tooltipBehavior: TooltipBehavior(enable: true),
               primaryXAxis: CategoryAxis(
+                interval: 1,
                 autoScrollingDelta: 12, 
-                majorGridLines: const MajorGridLines(width: 0),
-                labelStyle: TextStyle(color: ColorDefaults.darkPrimary, fontSize: 11),
+                labelPlacement: LabelPlacement.betweenTicks,
+                majorGridLines: const MajorGridLines(
+                  width: 1,
+                  color: Colors.black,
+                  dashArray: <double>[5,5]
+                ),
+                majorTickLines: const MajorTickLines(size: 0),
+                labelStyle: TextStyle(color: ColorDefaults.darkPrimary, fontSize: 12, fontWeight: FontWeight.bold),
               ),
               primaryYAxis: NumericAxis(
                 minimum: 0,
@@ -129,9 +136,8 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
       },
       yValueMapper: (data, _) => data[key] ?? 0,
       color: color,
-      // --- ESTAS DOS PROPIEDADES PEGAN LAS BARRAS ---
-      spacing: 0, // Elimina el espacio entre barras del mismo grupo
-      width: 0.8, // Controla el ancho del bloque total (0.8 deja un pequeño respiro entre FECHAS)
+      spacing: 0, 
+      width: 0.8, 
       // ----------------------------------------------
       borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
       dataLabelSettings: DataLabelSettings(
