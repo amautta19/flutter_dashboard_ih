@@ -47,7 +47,7 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
     final windowSize = MediaQuery.of(context).size;
 
     return Container(
-      height: windowSize.height * 0.55,
+      height: windowSize.height * 0.75, // Aumentamos el alto para acomodar ambas
       width: double.infinity,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -56,52 +56,64 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
           border: Border.all(color: ColorDefaults.whitePrimary)),
       child: Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              GlobalText(
-                'Tiempo Efectivo por Línea',
-                color: ColorDefaults.primaryBlue,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-              Row(
-                children: [
-                  Container(
-                    width: 10, height: 10,
-                    decoration: const BoxDecoration(color: Colors.blue, shape: BoxShape.circle),
-                  ),
-                  const SizedBox(width: 4),
-                  GlobalText('Grupos Compactos', color: ColorDefaults.darkPrimary, fontSize: 12),
-                ],
-              )
-            ],
+          GlobalText(
+            'Consumo Total vs Tiempo por Línea',
+            color: ColorDefaults.primaryBlue,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
           ),
           const SizedBox(height: 10),
+          
+          // --- GRÁFICA SUPERIOR: CONSUMO TOTAL (BARRAS) ---
           Expanded(
+            flex: 1,
+            child: SfCartesianChart(
+              title: ChartTitle(
+                text: 'Consumo Total Agua (m³)', 
+                textStyle: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)
+              ),
+              primaryXAxis: CategoryAxis(
+                isVisible: true,
+                autoScrollingDelta: 12,
+                labelStyle: const TextStyle(fontSize: 0), // Ocultamos texto pero mantenemos ticks
+                majorGridLines: const MajorGridLines(width: 1, dashArray: [5, 5]),
+              ),
+              primaryYAxis: NumericAxis(
+                labelStyle: TextStyle(color: ColorDefaults.darkPrimary, fontSize: 9),
+              ),
+              series: <ColumnSeries<dynamic, String>>[
+                ColumnSeries<dynamic, String>(
+                  name: 'Consumo Total',
+                  dataSource: _sortedData,
+                  xValueMapper: (data, _) => _formatTime(data['_time_lima']),
+                  yValueMapper: (data, _) => data['Lavadoras'] ?? 0, // El dato de tu vista
+                  color: Colors.purple.withOpacity(0.6),
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
+                  dataLabelSettings: const DataLabelSettings(
+                    isVisible: true,
+                    textStyle: TextStyle(fontSize: 9, fontWeight: FontWeight.bold),
+                  ),
+                )
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
+          // --- GRÁFICA INFERIOR: DETALLE POR LÍNEA ---
+          Expanded(
+            flex: 1,
             child: SfCartesianChart(
               legend: const Legend(
                 isVisible: true, 
                 position: LegendPosition.bottom,
-                overflowMode: LegendItemOverflowMode.wrap,
                 textStyle: TextStyle(fontSize: 10)
               ),
-              zoomPanBehavior: ZoomPanBehavior(
-                  enablePanning: true, 
-                  zoomMode: ZoomMode.x
-              ),
-              tooltipBehavior: TooltipBehavior(enable: true),
+              zoomPanBehavior: ZoomPanBehavior(enablePanning: true, zoomMode: ZoomMode.x),
               primaryXAxis: CategoryAxis(
                 interval: 1,
                 autoScrollingDelta: 12, 
                 labelPlacement: LabelPlacement.betweenTicks,
-                majorGridLines: const MajorGridLines(
-                  width: 1,
-                  color: Colors.black,
-                  dashArray: <double>[5,5]
-                ),
-                majorTickLines: const MajorTickLines(size: 0),
-                labelStyle: TextStyle(color: ColorDefaults.darkPrimary, fontSize: 12, fontWeight: FontWeight.bold),
+                majorGridLines: const MajorGridLines(width: 1, color: Colors.black26, dashArray: [5,5]),
+                labelStyle: TextStyle(color: ColorDefaults.darkPrimary, fontSize: 11, fontWeight: FontWeight.bold),
               ),
               primaryYAxis: NumericAxis(
                 minimum: 0,
@@ -121,35 +133,32 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
     );
   }
 
+  // Helper para formatear la hora
+  String _formatTime(dynamic timeData) {
+    final String fullTime = timeData?.toString() ?? '';
+    try {
+      DateTime dt = DateTime.parse(fullTime);
+      return DateFormat('HH:mm').format(dt);
+    } catch (e) {
+      return fullTime;
+    }
+  }
+
   ColumnSeries<dynamic, String> _buildColumnSeries(String name, String key, Color color) {
     return ColumnSeries<dynamic, String>(
       name: name,
       dataSource: _sortedData,
-      xValueMapper: (data, _){
-        final String fullTime = data['_time_lima']?.toString() ?? '';
-        try{
-          DateTime dt = DateTime.parse(fullTime);
-          return DateFormat('HH:mm').format(dt);
-        } catch (e){
-          return fullTime;
-        }
-      },
+      xValueMapper: (data, _) => _formatTime(data['_time_lima']),
       yValueMapper: (data, _) => data[key] ?? 0,
       color: color,
       spacing: 0, 
       width: 0.8, 
-      // ----------------------------------------------
       borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
       dataLabelSettings: DataLabelSettings(
         isVisible: true,
         showZeroValue: false,
-        // Rotamos los labels si quedan muy apretados
         labelAlignment: ChartDataLabelAlignment.outer,
-        textStyle: TextStyle(
-          fontSize: 12,
-          color: ColorDefaults.darkPrimary,
-          fontWeight: FontWeight.bold,
-        ),
+        textStyle: TextStyle(fontSize: 9, color: ColorDefaults.darkPrimary, fontWeight: FontWeight.bold),
       ),
     );
   }
