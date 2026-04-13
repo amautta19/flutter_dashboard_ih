@@ -72,32 +72,33 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
                 text: 'Consumo Total Agua (m³)', 
                 textStyle: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)
               ),
+              zoomPanBehavior: ZoomPanBehavior(enablePanning: true, zoomMode: ZoomMode.x),
               primaryXAxis: CategoryAxis(
                 isVisible: true,
                 autoScrollingDelta: 12,
-                labelStyle: const TextStyle(fontSize: 0), // Ocultamos texto pero mantenemos ticks
-                majorGridLines: const MajorGridLines(width: 1, dashArray: [5, 5]),
+                  majorGridLines: const MajorGridLines(width: 1, dashArray: [5, 5]),
               ),
               primaryYAxis: NumericAxis(
                 labelStyle: TextStyle(color: ColorDefaults.darkPrimary, fontSize: 9),
               ),
               series: <ColumnSeries<dynamic, String>>[
-                ColumnSeries<dynamic, String>(
-                  name: 'Consumo Total',
-                  dataSource: _sortedData,
-                  xValueMapper: (data, _) => _formatTime(data['_time_lima']),
-                  yValueMapper: (data, _) => data['Lavadoras'] ?? 0, // El dato de tu vista
-                  color: Colors.purple.withOpacity(0.6),
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
-                  dataLabelSettings: const DataLabelSettings(
-                    isVisible: true,
-                    textStyle: TextStyle(fontSize: 9, fontWeight: FontWeight.bold),
-                  ),
-                )
+                _buildColumnSeries('Lavadoras', 'Lavadoras', ColorDefaults.primaryBlue)
+                // ColumnSeries<dynamic, String>(
+                //   name: 'Consumo Total',
+                //   dataSource: _sortedData,
+                //   xValueMapper: (data, _) => _formatTime(data['_time_lima']),
+                //   yValueMapper: (data, _) => data['Lavadoras'] ?? 0, // El dato de tu vista
+                //   color: Colors.purple.withOpacity(0.6),
+                //   borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
+                //   dataLabelSettings: const DataLabelSettings(
+                //     isVisible: true,
+                //     textStyle: TextStyle(fontSize: 9, fontWeight: FontWeight.bold),
+                //   ),
+                // )
               ],
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 50),
           // --- GRÁFICA INFERIOR: DETALLE POR LÍNEA ---
           Expanded(
             flex: 1,
