@@ -37,7 +37,7 @@ class _LavadorasScreenState extends State<LavadorasScreen> {
             children: [
               FilterDayWidget(),
               StreamBuilder<List<dynamic>>(
-                stream: SupabaseServices().getDataByDayOperative('tiempo_efectivo', dayProvider), 
+                stream: SupabaseServices().getDataByDayOperative('lavadoras_tiempo_consumo', dayProvider), 
                 builder: (context, snapshot){
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return SizedBox(
