@@ -75,7 +75,7 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
               zoomPanBehavior: ZoomPanBehavior(enablePanning: true, zoomMode: ZoomMode.x),
               primaryXAxis: CategoryAxis(
                 isVisible: true,
-                autoScrollingDelta: 12,
+                autoScrollingDelta: 24,
                   majorGridLines: const MajorGridLines(width: 1, dashArray: [5, 5]),
               ),
               primaryYAxis: NumericAxis(
@@ -111,7 +111,7 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
               zoomPanBehavior: ZoomPanBehavior(enablePanning: true, zoomMode: ZoomMode.x),
               primaryXAxis: CategoryAxis(
                 interval: 1,
-                autoScrollingDelta: 12, 
+                autoScrollingDelta: 24, 
                 labelPlacement: LabelPlacement.betweenTicks,
                 majorGridLines: const MajorGridLines(width: 1, color: Colors.black26, dashArray: [5,5]),
                 labelStyle: TextStyle(color: ColorDefaults.darkPrimary, fontSize: 11, fontWeight: FontWeight.bold),
