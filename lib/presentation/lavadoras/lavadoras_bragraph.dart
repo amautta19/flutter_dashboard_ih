@@ -47,7 +47,7 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
     final windowSize = MediaQuery.of(context).size;
 
     return Container(
-      height: windowSize.height * 0.80, // Aumentamos el alto para acomodar ambas
+      height: windowSize.height * 0.80,
       width: double.infinity,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -64,9 +64,9 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
           ),
           const SizedBox(height: 10),
           
-          // --- GRÁFICA SUPERIOR: CONSUMO TOTAL (BARRAS) ---
+          // --- GRÁFICA SUPERIOR: CONSUMO TOTAL (COLUMNAS SIMPLES) ---
           Expanded(
-            flex: 1,
+            flex: 3,
             child: SfCartesianChart(
               title: ChartTitle(
                 text: 'Consumo Total Lavadoras (m³)', 
@@ -75,27 +75,32 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
               zoomPanBehavior: ZoomPanBehavior(enablePanning: true, zoomMode: ZoomMode.x),
               primaryXAxis: CategoryAxis(
                 isVisible: true,
-                
                 labelStyle: TextStyle(color: ColorDefaults.darkPrimary, fontSize: 0, fontWeight: FontWeight.bold),
                 autoScrollingDelta: 24,
-                majorGridLines: const MajorGridLines(width: 1, color: Colors.black,dashArray: [5, 5]),
+                majorGridLines: const MajorGridLines(width: 1, color: Colors.black, dashArray: [5, 5]),
               ),
               primaryYAxis: NumericAxis(
-                labelStyle: TextStyle(color: ColorDefaults.darkPrimary, fontSize: 9),
+                minimum: 0,
+                labelStyle: TextStyle(fontSize: 0),
+                title: AxisTitle(
+                  text: 'Consumo Total Lavadoras',
+                  textStyle: TextStyle(fontSize: 14, color: Colors.redAccent, fontWeight: FontWeight.bold)
+                ),
               ),
-              series: <ColumnSeries<dynamic, String>>[
+              series: <CartesianSeries<dynamic, String>>[
                 _buildColumnSeries('Lavadoras', 'Lavadoras', ColorDefaults.primaryBlue)
               ],
             ),
           ),
-          // --- GRÁFICA INFERIOR: DETALLE POR LÍNEA ---
+
+          // --- GRÁFICA INFERIOR: DETALLE POR LÍNEA (STACKED / APILADO) ---
           Expanded(
-            flex: 1,
+            flex: 7,
             child: SfCartesianChart(
               legend: const Legend(
                 isVisible: true, 
                 position: LegendPosition.bottom,
-                textStyle: TextStyle(fontSize: 10)
+                textStyle: TextStyle(fontSize: 12)
               ),
               zoomPanBehavior: ZoomPanBehavior(enablePanning: true, zoomMode: ZoomMode.x),
               primaryXAxis: CategoryAxis(
@@ -103,18 +108,22 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
                 autoScrollingDelta: 24, 
                 labelPlacement: LabelPlacement.betweenTicks,
                 majorGridLines: const MajorGridLines(width: 1, color: Colors.black, dashArray: [5,5]),
-                labelStyle: TextStyle(color: ColorDefaults.darkPrimary, fontSize: 11, fontWeight: FontWeight.bold),
+                labelStyle: TextStyle(color: ColorDefaults.darkPrimary, fontSize: 12, fontWeight: FontWeight.bold),
               ),
               primaryYAxis: NumericAxis(
                 minimum: 0,
                 rangePadding: ChartRangePadding.additional,
-                labelStyle: TextStyle(color: ColorDefaults.darkPrimary, fontSize: 11),
+                labelStyle: TextStyle(color: ColorDefaults.darkPrimary, fontSize: 0),
+                title: AxisTitle(
+                  text: 'Minutos Efectivos por Línea',
+                  textStyle: TextStyle(fontSize: 14, color: Colors.redAccent, fontWeight: FontWeight.bold)
+                ),
               ),
-              series: <ColumnSeries<dynamic, String>>[
-                _buildColumnSeries('Línea 1', 'linea1', ColorDefaults.primaryBlue),
-                _buildColumnSeries('Línea 2', 'linea2', Colors.teal),
-                _buildColumnSeries('Línea 10', 'linea10', Colors.orangeAccent),
-                _buildColumnSeries('Línea 11', 'linea11', Colors.redAccent),
+              series: <StackedColumnSeries<dynamic, String>>[
+                _buildStackedSeries('Línea 1', 'linea1', ColorDefaults.primaryBlue),
+                _buildStackedSeries('Línea 2', 'linea2', Colors.teal),
+                _buildStackedSeries('Línea 10', 'linea10', Colors.orangeAccent),
+                _buildStackedSeries('Línea 11', 'linea11', Colors.redAccent),
               ],
             ),
           )
@@ -123,7 +132,6 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
     );
   }
 
-  // Helper para formatear la hora
   String _formatTime(dynamic timeData) {
     final String fullTime = timeData?.toString() ?? '';
     try {
@@ -134,6 +142,7 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
     }
   }
 
+  // Helper para Columnas normales (Gráfica Superior)
   ColumnSeries<dynamic, String> _buildColumnSeries(String name, String key, Color color) {
     return ColumnSeries<dynamic, String>(
       name: name,
@@ -148,7 +157,26 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
         isVisible: true,
         showZeroValue: false,
         labelAlignment: ChartDataLabelAlignment.outer,
-        textStyle: TextStyle(fontSize: 9, color: ColorDefaults.darkPrimary, fontWeight: FontWeight.bold),
+        textStyle: TextStyle(fontSize: 12, color: ColorDefaults.darkPrimary),
+      ),
+    );
+  }
+
+  // NUEVO Helper para Columnas Apiladas (Gráfica Inferior)
+  StackedColumnSeries<dynamic, String> _buildStackedSeries(String name, String key, Color color) {
+    return StackedColumnSeries<dynamic, String>(
+      name: name,
+      dataSource: _sortedData,
+      xValueMapper: (data, _) => _formatTime(data['_time_lima']),
+      yValueMapper: (data, _) => data[key] ?? 0,
+      color: color,
+      width: 0.8,
+      // En stacked no usamos borderRadius vertical arriba porque se vería raro entre bloques
+      dataLabelSettings: DataLabelSettings(
+        isVisible: true,
+        showZeroValue: false,
+        labelAlignment: ChartDataLabelAlignment.middle, // Etiquetas dentro de cada bloque
+        textStyle: TextStyle(fontSize: 12, color: ColorDefaults.whitePrimary),
       ),
     );
   }
