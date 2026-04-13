@@ -62,8 +62,12 @@ class _LavadorasScreenState extends State<LavadorasScreen> {
                     );
                   }
                   // --- AQUÍ ESTÁ EL CAMBIO ---
-                  return GraficaEficienciaDiaria(dataCruda: snapshot.data!);
-                  
+                  return Column(
+                    children: [
+                      BarGraphDiaryMulti(allData: snapshot.data!),
+                      SizedBox(height: 50,),
+                    ],
+                  );
                 }
               )
             ],
