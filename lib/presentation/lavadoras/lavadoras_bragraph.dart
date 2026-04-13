@@ -47,7 +47,7 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
     final windowSize = MediaQuery.of(context).size;
 
     return Container(
-      height: windowSize.height * 0.75, // Aumentamos el alto para acomodar ambas
+      height: windowSize.height * 0.80, // Aumentamos el alto para acomodar ambas
       width: double.infinity,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -69,36 +69,25 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
             flex: 1,
             child: SfCartesianChart(
               title: ChartTitle(
-                text: 'Consumo Total Agua (m³)', 
+                text: 'Consumo Total Lavadoras (m³)', 
                 textStyle: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)
               ),
               zoomPanBehavior: ZoomPanBehavior(enablePanning: true, zoomMode: ZoomMode.x),
               primaryXAxis: CategoryAxis(
                 isVisible: true,
+                
+                labelStyle: TextStyle(color: ColorDefaults.darkPrimary, fontSize: 0, fontWeight: FontWeight.bold),
                 autoScrollingDelta: 24,
-                  majorGridLines: const MajorGridLines(width: 1, dashArray: [5, 5]),
+                majorGridLines: const MajorGridLines(width: 1, color: Colors.black,dashArray: [5, 5]),
               ),
               primaryYAxis: NumericAxis(
                 labelStyle: TextStyle(color: ColorDefaults.darkPrimary, fontSize: 9),
               ),
               series: <ColumnSeries<dynamic, String>>[
                 _buildColumnSeries('Lavadoras', 'Lavadoras', ColorDefaults.primaryBlue)
-                // ColumnSeries<dynamic, String>(
-                //   name: 'Consumo Total',
-                //   dataSource: _sortedData,
-                //   xValueMapper: (data, _) => _formatTime(data['_time_lima']),
-                //   yValueMapper: (data, _) => data['Lavadoras'] ?? 0, // El dato de tu vista
-                //   color: Colors.purple.withOpacity(0.6),
-                //   borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
-                //   dataLabelSettings: const DataLabelSettings(
-                //     isVisible: true,
-                //     textStyle: TextStyle(fontSize: 9, fontWeight: FontWeight.bold),
-                //   ),
-                // )
               ],
             ),
           ),
-          const SizedBox(height: 50),
           // --- GRÁFICA INFERIOR: DETALLE POR LÍNEA ---
           Expanded(
             flex: 1,
@@ -113,7 +102,7 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
                 interval: 1,
                 autoScrollingDelta: 24, 
                 labelPlacement: LabelPlacement.betweenTicks,
-                majorGridLines: const MajorGridLines(width: 1, color: Colors.black26, dashArray: [5,5]),
+                majorGridLines: const MajorGridLines(width: 1, color: Colors.black, dashArray: [5,5]),
                 labelStyle: TextStyle(color: ColorDefaults.darkPrimary, fontSize: 11, fontWeight: FontWeight.bold),
               ),
               primaryYAxis: NumericAxis(
