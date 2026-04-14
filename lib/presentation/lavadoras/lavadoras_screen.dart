@@ -5,7 +5,6 @@ import 'package:flutter_dashboard_ih/presentation/lavadoras/lavadoras_bragraph.d
 import 'package:flutter_dashboard_ih/presentation/widgets/appbar_design.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/navbar_design.dart';
 import 'package:flutter_dashboard_ih/providers/filter_day_provider.dart';
-import 'package:flutter_dashboard_ih/providers/filter_month_provider.dart';
 import 'package:flutter_dashboard_ih/services/supabase_services.dart';
 import 'package:provider/provider.dart';
 
@@ -19,7 +18,6 @@ class LavadorasScreen extends StatefulWidget {
 class _LavadorasScreenState extends State<LavadorasScreen> {
   @override
   Widget build(BuildContext context) {
-    final selectedMonth = context.watch<FilterMonthProvider>().getMonth;
     final dayProvider = context.watch<FilterDayProvider>().getDate;
     final windowSize = MediaQuery.of(context).size;
     return Scaffold(
