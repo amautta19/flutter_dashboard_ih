@@ -10,6 +10,7 @@ import 'package:flutter_dashboard_ih/providers/filter_day_provider.dart';
 import 'package:flutter_dashboard_ih/providers/filter_element_provider.dart';
 import 'package:flutter_dashboard_ih/providers/filter_month_provider.dart';
 import 'package:flutter_dashboard_ih/providers/index_screen_provider.dart';
+import 'package:flutter_dashboard_ih/providers/umbrales_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -33,6 +34,10 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => FilterElementProvider()), // Filtro por elemento del manifold
         ChangeNotifierProvider(create: (_) => FilterDayProvider()),
         ChangeNotifierProvider(create: (_) => IndexScreenProvider()),
+        // ChangeNotifierProvider(create: (_) => UmbralesProvider()) // Obtener la tabla de umbrales 
+        ChangeNotifierProvider(
+          create: (_) => UmbralesProvider()..actualizarUmbrales()
+        )
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -63,6 +68,14 @@ class _WindowsTableScreenState extends State<WindowsTableScreen> {
   @override
   Widget build(BuildContext context) {
     final indexScreenProvider = Provider.of<IndexScreenProvider>(context);
+    final umbralesProvider = Provider.of<UmbralesProvider>(context);
+    if(umbralesProvider.isLoading && umbralesProvider.tablaUmbrales.isEmpty){
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(color: ColorDefaults.primaryBlue,),
+        ),
+      );
+    }
     
     return screens[indexScreenProvider.getIndexClicked];
   }
