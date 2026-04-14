@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dashboard_ih/defaults/color_defaults.dart';
 import 'package:flutter_dashboard_ih/defaults/text_global.dart';
+import 'package:flutter_dashboard_ih/providers/umbrales_provider.dart'; // Importante
+import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
-import 'package:syncfusion_flutter_core/theme.dart'; // Necesario para el tema
+import 'package:syncfusion_flutter_core/theme.dart';
 
 class TablaOsmosis extends StatefulWidget {
   final List<dynamic> osmosisData;
@@ -16,27 +18,36 @@ class _TablaOsmosisState extends State<TablaOsmosis> {
   late _PozosDataSource _dataSource;
 
   @override
-  void didUpdateWidget(TablaOsmosis  oldWidget) {
+  void didUpdateWidget(TablaOsmosis oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if(oldWidget.osmosisData != widget.osmosisData){
+    if (oldWidget.osmosisData != widget.osmosisData) {
       _actualizarDataSource();
     }
   }
+
   @override
   void initState() {
     super.initState();
     _actualizarDataSource();
   }
-  
-  void _actualizarDataSource(){
+
+  void _actualizarDataSource() {
+    // Obtenemos la tabla de umbrales del provider (listen false porque estamos en un método)
+    final listaUmbrales = Provider.of<UmbralesProvider>(context, listen: false).tablaUmbrales;
+
     setState(() {
       List<dynamic> sortedData = List.from(widget.osmosisData);
-      sortedData.sort((a,b){
+      sortedData.sort((a, b) {
         DateTime fechaA = DateTime.parse(a['fecha_operativa']);
         DateTime fechaB = DateTime.parse(b['fecha_operativa']);
         return fechaB.compareTo(fechaA);
       });
-      _dataSource = _PozosDataSource(data: sortedData);
+      
+      // Inyectamos tanto los datos de osmosis como la lista de umbrales
+      _dataSource = _PozosDataSource(
+        data: sortedData, 
+        umbrales: listaUmbrales
+      );
     });
   }
 
@@ -44,21 +55,19 @@ class _TablaOsmosisState extends State<TablaOsmosis> {
   Widget build(BuildContext context) {
     final windowSize = MediaQuery.of(context).size;
     final BorderSide customBorder = BorderSide(
-      color: ColorDefaults.darkPrimary.withOpacity(0.5),
-      width: 2.5
-    );
+        color: ColorDefaults.darkPrimary.withOpacity(0.5), width: 2.5);
+
     return SizedBox(
       height: windowSize.height * 0.35,
       width: double.infinity,
       child: SfDataGridTheme(
-        // Aplicamos el grosor y color a las líneas horizontales nativas
         data: SfDataGridThemeData(
           gridLineColor: ColorDefaults.darkPrimary.withOpacity(0.5),
           gridLineStrokeWidth: 2.5,
         ),
         child: SfDataGrid(
           source: _dataSource,
-          columnWidthMode: ColumnWidthMode.fill, 
+          columnWidthMode: ColumnWidthMode.fill,
           gridLinesVisibility: GridLinesVisibility.horizontal,
           headerGridLinesVisibility: GridLinesVisibility.horizontal,
           columns: _getColumns(customBorder),
@@ -67,7 +76,8 @@ class _TablaOsmosisState extends State<TablaOsmosis> {
     );
   }
 }
-List<GridColumn> _getColumns(BorderSide border){
+
+List<GridColumn> _getColumns(BorderSide border) {
   return [
     _buildColumn('fecha', 'Fecha', border),
     _buildColumn('MF01_in', 'MF01_in', border),
@@ -85,34 +95,36 @@ List<GridColumn> _getColumns(BorderSide border){
     _buildColumn('MF06_in', 'MF06_in', border),
     _buildColumn('MF06_out', 'MF06_out', border),
     _buildColumn('MF06_pc', 'MF06 %', border),
-
-    // _buildColumn('total_estaciones', 'Total Pozos', border, isTotal: true)
   ];
 }
 
-GridColumn _buildColumn(String name, String label, BorderSide border){
+GridColumn _buildColumn(String name, String label, BorderSide border) {
   return GridColumn(
-    columnName: name, 
-    label: Container(
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: ColorDefaults.primaryBlue,
-        border: Border(
-          right: name == 'fecha' || name.contains('pc') ? border : BorderSide.none,
-          left: name.contains('pc') ? border : BorderSide.none
-        )
-      ),
-      child: GlobalText(label, fontWeight: FontWeight.bold, fontSize: 14, color: ColorDefaults.darkPrimary,),
-    )
-  );
+      columnName: name,
+      label: Container(
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+            color: ColorDefaults.primaryBlue,
+            border: Border(
+                right: name == 'fecha' || name.contains('pc') ? border : BorderSide.none,
+                left: name.contains('pc') ? border : BorderSide.none)),
+        child: GlobalText(
+          label,
+          fontWeight: FontWeight.bold,
+          fontSize: 14,
+          color: ColorDefaults.darkPrimary,
+        ),
+      ));
 }
 
-
 class _PozosDataSource extends DataGridSource {
-  _PozosDataSource({required List<dynamic> data}) {
+  final List<Map<String, dynamic>> umbrales;
+
+  _PozosDataSource({
+    required List<dynamic> data, 
+    required this.umbrales
+  }) {
     _rows = data.map<DataGridRow>((item) {
-      // final total = (item['cip_a'] ?? 0) + (item['cip_b'] ?? 0) + (item['cip_c'] ?? 0) + (item['cip_d'] ?? 0) + (item['cip_e'] ?? 0) + (item['cip_f'] ?? 0);
-      
       return DataGridRow(cells: [
         DataGridCell<String>(columnName: 'fecha', value: item['fecha_operativa'].toString()),
         DataGridCell<num>(columnName: 'MF01_in', value: item['MF01_in'] ?? 0),
@@ -130,20 +142,18 @@ class _PozosDataSource extends DataGridSource {
         DataGridCell<num>(columnName: 'MF06_in', value: item['MF06_in'] ?? 0),
         DataGridCell<num>(columnName: 'MF06_out', value: item['MF06_out'] ?? 0),
         DataGridCell<num>(columnName: 'MF06_pc', value: item['MF06_pc'] ?? 0),
-
-        // DataGridCell<num>(columnName: 'total_estaciones', value: total),
       ]);
     }).toList();
   }
+
   List<DataGridRow> _rows = [];
-  @override List<DataGridRow> get rows => _rows;
-  
-  @override 
+  @override
+  List<DataGridRow> get rows => _rows;
+
+  @override
   DataGridRowAdapter buildRow(DataGridRow row) {
     final BorderSide customBorder = BorderSide(
-      color: ColorDefaults.darkPrimary.withOpacity(0.5), 
-      width: 1.5
-    );
+        color: ColorDefaults.darkPrimary.withOpacity(0.5), width: 1.5);
 
     return DataGridRowAdapter(
       color: ColorDefaults.whitePrimary,
@@ -151,19 +161,49 @@ class _PozosDataSource extends DataGridSource {
         final bool isPC = cell.columnName.contains('pc');
         final bool isFecha = cell.columnName == 'fecha';
 
+        // LÓGICA DE ALERTA (FONDO DE CELDA)
+        // Por defecto, color según diseño original
+        Color cellBackgroundColor = isPC ? ColorDefaults.secundaryBlue : Colors.transparent;
+        Color cellTextColor = ColorDefaults.darkPrimary;
+
+        if (isPC) {
+          // Obtenemos el prefijo (ej. "MF01") de la columna "MF01_pc"
+          String equipo = cell.columnName.split('_')[0];
+          
+          // Buscamos el umbral en la lista inyectada
+          final umbralFila = umbrales.firstWhere(
+            (u) => equipo.contains(u['argumento']),
+            orElse: () => {},
+          );
+
+          if (umbralFila.isNotEmpty && umbralFila['umbral'] != null) {
+            double limiteMax = (umbralFila['umbral'] as num).toDouble();
+            double valorCelda = (cell.value as num).toDouble();
+            
+            // SI SUPERA EL LÍMITE: Pintamos TODA la celda de rojo
+            if (valorCelda < limiteMax) {
+              cellBackgroundColor = Colors.redAccent; // Rojo para el fondo
+              cellTextColor = Colors.white; // Texto blanco para que resalte
+            }
+          }
+        }
+
         return Container(
-          alignment: Alignment.center, 
-          padding: const EdgeInsets.symmetric(horizontal: 8), 
+          alignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(horizontal: 8),
           decoration: BoxDecoration(
-            color: isPC ? ColorDefaults.secundaryBlue : Colors.transparent,
+            color: cellBackgroundColor, // Aplicamos el color de fondo dinámico
             border: Border(
               right: isFecha || isPC ? customBorder : BorderSide.none,
               left: isPC ? customBorder : BorderSide.none,
             ),
           ),
-          child: GlobalText(isPC ? '${cell.value.toString()} %' : cell.value.toString(), 
-          fontSize: 12, color: ColorDefaults.darkPrimary,
-            fontWeight: isPC ? FontWeight.bold : FontWeight.normal),
+          child: GlobalText(
+            isPC ? '${cell.value.toString()} %' : cell.value.toString(),
+            fontSize: 12,
+            color: cellTextColor, // Aplicamos color de texto (blanco en alerta, oscuro normal)
+            fontWeight: isPC ? FontWeight.bold : FontWeight.normal,
+          ),
         );
       }).toList(),
     );
