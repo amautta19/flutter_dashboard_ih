@@ -46,6 +46,12 @@ class SupabaseServices {
       return null;
     });
     return response;
+  }
 
+  // En tu clase SupabaseServices
+  Future<List<Map<String, dynamic>>> getUmbrales() async {
+    // Traemos toda la tabla sin filtros para tener todos los argumentos
+    final response = await supabase.from('umbrales').select();
+    return response;
   }
 }
