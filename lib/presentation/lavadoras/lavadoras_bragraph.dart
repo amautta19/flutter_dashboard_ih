@@ -16,6 +16,7 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
   late List<dynamic> _fullRangeData;
   late TooltipBehavior _tooltipUpper;
   late TooltipBehavior _tooltipLower;
+  late TooltipBehavior _tooltipTeorico;
 
   @override
   void initState() {
@@ -33,6 +34,12 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
       enable: true,
       header: '', 
       format: 'series.name: point.y min',
+      canShowMarker: true
+    );
+    _tooltipTeorico = TooltipBehavior(
+      enable: true,
+      header: '',
+      format: 'series.name: point.y m³',
       canShowMarker: true
     );
   }
@@ -137,7 +144,7 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
           Expanded(
             flex: 3,
             child: SfCartesianChart(
-              tooltipBehavior: _tooltipLower,
+              tooltipBehavior: _tooltipTeorico,
               legend: const Legend(
                   isVisible: true, 
                   position: LegendPosition.bottom, 
@@ -152,7 +159,7 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
               ),
               primaryYAxis: NumericAxis(
                 title: AxisTitle(
-                  text: 'Minutos Efectivos por Línea',
+                  text: 'Consumo Teórico',
                   textStyle: TextStyle(fontSize: 14, color: Colors.redAccent, fontWeight: FontWeight.bold)
                 ),
                 minimum: 0,
@@ -216,9 +223,7 @@ List<CartesianSeries<dynamic, String>> _buildGroupedProgress(
         dataSource: _fullRangeData,
         xValueMapper: (data, _) => _formatTime(data['_time_lima']),
         yValueMapper: (data, _) => data[key] ?? 0,
-        // groupName: name, // MISMO groupName para que se encime
         color: color,
-        // width: 0.2,
         enableTooltip: true,
         dataLabelSettings: DataLabelSettings(
           isVisible: true,
