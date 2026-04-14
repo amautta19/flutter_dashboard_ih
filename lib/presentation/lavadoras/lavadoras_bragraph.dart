@@ -87,7 +87,7 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
     final windowSize = MediaQuery.of(context).size;
 
     return Container(
-      height: windowSize.height * 0.80,
+      height: windowSize.height * 0.90,
       width: double.infinity,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -134,10 +134,44 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
               ],
             ),
           ),
-
+          Expanded(
+            flex: 3,
+            child: SfCartesianChart(
+              tooltipBehavior: _tooltipLower,
+              legend: const Legend(
+                  isVisible: true, 
+                  position: LegendPosition.bottom, 
+                  textStyle: TextStyle(fontSize: 12)
+              ),
+              zoomPanBehavior: ZoomPanBehavior(enablePanning: true, zoomMode: ZoomMode.x),
+              primaryXAxis: CategoryAxis(
+                interval: 1,
+                autoScrollingDelta: 24, // Reducimos para que se vean bien las 4 columnas por hora
+                majorGridLines: const MajorGridLines(width: 1, color: Colors.black, dashArray: [5,5]),
+                labelStyle: TextStyle(color: ColorDefaults.darkPrimary, fontSize: 13, fontWeight: FontWeight.bold),
+              ),
+              primaryYAxis: NumericAxis(
+                title: AxisTitle(
+                  text: 'Minutos Efectivos por Línea',
+                  textStyle: TextStyle(fontSize: 14, color: Colors.redAccent, fontWeight: FontWeight.bold)
+                ),
+                minimum: 0,
+                maximum: 10, // AHORA EL MÁXIMO ES 60 porque ya no se apilan
+                // interval: 10,
+                labelStyle: const TextStyle(fontSize: 10),
+              ),
+              series: <CartesianSeries<dynamic, String>>[
+                // Llamamos a cada línea. Cada una genera su barra y su fondo.
+                ..._buildGroupedProgress('Línea 1', 'lavadora_l1_teorico', ColorDefaults.primaryBlue),
+                ..._buildGroupedProgress('Línea 2', 'lavadora_l2_teorico', Colors.teal),
+                ..._buildGroupedProgress('Línea 10', 'lavadora_l10_teorico', Colors.orangeAccent),
+                ..._buildGroupedProgress('Línea 11', 'lavadora_l11_teorico', Colors.redAccent),
+              ],
+            ),
+          ),
           // --- GRÁFICA INFERIOR ---
           Expanded(
-            flex: 7,
+            flex: 4,
             child: SfCartesianChart(
               tooltipBehavior: _tooltipLower,
               legend: const Legend(
@@ -169,12 +203,31 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
                 ..._buildFixedCenterProgress('Línea 11', 'linea11', Colors.redAccent, 210),
               ],
             ),
-          )
+          ),
         ],
       ),
     );
   }
-
+List<CartesianSeries<dynamic, String>> _buildGroupedProgress(
+      String name, String key, Color color) {
+    return [
+      ColumnSeries<dynamic, String>(
+        name: name,
+        dataSource: _fullRangeData,
+        xValueMapper: (data, _) => _formatTime(data['_time_lima']),
+        yValueMapper: (data, _) => data[key] ?? 0,
+        // groupName: name, // MISMO groupName para que se encime
+        color: color,
+        // width: 0.2,
+        enableTooltip: true,
+        dataLabelSettings: DataLabelSettings(
+          isVisible: true,
+          labelAlignment: ChartDataLabelAlignment.middle,
+          textStyle: const TextStyle(fontSize: 10, color: Colors.black, fontWeight: FontWeight.bold),
+        ),
+      ),
+    ];
+  }
   List<CartesianSeries<dynamic, String>> _buildFixedCenterProgress(
       String name, String key, Color color, double fixedCenterY) {
     return [
