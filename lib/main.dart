@@ -13,8 +13,24 @@ import 'package:flutter_dashboard_ih/providers/index_screen_provider.dart';
 import 'package:flutter_dashboard_ih/providers/umbrales_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:window_manager/window_manager.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await windowManager.ensureInitialized();
+  WindowOptions windowOptions = const WindowOptions(
+    size: Size(1080, 720),
+    center: true,
+    title: 'Dashboard Procesos - Planta Pucusana',
+    titleBarStyle: TitleBarStyle.normal
+  );
+
+  windowManager.waitUntilReadyToShow(windowOptions, () async{
+    await windowManager.show();
+    await windowManager.focus();
+    await windowManager.maximize();
+  });
+
   WidgetsFlutterBinding.ensureInitialized();
   await Supabase.initialize(
     url: 'https://qskfiowkylkfqckfokqy.supabase.co',
