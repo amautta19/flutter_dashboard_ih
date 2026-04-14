@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dashboard_ih/defaults/color_defaults.dart';
 import 'package:flutter_dashboard_ih/defaults/text_global.dart';
+import 'package:flutter_dashboard_ih/presentation/widgets/filter_day.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/filter_month.dart';
 import 'package:flutter_dashboard_ih/services/supabase_services.dart';
 import 'package:intl/intl.dart';
@@ -9,7 +10,9 @@ class AppbarDesign extends StatelessWidget implements PreferredSizeWidget{
   final String title;
   final String table;
   final Color colorBar;
-  const AppbarDesign({super.key, required this.title, required this.colorBar, required this.table});
+  final bool filterByMonth;
+  final bool filterByDay;
+  const AppbarDesign({super.key, required this.title, required this.colorBar, required this.table, this.filterByMonth = false, this.filterByDay = false});
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +52,14 @@ class AppbarDesign extends StatelessWidget implements PreferredSizeWidget{
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const SizedBox(width: 10,),
-            FilterMonthWidget(),
+            Visibility(
+              visible: filterByMonth,
+              child: FilterMonthWidget()
+            ),
+            Visibility(
+              visible: filterByDay,
+              child: FilterDayWidget()
+            ),
             const SizedBox(width: 200,)
           ],
         ),
