@@ -26,7 +26,7 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
     _tooltipUpper = TooltipBehavior(
       enable: true, 
       header: '',
-      format: 'Consumo Total Lavadoras: point.y m³',
+      format: 'series.name: point.y m³',
       canShowMarker: false
     );
     
@@ -94,7 +94,7 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
     final windowSize = MediaQuery.of(context).size;
 
     return Container(
-      height: windowSize.height * 0.90,
+      height: windowSize.height * 0.85,
       width: double.infinity,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -104,22 +104,23 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
       child: Column(
         children: [
           GlobalText(
-            'Consumo Total vs Tiempo por Línea',
+            'Consumo Total Lavadoras vs Tiempo Efectivo',
             color: ColorDefaults.primaryBlue,
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 5),
           
           // --- GRÁFICA SUPERIOR ---
           Expanded(
             flex: 3,
             child: SfCartesianChart(
-              tooltipBehavior: _tooltipUpper,
-              title: ChartTitle(
-                  text: 'Consumo Total Lavadoras (m³)', 
-                  textStyle: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)
+              legend: const Legend(
+                  isVisible: true, 
+                  position: LegendPosition.bottom, 
+                  textStyle: TextStyle(fontSize: 12)
               ),
+              tooltipBehavior: _tooltipUpper,
               zoomPanBehavior: ZoomPanBehavior(enablePanning: true, zoomMode: ZoomMode.x),
               primaryXAxis: CategoryAxis(
                 isVisible: true,
@@ -132,12 +133,13 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
                 minimum: 0,
                 maximum: 60,
                 title: AxisTitle(
-                  text: 'Consumo Total Lavadoras',
+                  text: 'Consumo Total',
                   textStyle: TextStyle(fontSize: 14, color: Colors.redAccent, fontWeight: FontWeight.bold)
                 ),
               ),
               series: <CartesianSeries<dynamic, String>>[
-                _buildColumnSeries('Lavadoras', 'Lavadoras', ColorDefaults.primaryBlue)
+                _buildColumnSeries('Lavadoras Total', 'Lavadoras', ColorDefaults.primaryBlue),
+                _buildColumnSeries('Consumo Teórico', 'lavadoras_teorico', ColorDefaults.secundaryBlue)
               ],
             ),
           ),
@@ -155,7 +157,7 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
                 interval: 1,
                 autoScrollingDelta: 24, // Reducimos para que se vean bien las 4 columnas por hora
                 majorGridLines: const MajorGridLines(width: 1, color: Colors.black, dashArray: [5,5]),
-                labelStyle: TextStyle(color: ColorDefaults.darkPrimary, fontSize: 13, fontWeight: FontWeight.bold),
+                labelStyle: TextStyle(color: ColorDefaults.darkPrimary, fontSize: 0, fontWeight: FontWeight.bold),
               ),
               primaryYAxis: NumericAxis(
                 title: AxisTitle(
@@ -163,9 +165,8 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
                   textStyle: TextStyle(fontSize: 14, color: Colors.redAccent, fontWeight: FontWeight.bold)
                 ),
                 minimum: 0,
-                maximum: 10, // AHORA EL MÁXIMO ES 60 porque ya no se apilan
-                // interval: 10,
-                labelStyle: const TextStyle(fontSize: 10),
+                maximum: 10,
+                labelStyle: const TextStyle(fontSize: 0),
               ),
               series: <CartesianSeries<dynamic, String>>[
                 // Llamamos a cada línea. Cada una genera su barra y su fondo.
