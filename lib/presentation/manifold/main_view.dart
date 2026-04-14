@@ -40,6 +40,7 @@ class _MainViewState extends State<MainView> {
         table: 'agua_manifold',
         title: 'Consumo Agua Manifold - Planta Pucusana',
         colorBar: ColorDefaults.primaryBlue,
+        filterByMonth: true,
       ),
       drawer: NavbarDisgn(),
       body: SingleChildScrollView(

@@ -38,7 +38,8 @@ class _FiltrosPulidoresScreenState extends State<FiltrosPulidoresScreen> {
       appBar: AppbarDesign(
         title: 'Consumo Agua Filtros Pulidores - Planta Pucusana', 
         colorBar: Colors.limeAccent, 
-        table: 'filtros_pulidores'
+        table: 'filtros_pulidores',
+        filterByDay: true,
       ),
       drawer: NavbarDisgn(),
       body: SingleChildScrollView(

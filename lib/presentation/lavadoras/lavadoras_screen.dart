@@ -3,7 +3,6 @@ import 'package:flutter_dashboard_ih/defaults/color_defaults.dart';
 import 'package:flutter_dashboard_ih/defaults/text_global.dart';
 import 'package:flutter_dashboard_ih/presentation/lavadoras/lavadoras_bragraph.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/appbar_design.dart';
-import 'package:flutter_dashboard_ih/presentation/widgets/filter_day.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/navbar_design.dart';
 import 'package:flutter_dashboard_ih/providers/filter_day_provider.dart';
 import 'package:flutter_dashboard_ih/providers/filter_month_provider.dart';
@@ -27,7 +26,8 @@ class _LavadorasScreenState extends State<LavadorasScreen> {
       appBar: AppbarDesign(
         title: 'Consumo Agua Lavadoras - Pucusana', 
         colorBar: Colors.redAccent, 
-        table: 'tiempo_efectivo'
+        table: 'tiempo_efectivo',
+        filterByDay: true,
       ),
       drawer: NavbarDisgn(),
       body: SingleChildScrollView(
@@ -35,7 +35,6 @@ class _LavadorasScreenState extends State<LavadorasScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
           child: Column(
             children: [
-              FilterDayWidget(),
               StreamBuilder<List<dynamic>>(
                 stream: SupabaseServices().getDataByDayOperative('lavadoras_tiempo_consumo', dayProvider), 
                 builder: (context, snapshot){

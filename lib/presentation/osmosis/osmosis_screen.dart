@@ -36,7 +36,8 @@ class _OsmosisScreenState extends State<OsmosisScreen> {
       appBar: AppbarDesign(
         title: 'Consumo Agua Ósmosis - Planta Pucusana', 
         colorBar: Colors.purpleAccent, 
-        table: 'osmosis'
+        table: 'osmosis',
+        filterByMonth: true,
       ),
       drawer: NavbarDisgn(),
       body: SingleChildScrollView(

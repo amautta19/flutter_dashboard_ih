@@ -37,7 +37,8 @@ class _EstacionesCipScreenState extends State<EstacionesCipScreen> {
       appBar: AppbarDesign(
         title: 'Consumo Agua Estaciones CIP - Planta Pucusana', 
         colorBar: Colors.greenAccent, 
-        table: 'estaciones_cip'
+        table: 'estaciones_cip',
+        filterByMonth: true,
       ),
       drawer: NavbarDisgn(),
       body: SingleChildScrollView(

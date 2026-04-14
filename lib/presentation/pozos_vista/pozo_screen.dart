@@ -38,7 +38,8 @@ class _PozoScreenState extends State<PozoScreen> {
       appBar: AppbarDesign(
         table: 'agua_manifold',
         title: 'Consumo Agua Pozos - Planta Pucusana', 
-        colorBar: Colors.orangeAccent
+        colorBar: Colors.orangeAccent,
+        filterByMonth: true,
       ),
       drawer: NavbarDisgn(),
       body: SingleChildScrollView(
