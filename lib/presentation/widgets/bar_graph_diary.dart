@@ -2,12 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dashboard_ih/defaults/color_defaults.dart';
 import 'package:flutter_dashboard_ih/defaults/text_global.dart';
 import 'package:flutter_dashboard_ih/providers/filter_element_provider.dart';
+import 'package:flutter_dashboard_ih/providers/umbrales_provider.dart'; // Importante
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class BarGraphDiary extends StatefulWidget {
   final List<dynamic> allData;
-  const BarGraphDiary({super.key, required this.allData});
+  final bool umbralInverso;
+  final String unidadM;
+  final String titleM;
+  const BarGraphDiary({super.key, required this.allData, this.umbralInverso = false, this.unidadM = 'm³', this.titleM = 'Consumo Agua (m³)'});
 
   @override
   State<BarGraphDiary> createState() => _BarGraphDiaryState();
@@ -46,23 +50,52 @@ class _BarGraphDiaryState extends State<BarGraphDiary> {
   double _calcularPromedio(String column) {
     if (_sortedData.isEmpty) return 0;
     double suma = 0;
+    int cont = 0;
     for (var item in _sortedData) {
-      suma += (item[column] ?? 0).toDouble();
+      final valor = (item[column] ?? 0).toDouble();
+      if (valor > 0) { // Opcional: solo promediar días con consumo
+        suma += valor;
+        cont++;
+      }
     }
-    return suma / _sortedData.length;
+    return cont > 0 ? suma / cont : 0;
   }
 
   @override
   Widget build(BuildContext context) {
-    // Escuchamos el cambio del filtro (ej. AF01, AF02, etc)
+    // 1. Escuchamos los Providers
     final String selectedFilter = context.watch<FilterElementProvider>().getElement;
-    final double promedio = _calcularPromedio(selectedFilter);
+    final umbralesProv = context.watch<UmbralesProvider>();
+
+    // 2. LÓGICA DINÁMICA DE UMBRALES
+    // Buscamos en la tabla cargada en el provider si existe el elemento
+    final umbralFila = umbralesProv.tablaUmbrales.firstWhere(
+      (u) => selectedFilter.contains(u['argumento']),
+      orElse: () => {},
+    );
+
+    double valorReferencia;
+    String etiquetaReferencia;
+    Color colorReferencia;
+
+    if (umbralFila.isNotEmpty && umbralFila['umbral'] != null) {
+      // Si existe en la tabla de Supabase, usamos ese límite
+      valorReferencia = (umbralFila['umbral'] as num).toDouble();
+      etiquetaReferencia = 'Umbral Técnico: ${valorReferencia.toStringAsFixed(1)} ${widget.unidadM}';
+      colorReferencia = Colors.orangeAccent; 
+    } else {
+      
+      valorReferencia = _calcularPromedio(selectedFilter);
+      etiquetaReferencia = 'Promedio: ${valorReferencia.toStringAsFixed(1)} ${widget.unidadM}';
+      colorReferencia = Colors.orangeAccent;
+    }
+
     final windowSize = MediaQuery.of(context).size;
 
     return Container(
       height: windowSize.height * 0.42,
       width: windowSize.width * 0.60,
-      padding: const EdgeInsets.all(5),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
           color: ColorDefaults.whitePrimary,
           borderRadius: BorderRadius.circular(15),
@@ -73,7 +106,7 @@ class _BarGraphDiaryState extends State<BarGraphDiary> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               GlobalText(
-                'Consumo de Agua (m³): $selectedFilter',
+                '${widget.titleM} : $selectedFilter',
                 color: ColorDefaults.primaryBlue,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -83,13 +116,13 @@ class _BarGraphDiaryState extends State<BarGraphDiary> {
                   Container(
                     width: 10,
                     height: 10,
-                    decoration: const BoxDecoration(
-                        color: Colors.orangeAccent, shape: BoxShape.circle),
+                    decoration: BoxDecoration(
+                        color: colorReferencia, shape: BoxShape.circle),
                   ),
                   const SizedBox(width: 8),
                   GlobalText(
-                    'Promedio: ${promedio.toStringAsFixed(1)} m³',
-                    color: Colors.orangeAccent,
+                    etiquetaReferencia,
+                    color: colorReferencia,
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
                   )
@@ -100,8 +133,7 @@ class _BarGraphDiaryState extends State<BarGraphDiary> {
           const SizedBox(height: 10),
           Expanded(
             child: SfCartesianChart(
-              // Usamos una Key en el chart para forzar el redibujado completo si falla la serie
-              key: ValueKey('chart_$selectedFilter'),
+              key: ValueKey('chart_${selectedFilter}_$valorReferencia'),
               zoomPanBehavior: ZoomPanBehavior(
                   enablePanning: true, 
                   zoomMode: ZoomMode.x
@@ -111,27 +143,25 @@ class _BarGraphDiaryState extends State<BarGraphDiary> {
                 autoScrollingMode: AutoScrollingMode.end,
                 majorGridLines: const MajorGridLines(width: 0),
                 labelStyle: TextStyle(
-                    color: ColorDefaults.darkPrimary, fontSize: 12),
+                    color: ColorDefaults.darkPrimary, fontSize: 11),
               ),
               primaryYAxis: NumericAxis(
                 minimum: 0,
-                // Agrega espacio arriba para que la línea y labels no se corten
                 rangePadding: ChartRangePadding.additional,
-                labelStyle: TextStyle(color: ColorDefaults.darkPrimary),
+                labelStyle: TextStyle(color: ColorDefaults.darkPrimary, fontSize: 11),
                 plotBands: <PlotBand>[
                   PlotBand(
                       isVisible: true,
-                      start: promedio,
-                      end: promedio,
+                      start: valorReferencia,
+                      end: valorReferencia,
                       borderWidth: 2,
-                      borderColor: Colors.orangeAccent,
+                      borderColor: colorReferencia,
                       dashArray: <double>[6, 6])
                 ],
               ),
               series: <CartesianSeries<dynamic, String>>[
-                // Serie 1: BARRAS
+                // BARRAS
                 ColumnSeries<dynamic, String>(
-                  // La Key obliga a refrescar la serie al cambiar el filtro
                   key: ValueKey('bars_$selectedFilter'),
                   name: 'Consumo',
                   dataSource: _sortedData,
@@ -139,22 +169,27 @@ class _BarGraphDiaryState extends State<BarGraphDiary> {
                   yValueMapper: (data, _) => data[selectedFilter] ?? 0,
                   pointColorMapper: (data, _) {
                     final valor = data[selectedFilter] ?? 0;
-                    return valor > promedio ? Colors.red : ColorDefaults.primaryBlue;
+                    // Si supera el umbral o promedio, se pinta de rojo
+                    if(widget.umbralInverso == false){
+                      return valor > valorReferencia ? Colors.red : ColorDefaults.primaryBlue;
+
+                    }else{
+                      return valor < valorReferencia ? Colors.red : ColorDefaults.primaryBlue;
+                    }
                   },
                   borderRadius: const BorderRadius.vertical(top: Radius.circular(6)),
                   dataLabelSettings: DataLabelSettings(
                       isVisible: true,
                       borderRadius: 5,
-                      color: Colors.amberAccent,
+                      color: Colors.amberAccent.withOpacity(0.8),
                       textStyle: TextStyle(
-                          fontSize: 11,
+                          fontSize: 10,
                           color: ColorDefaults.darkPrimary,
                           fontWeight: FontWeight.bold)),
                 ),
 
-                // Serie 2: LÍNEA DE EVOLUCIÓN RECTA
+                // LÍNEA DE EVOLUCIÓN
                 LineSeries<dynamic, String>(
-                  // La Key obliga a la línea a buscar los nuevos datos del mapeo
                   key: ValueKey('line_$selectedFilter'),
                   name: 'Evolución',
                   dataSource: _sortedData,
@@ -164,12 +199,12 @@ class _BarGraphDiaryState extends State<BarGraphDiary> {
                   width: 3,
                   markerSettings: const MarkerSettings(
                     isVisible: true,
-                    height: 6,
-                    width: 6,
+                    height: 4,
+                    width: 4,
                     shape: DataMarkerType.circle,
                     color: Colors.green,
                   ),
-                  animationDuration: 1000,
+                  animationDuration: 1200,
                 ),
               ],
             ),
