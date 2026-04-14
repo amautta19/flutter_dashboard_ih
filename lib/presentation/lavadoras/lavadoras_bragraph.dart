@@ -94,9 +94,9 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
     final windowSize = MediaQuery.of(context).size;
 
     return Container(
-      height: windowSize.height * 0.85,
+      height: windowSize.height * 0.90,
       width: double.infinity,
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(5),
       decoration: BoxDecoration(
           color: ColorDefaults.whitePrimary,
           borderRadius: BorderRadius.circular(15),

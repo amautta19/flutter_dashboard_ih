@@ -63,8 +63,8 @@ class _LavadorasScreenState extends State<LavadorasScreen> {
                   // --- AQUÍ ESTÁ EL CAMBIO ---
                   return Column(
                     children: [
+                      SizedBox(height: 10,),
                       BarGraphDiaryMulti(allData: snapshot.data!),
-                      SizedBox(height: 50,),
                     ],
                   );
                 }
