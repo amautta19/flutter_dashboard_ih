@@ -228,7 +228,7 @@ List<CartesianSeries<dynamic, String>> _buildGroupedProgress(
         enableTooltip: true,
         dataLabelSettings: DataLabelSettings(
           isVisible: true,
-          labelAlignment: ChartDataLabelAlignment.middle,
+          // labelAlignment: ChartDataLabelAlignment.top,
           textStyle: const TextStyle(fontSize: 10, color: Colors.black, fontWeight: FontWeight.bold),
         ),
       ),
