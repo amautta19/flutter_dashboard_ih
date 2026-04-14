@@ -89,7 +89,7 @@ class _OsmosisScreenState extends State<OsmosisScreen> {
                           SizedBox(height: 5,),
                           Row(
                             children: [
-                              BarGraphDiary(allData: filteredData),
+                              BarGraphDiary(allData: filteredData, umbralInverso: true, unidadM: '%', titleM: 'Eficiencia (%)',),
                               const Spacer(),
                               Consumer<FilterDayProvider>(
                                 builder: (context, dayProvider, child){
