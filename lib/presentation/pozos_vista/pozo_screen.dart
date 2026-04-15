@@ -26,8 +26,9 @@ class _PozoScreenState extends State<PozoScreen> {
   @override
   void initState() {
     super.initState();
+    // Se inicializa la provider con un valor de Pozo1
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<FilterElementProvider>().updateColumn('Pozo1'); 
+      context.read<FilterElementProvider>().updateColumn('Pozos_Total'); 
     });
   }
   @override
@@ -86,7 +87,7 @@ class _PozoScreenState extends State<PozoScreen> {
                         children: [
                           Row(
                             children: [
-                              FilterElementWidget(columns: ['Pozo1', 'Pozo3']),
+                              FilterElementWidget(columns: ['Pozos_Total', 'Pozo1', 'Pozo3']),
                               const Spacer(),
                               FilterDayWidget(),
                               const SizedBox(width: 100,)
