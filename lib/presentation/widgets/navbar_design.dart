@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dashboard_ih/defaults/color_defaults.dart';
 import 'package:flutter_dashboard_ih/defaults/text_global.dart';
 import 'package:flutter_dashboard_ih/providers/index_screen_provider.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 
 class NavbarDisgn extends StatefulWidget {
@@ -12,6 +13,21 @@ class NavbarDisgn extends StatefulWidget {
 }
 
 class _NavbarDisgnState extends State<NavbarDisgn> {
+  String _version = 'Cargando...';
+  @override
+  void initState() {
+    super.initState();
+    _getAppVersion();
+  }
+
+  Future<void> _getAppVersion() async{
+    final PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    setState(() {
+      _version = '${packageInfo.version} + ${packageInfo.buildNumber}';
+    });
+  }
+
+
   @override
   Widget build(BuildContext context) {
   final indexScreenProvider = Provider.of<IndexScreenProvider>(context);
@@ -42,7 +58,7 @@ class _NavbarDisgnState extends State<NavbarDisgn> {
             const SizedBox(height: 20,),
             items('Lavadoras', indexScreenProvider, context, 5),
             Spacer(),
-            GlobalText('Versión: ', color: ColorDefaults.darkPrimary,fontSize: 14,),
+            GlobalText('Versión: $_version', color: ColorDefaults.darkPrimary,fontSize: 14,),
             const SizedBox(height: 20,)
           ],
         ),
