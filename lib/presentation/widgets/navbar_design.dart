@@ -40,7 +40,10 @@ class _NavbarDisgnState extends State<NavbarDisgn> {
             const SizedBox(height: 20,),
             items('Filtros Pulidores', indexScreenProvider, context, 4),
             const SizedBox(height: 20,),
-            items('Lavadoras', indexScreenProvider, context, 5)
+            items('Lavadoras', indexScreenProvider, context, 5),
+            Spacer(),
+            GlobalText('Versión: ', color: ColorDefaults.darkPrimary,fontSize: 14,),
+            const SizedBox(height: 20,)
           ],
         ),
         
