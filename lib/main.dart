@@ -16,6 +16,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:window_manager/window_manager.dart';
 
 void main() async {
+
+  // Se configura como pantalla grande la aplicación
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
   WindowOptions windowOptions = const WindowOptions(
@@ -50,7 +52,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => FilterElementProvider()), // Filtro por elemento del manifold
         ChangeNotifierProvider(create: (_) => FilterDayProvider()),
         ChangeNotifierProvider(create: (_) => IndexScreenProvider()),
-        // ChangeNotifierProvider(create: (_) => UmbralesProvider()) // Obtener la tabla de umbrales 
+        // Se inicializa el provider para obtener la tabla de los umbrales
         ChangeNotifierProvider(
           create: (_) => UmbralesProvider()..actualizarUmbrales()
         )
@@ -85,6 +87,7 @@ class _WindowsTableScreenState extends State<WindowsTableScreen> {
   Widget build(BuildContext context) {
     final indexScreenProvider = Provider.of<IndexScreenProvider>(context);
     final umbralesProvider = Provider.of<UmbralesProvider>(context);
+    // Espear la carga de la tabla de umbrales
     if(umbralesProvider.isLoading && umbralesProvider.tablaUmbrales.isEmpty){
       return Scaffold(
         body: Center(
