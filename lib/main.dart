@@ -12,6 +12,8 @@ import 'package:flutter_dashboard_ih/providers/filter_month_provider.dart';
 import 'package:flutter_dashboard_ih/providers/index_screen_provider.dart';
 import 'package:flutter_dashboard_ih/providers/umbrales_provider.dart';
 import 'package:flutter_dashboard_ih/providers/version_app_provider.dart';
+import 'package:flutter_dashboard_ih/services/supabase_services.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:window_manager/window_manager.dart';
@@ -77,6 +79,29 @@ class WindowsTableScreen extends StatefulWidget {
 }
 
 class _WindowsTableScreenState extends State<WindowsTableScreen> {
+  String newVersion = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _getActVersion();
+    _getNewVersion();
+  }
+
+  Future<void> _getActVersion() async{
+    final info = await PackageInfo.fromPlatform();
+    final version = info.version;
+    print('Version Actual: $version');
+    if(!mounted) return;
+    Provider.of<VersionAppProvider>(context, listen: false).updateVersionApp(version);
+  }
+
+  Future<void> _getNewVersion() async{
+    final info = await SupabaseServices().getVersionNew();
+    newVersion = info;
+    print('Nueva version: $newVersion');
+  }
+
   final screens = [
     PozoScreen(),
     MainView(),
