@@ -11,6 +11,7 @@ import 'package:flutter_dashboard_ih/providers/filter_element_provider.dart';
 import 'package:flutter_dashboard_ih/providers/filter_month_provider.dart';
 import 'package:flutter_dashboard_ih/providers/index_screen_provider.dart';
 import 'package:flutter_dashboard_ih/providers/umbrales_provider.dart';
+import 'package:flutter_dashboard_ih/providers/version_app_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:window_manager/window_manager.dart';
@@ -48,6 +49,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         // Llamando a los providers
+        ChangeNotifierProvider(create: (_) => VersionAppProvider()),
         ChangeNotifierProvider(create: (_) => FilterMonthProvider()), // Filtro por mes
         ChangeNotifierProvider(create: (_) => FilterElementProvider()), // Filtro por elemento del manifold
         ChangeNotifierProvider(create: (_) => FilterDayProvider()),
