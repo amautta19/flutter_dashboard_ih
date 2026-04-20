@@ -15,12 +15,12 @@ class VersionUpdateScreen extends StatefulWidget {
 
 class _VersionUpdateScreenState extends State<VersionUpdateScreen> {
   bool _isDownloading = false;
+  double _progresoDescarga = 0; // Nueva variable para el porcentaje
 
-  // 1. Diálogo de confirmación
   Future<void> _confirmarActualizacion() async {
     bool? aceptar = await showDialog<bool>(
       context: context,
-      barrierDismissible: false, // Obliga a interactuar con los botones
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: const Color(0xFF2B2B2B),
@@ -59,26 +59,33 @@ class _VersionUpdateScreenState extends State<VersionUpdateScreen> {
     }
   }
 
-  // 2. Lógica de descarga y ejecución de script
   Future<void> _ejecutarActualizacion() async {
-    setState(() => _isDownloading = true);
+    setState(() {
+      _isDownloading = true;
+      _progresoDescarga = 0;
+    });
 
     try {
-      // Obtener URL de Supabase Storage
       final String urlDescarga = Supabase.instance.client.storage
           .from('updates')
           .getPublicUrl('update.zip');
 
-      // Ruta local en el directorio de la aplicación
       String pathZip = "${Directory.current.path}/update.zip";
 
-      // Descarga con Dio (evitando caché con timestamp)
+      // Lógica de descarga con seguimiento de progreso
       await Dio().download(
         "$urlDescarga?t=${DateTime.now().millisecondsSinceEpoch}",
         pathZip,
+        onReceiveProgress: (received, total) {
+          if (total != -1) {
+            setState(() {
+              _progresoDescarga = received / total;
+            });
+          }
+        },
       );
 
-      // Lanzar script de PowerShell (Debe existir update.ps1 en la raíz)
+      // Una vez descargado, lanzamos el script
       await Process.start('powershell', [
         '-ExecutionPolicy',
         'Bypass',
@@ -86,7 +93,6 @@ class _VersionUpdateScreenState extends State<VersionUpdateScreen> {
         'update.ps1',
       ]);
 
-      // Cerrar app para permitir que el script reemplace los archivos
       exit(0);
     } catch (e) {
       setState(() => _isDownloading = false);
@@ -110,7 +116,7 @@ class _VersionUpdateScreenState extends State<VersionUpdateScreen> {
       backgroundColor: ColorDefaults.darkPrimary,
       body: Center(
         child: Container(
-          constraints: const BoxConstraints(maxWidth: 550, maxHeight: 400),
+          constraints: const BoxConstraints(maxWidth: 550, maxHeight: 420),
           padding: const EdgeInsets.all(40.0),
           decoration: BoxDecoration(
             color: cardColor,
@@ -145,27 +151,43 @@ class _VersionUpdateScreenState extends State<VersionUpdateScreen> {
                 fontSize: 15,
               ),
               const SizedBox(height: 20),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                decoration: BoxDecoration(
-                  color: Colors.black26,
-                  borderRadius: BorderRadius.circular(20),
+              
+              // Indicador de Progreso de Descarga (Solo visible al descargar)
+              if (_isDownloading) ...[
+                Text(
+                  "Descargando paquete: ${(_progresoDescarga * 100).toStringAsFixed(0)}%",
+                  style: const TextStyle(color: accentBlue, fontSize: 13, fontWeight: FontWeight.bold),
                 ),
-                child: Text(
-                  'Versión de destino: ${widget.versionNew}',
-                  style: const TextStyle(
-                    color: accentBlue,
-                    fontFamily: 'Consolas',
-                    fontWeight: FontWeight.w600,
+                const SizedBox(height: 8),
+                LinearProgressIndicator(
+                  value: _progresoDescarga,
+                  backgroundColor: Colors.white10,
+                  color: accentBlue,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                const SizedBox(height: 20),
+              ] else 
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.black26,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    'Versión de destino: ${widget.versionNew}',
+                    style: const TextStyle(
+                      color: accentBlue,
+                      fontFamily: 'Consolas',
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
-              ),
+
               const Spacer(),
               SizedBox(
                 width: double.infinity,
                 height: 50,
                 child: ElevatedButton.icon(
-                  // Si está descargando, el botón se deshabilita (null)
                   onPressed: _isDownloading ? null : _confirmarActualizacion,
                   icon: _isDownloading
                       ? const SizedBox(
@@ -178,7 +200,7 @@ class _VersionUpdateScreenState extends State<VersionUpdateScreen> {
                         )
                       : const Icon(Icons.auto_fix_high_rounded),
                   label: Text(
-                    _isDownloading ? 'PROCESANDO...' : 'ACTUALIZAR AHORA',
+                    _isDownloading ? 'DESCARGANDO...' : 'ACTUALIZAR AHORA',
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
