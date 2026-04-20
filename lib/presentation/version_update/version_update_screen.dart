@@ -3,8 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dashboard_ih/defaults/color_defaults.dart';
 import 'package:flutter_dashboard_ih/defaults/text_global.dart';
-import 'package:supabase_flutter/supabase_flutter.dart'; 
-
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class VersionUpdateScreen extends StatefulWidget {
   final String versionNew;
@@ -15,46 +14,88 @@ class VersionUpdateScreen extends StatefulWidget {
 }
 
 class _VersionUpdateScreenState extends State<VersionUpdateScreen> {
-  bool _isDownloading = false; // Estado visual para el botón
-  bool _estaDescargando = false;
-  Future<void> _actualizarSistema() async {
-    setState(() => _estaDescargando = true);
+  bool _isDownloading = false;
+
+  // 1. Diálogo de confirmación
+  Future<void> _confirmarActualizacion() async {
+    bool? aceptar = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false, // Obliga a interactuar con los botones
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: const Color(0xFF2B2B2B),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          title: const Row(
+            children: [
+              Icon(Icons.warning_amber_rounded, color: Colors.orange),
+              SizedBox(width: 10),
+              Text("Confirmar Actualización", style: TextStyle(color: Colors.white, fontSize: 18)),
+            ],
+          ),
+          content: const Text(
+            "Se cerrará y se abrirá la aplicación en automático.\n\n¡No interrumpir el proceso hasta que la aplicación se reinicie!",
+            style: TextStyle(color: Colors.white70, fontSize: 15),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text("CANCELAR", style: TextStyle(color: Colors.white54)),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF0078D4),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+              ),
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text("ACEPTAR", style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (aceptar == true) {
+      _ejecutarActualizacion();
+    }
+  }
+
+  // 2. Lógica de descarga y ejecución de script
+  Future<void> _ejecutarActualizacion() async {
+    setState(() => _isDownloading = true);
 
     try {
-      // 2. OBTENER URL DEL ARCHIVO DESDE EL STORAGE
-      // 'updates' es el nombre de tu bucket y 'update.zip' el archivo
-      final String urlDescarga = Supabase.instance.client
-          .storage
+      // Obtener URL de Supabase Storage
+      final String urlDescarga = Supabase.instance.client.storage
           .from('updates')
           .getPublicUrl('update.zip');
 
-      // 3. RUTA LOCAL (Donde se guarda temporalmente)
+      // Ruta local en el directorio de la aplicación
       String pathZip = "${Directory.current.path}/update.zip";
 
-      // 4. DESCARGAR EL ARCHIVO (Usamos Dio)
-      // Agregamos el timestamp para saltarnos el cache del firewall de la empresa
+      // Descarga con Dio (evitando caché con timestamp)
       await Dio().download(
-        "$urlDescarga?t=${DateTime.now().millisecondsSinceEpoch}", 
-        pathZip
+        "$urlDescarga?t=${DateTime.now().millisecondsSinceEpoch}",
+        pathZip,
       );
 
-      // 5. LANZAR EL SCRIPT DE POWERSHELL
-      // Importante: El archivo 'update.ps1' debe estar en la carpeta de la app
+      // Lanzar script de PowerShell (Debe existir update.ps1 en la raíz)
       await Process.start('powershell', [
         '-ExecutionPolicy',
         'Bypass',
         '-File',
-        'update.ps1'
+        'update.ps1',
       ]);
 
-      // 6. CERRAR LA APP PARA EL REEMPLAZO
+      // Cerrar app para permitir que el script reemplace los archivos
       exit(0);
-
     } catch (e) {
-      setState(() => _estaDescargando = false);
+      setState(() => _isDownloading = false);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Error de conexión: $e")),
+          SnackBar(
+            backgroundColor: Colors.redAccent,
+            content: Text("Error crítico: $e"),
+          ),
         );
       }
     }
@@ -62,118 +103,92 @@ class _VersionUpdateScreenState extends State<VersionUpdateScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Usamos el color oscuro de fondo que ya tienes definido
-    final backgroundColor = ColorDefaults.darkPrimary; 
-    const accentBlue = Color(0xFF0078D4); // Azul estándar de Windows
-    const cardColor = Color(0xFF2B2B2B); // Un gris ligeramente más claro que el fondo
+    const accentBlue = Color(0xFF0078D4);
+    const cardColor = Color(0xFF2B2B2B);
 
     return Scaffold(
-      backgroundColor: backgroundColor,
+      backgroundColor: ColorDefaults.darkPrimary,
       body: Center(
         child: Container(
-          // Limitamos el ancho para que no se vea gigante en monitores 1080p
-          constraints: const BoxConstraints(maxWidth: 600, maxHeight: 450),
-          padding: const EdgeInsets.all(32.0),
+          constraints: const BoxConstraints(maxWidth: 550, maxHeight: 400),
+          padding: const EdgeInsets.all(40.0),
           decoration: BoxDecoration(
             color: cardColor,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.white10), // Borde sutil estilo Windows 11
+            borderRadius: BorderRadius.circular(15),
+            border: Border.all(color: Colors.white10),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.3),
-                blurRadius: 15,
-                offset: const Offset(0, 8),
+                color: Colors.black.withOpacity(0.4),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
               ),
             ],
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Icono grande indicando actualización
-              const Icon(
-                Icons.system_update_alt_rounded,
-                size: 80,
-                color: accentBlue,
-              ),
-              const SizedBox(height: 24),
-              
-              // Título Principal
+              const Icon(Icons.system_update_alt_rounded, size: 70, color: accentBlue),
+              const SizedBox(height: 20),
               const Text(
-                'Actualización Obligatoria',
-                textAlign: TextAlign.center,
+                'Actualización Disponible',
                 style: TextStyle(
-                  color: Colors.white, // O ColorDefaults.whitePrimary
-                  fontSize: 28,
+                  color: Colors.white,
+                  fontSize: 26,
                   fontWeight: FontWeight.bold,
-                  letterSpacing: 0.5,
                 ),
               ),
-              const SizedBox(height: 16),
-
+              const SizedBox(height: 15),
               GlobalText(
-                'Se requiere actualizar la aplicación para continuar con el monitoreo.',
+                'Se requiere actualizar la aplicación para asegurar la integridad de los datos y continuar con el monitoreo.',
                 textAlign: TextAlign.center,
                 color: ColorDefaults.whitePrimary.withOpacity(0.7),
-                fontSize: 16,
+                fontSize: 15,
               ),
-              const SizedBox(height: 10),
-              
-              // Cuadro con la versión nueva
+              const SizedBox(height: 20),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                 decoration: BoxDecoration(
-                  color: Colors.black45,
+                  color: Colors.black26,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  'Nueva versión: ${widget.versionNew}',
+                  'Versión de destino: ${widget.versionNew}',
                   style: const TextStyle(
                     color: accentBlue,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Consolas', // Toque técnico
+                    fontFamily: 'Consolas',
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
-              
-              const Spacer(), // Empuja el botón hacia abajo
-
-              // Botón de Acción Principal (Estilo Windows Elevado)
+              const Spacer(),
               SizedBox(
                 width: double.infinity,
                 height: 50,
                 child: ElevatedButton.icon(
-                  // onPressed: _isDownloading 
-                  //   ? null // Deshabilitado si está "descargando"
-                  //   : () {
-                  //       // AQUÍ IRÁ LA LÓGICA LUEGO
-                  //       setState(() {
-                  //         _isDownloading = true;
-                  //       });
-                  //       print('Iniciando descarga de versión ${widget.versionNew}...');
-                  //     },
-                  onPressed: _actualizarSistema,
-                  icon: _isDownloading 
-                    ? const SizedBox(
-                        width: 20, 
-                        height: 20, 
-                        child: CircularProgressIndicator(color: Colors.white70, strokeWidth: 2,)
-                      )
-                    : const Icon(Icons.download_rounded),
+                  // Si está descargando, el botón se deshabilita (null)
+                  onPressed: _isDownloading ? null : _confirmarActualizacion,
+                  icon: _isDownloading
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : const Icon(Icons.auto_fix_high_rounded),
                   label: Text(
-                    _isDownloading 
-                      ? 'DESCARGANDO E INSTALANDO...' 
-                      : 'ACTUALIZAR APLICACIÓN',
+                    _isDownloading ? 'PROCESANDO...' : 'ACTUALIZAR AHORA',
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      letterSpacing: 1,
+                      letterSpacing: 1.2,
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: accentBlue,
                     foregroundColor: Colors.white,
-                    elevation: 4,
+                    disabledBackgroundColor: Colors.grey[800],
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
