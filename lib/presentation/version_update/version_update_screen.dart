@@ -1,9 +1,10 @@
+import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-// Asumiendo que tus defaults están en estas rutas, ajústalas si es necesario
 import 'package:flutter_dashboard_ih/defaults/color_defaults.dart';
-import 'package:flutter_dashboard_ih/defaults/text_global.dart'; 
-// Reemplazo GlobalText por Text estándar para asegurar compatibilidad en el ejemplo,
-// pero tú usa tu GlobalText donde aplique.
+import 'package:flutter_dashboard_ih/defaults/text_global.dart';
+import 'package:supabase_flutter/supabase_flutter.dart'; 
+
 
 class VersionUpdateScreen extends StatefulWidget {
   final String versionNew;
@@ -15,6 +16,49 @@ class VersionUpdateScreen extends StatefulWidget {
 
 class _VersionUpdateScreenState extends State<VersionUpdateScreen> {
   bool _isDownloading = false; // Estado visual para el botón
+  bool _estaDescargando = false;
+  Future<void> _actualizarSistema() async {
+    setState(() => _estaDescargando = true);
+
+    try {
+      // 2. OBTENER URL DEL ARCHIVO DESDE EL STORAGE
+      // 'updates' es el nombre de tu bucket y 'update.zip' el archivo
+      final String urlDescarga = Supabase.instance.client
+          .storage
+          .from('updates')
+          .getPublicUrl('update.zip');
+
+      // 3. RUTA LOCAL (Donde se guarda temporalmente)
+      String pathZip = "${Directory.current.path}/update.zip";
+
+      // 4. DESCARGAR EL ARCHIVO (Usamos Dio)
+      // Agregamos el timestamp para saltarnos el cache del firewall de la empresa
+      await Dio().download(
+        "$urlDescarga?t=${DateTime.now().millisecondsSinceEpoch}", 
+        pathZip
+      );
+
+      // 5. LANZAR EL SCRIPT DE POWERSHELL
+      // Importante: El archivo 'update.ps1' debe estar en la carpeta de la app
+      await Process.start('powershell', [
+        '-ExecutionPolicy',
+        'Bypass',
+        '-File',
+        'update.ps1'
+      ]);
+
+      // 6. CERRAR LA APP PARA EL REEMPLAZO
+      exit(0);
+
+    } catch (e) {
+      setState(() => _estaDescargando = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error de conexión: $e")),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -99,15 +143,16 @@ class _VersionUpdateScreenState extends State<VersionUpdateScreen> {
                 width: double.infinity,
                 height: 50,
                 child: ElevatedButton.icon(
-                  onPressed: _isDownloading 
-                    ? null // Deshabilitado si está "descargando"
-                    : () {
-                        // AQUÍ IRÁ LA LÓGICA LUEGO
-                        setState(() {
-                          _isDownloading = true;
-                        });
-                        print('Iniciando descarga de versión ${widget.versionNew}...');
-                      },
+                  // onPressed: _isDownloading 
+                  //   ? null // Deshabilitado si está "descargando"
+                  //   : () {
+                  //       // AQUÍ IRÁ LA LÓGICA LUEGO
+                  //       setState(() {
+                  //         _isDownloading = true;
+                  //       });
+                  //       print('Iniciando descarga de versión ${widget.versionNew}...');
+                  //     },
+                  onPressed: _actualizarSistema,
                   icon: _isDownloading 
                     ? const SizedBox(
                         width: 20, 
