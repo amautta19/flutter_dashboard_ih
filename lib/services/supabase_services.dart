@@ -53,4 +53,14 @@ Stream<List<Map<String, dynamic>>> getDataByDayOperative(String table, DateTime 
     final response = await supabase.from('umbrales').select();
     return response;
   }
+
+  // Obtener la nueva versión
+  Future<String> getVersionNew() async{
+    final response = await supabase
+      .from('data_version')
+      .select('valor')
+      .eq('indice', 'version')
+      .single();
+    return response['valor'];
+  }
 }
