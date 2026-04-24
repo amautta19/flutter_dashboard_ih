@@ -3,7 +3,7 @@ import 'package:flutter_dashboard_ih/defaults/color_defaults.dart';
 import 'package:flutter_dashboard_ih/presentation/estaciones_cip/estaciones_cip_screen.dart';
 import 'package:flutter_dashboard_ih/presentation/fiiltros_pulidores/filtros_pulidores_screen.dart';
 import 'package:flutter_dashboard_ih/presentation/lavadoras/lavadoras_screen.dart';
-import 'package:flutter_dashboard_ih/presentation/manifold/main_view.dart';
+import 'package:flutter_dashboard_ih/presentation/manifold/manifold_screend.dart';
 import 'package:flutter_dashboard_ih/presentation/osmosis/osmosis_screen.dart';
 import 'package:flutter_dashboard_ih/presentation/pozos_vista/pozo_screen.dart';
 import 'package:flutter_dashboard_ih/presentation/version_update/version_update_screen.dart';
@@ -46,11 +46,11 @@ void main() async {
     MultiProvider(
       providers: [
         // Llamando a los providers
-        ChangeNotifierProvider(create: (_) => VersionAppProvider()),
+        ChangeNotifierProvider(create: (_) => VersionAppProvider()),  // Versión actual 
         ChangeNotifierProvider(create: (_) => FilterMonthProvider()), // Filtro por mes
         ChangeNotifierProvider(create: (_) => FilterElementProvider()), // Filtro por elemento del manifold
-        ChangeNotifierProvider(create: (_) => FilterDayProvider()),
-        ChangeNotifierProvider(create: (_) => IndexScreenProvider()),
+        ChangeNotifierProvider(create: (_) => FilterDayProvider()), // Filtro por día
+        ChangeNotifierProvider(create: (_) => IndexScreenProvider()), // Index de navegación
         // Se inicializa el provider para obtener la tabla de los umbrales
         ChangeNotifierProvider(
           create: (_) => UmbralesProvider()..actualizarUmbrales()
@@ -69,8 +69,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String? newVersion; // Usamos null para saber que aún no carga
-  String? actualVersion;
+  String? newVersion; // Versión traida desde supabase
+  String? actualVersion; // Versión actual
 
   @override
   void initState() {
@@ -79,18 +79,17 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> _initAppLogic() async {
-    // 1. Obtener versión local
+    // Obtener la versión actual de la app
     final info = await PackageInfo.fromPlatform();
     final vLocal = info.version;
-
-    // 2. Obtener versión remota
-    final vRemote = await SupabaseServices().getVersionNew();
-
-    // 3. Guardar en el Provider solo la actual
+    // Se guarda la versión actual en el provider
     if (!mounted) return;
     context.read<VersionAppProvider>().updateVersionApp(vLocal);
 
-    // 4. Actualizar variables locales para el build
+    // Obtener la nueva versión escrita en tabla de supabase
+    final vRemote = await SupabaseServices().getVersionNew();
+
+    // Actualizamos las variables locales
     setState(() {
       actualVersion = vLocal;
       newVersion = vRemote;
@@ -99,23 +98,21 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    // Mientras esperamos los datos, mostramos un splash o loading
+    // Mostrar una carga mientras cargan las versiones
     if (actualVersion == null || newVersion == null) {
-      return const MaterialApp(
+      return MaterialApp(
         home: Scaffold(
-          body: Center(child: CircularProgressIndicator()),
+          body: Center(child: CircularProgressIndicator(color: ColorDefaults.primaryBlue,)),
         ),
       );
     }
 
-    // Ahora sí, comparamos con seguridad
-    // Si la versión actual es IGUAL a la nueva, entramos a la app (WindowsTableScreen)
-    // Si son DIFERENTES, mandamos a actualizar.
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         scaffoldBackgroundColor: ColorDefaults.darkPrimary,
       ),
+      // Si las versiones son iguales muestra la app, si son diferentes salta a la ventana de actualizar versión
       home: (actualVersion == newVersion)
           ? const WindowsTableScreen()
           : VersionUpdateScreen(versionNew: newVersion!),
@@ -130,10 +127,10 @@ class WindowsTableScreen extends StatefulWidget {
 }
 
 class _WindowsTableScreenState extends State<WindowsTableScreen> {
-
+  // Lista de screens de navegación
   final screens = [
     PozoScreen(),
-    MainView(),
+    ManifoldScreen(),
     EstacionesCipScreen(),
     OsmosisScreen(),
     FiltrosPulidoresScreen(),

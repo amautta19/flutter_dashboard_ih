@@ -15,14 +15,14 @@ import 'package:flutter_dashboard_ih/providers/filter_day_provider.dart';
 import 'package:flutter_dashboard_ih/presentation/manifold/tables_manifold.dart';
 import 'package:flutter_dashboard_ih/services/supabase_services.dart';
 
-class MainView extends StatefulWidget {
-  const MainView({super.key});
+class ManifoldScreen extends StatefulWidget {
+  const ManifoldScreen({super.key});
 
   @override
-  State<MainView> createState() => _MainViewState();
+  State<ManifoldScreen> createState() => _ManifoldScreenState();
 }
 
-class _MainViewState extends State<MainView> {
+class _ManifoldScreenState extends State<ManifoldScreen> {
   @override
   void initState() {
     super.initState();
