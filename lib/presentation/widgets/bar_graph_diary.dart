@@ -6,12 +6,19 @@ import 'package:flutter_dashboard_ih/providers/umbrales_provider.dart'; // Impor
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
+// Widget para mostrar el consumo diario
 class BarGraphDiary extends StatefulWidget {
-  final List<dynamic> allData;
-  final bool umbralInverso;
-  final String unidadM;
-  final String titleM;
-  const BarGraphDiary({super.key, required this.allData, this.umbralInverso = false, this.unidadM = 'm³', this.titleM = 'Consumo Agua (m³)'});
+  final List<dynamic> allData;  // Lista de toda la data
+  final bool umbralInverso;     // Se revierte la condición del umbral del gráfico
+  final String unidadM;         // Unidad de los valores (m3, %,...)
+  final String titleM;          // Título del gráfico
+  const BarGraphDiary({
+    super.key, 
+    required this.allData, 
+    this.umbralInverso = false,       // Valor predeterminado desactivado 
+    this.unidadM = 'm³', 
+    this.titleM = 'Consumo Agua (m³)'
+  });
 
   @override
   State<BarGraphDiary> createState() => _BarGraphDiaryState();
@@ -33,8 +40,9 @@ class _BarGraphDiaryState extends State<BarGraphDiary> {
       _prepararDatos();
     }
   }
-
+  // Prearar los datos obtenidos de la lista
   void _prepararDatos() {
+    // Ordename los datos de forma ascendente
     _sortedData = List.from(widget.allData);
     _sortedData.sort((a, b) {
       try {
@@ -47,13 +55,14 @@ class _BarGraphDiaryState extends State<BarGraphDiary> {
     });
   }
 
+  // Obtener el promedio de los valores como umbral
   double _calcularPromedio(String column) {
     if (_sortedData.isEmpty) return 0;
     double suma = 0;
     int cont = 0;
     for (var item in _sortedData) {
       final valor = (item[column] ?? 0).toDouble();
-      if (valor > 0) { // Opcional: solo promediar días con consumo
+      if (valor > 0) { // Solo promediar días con consumo
         suma += valor;
         cont++;
       }
@@ -63,30 +72,30 @@ class _BarGraphDiaryState extends State<BarGraphDiary> {
 
   @override
   Widget build(BuildContext context) {
-    // 1. Escuchamos los Providers
-    final String selectedFilter = context.watch<FilterElementProvider>().getElement;
-    final umbralesProv = context.watch<UmbralesProvider>();
+    // Obtenemos valor de los providers
+    final String selectedFilter = context.watch<FilterElementProvider>().getElement; // Filtro escogido
+    final umbralesProvider = context.watch<UmbralesProvider>(); // Lista de umbrales de supabase
 
-    // 2. LÓGICA DINÁMICA DE UMBRALES
     // Buscamos en la tabla cargada en el provider si existe el elemento
-    final umbralFila = umbralesProv.tablaUmbrales.firstWhere(
+    final umbralFila = umbralesProvider.tablaUmbrales.firstWhere(
       (u) => selectedFilter.contains(u['argumento']),
       orElse: () => {},
     );
 
+    // Variables para la lógica de los umbrales
     double valorReferencia;
-    String etiquetaReferencia;
+    String umbralLimite;
     Color colorReferencia;
 
+    // Si existe un umbral en la tabla de supabase usamos ese
     if (umbralFila.isNotEmpty && umbralFila['umbral'] != null) {
-      // Si existe en la tabla de Supabase, usamos ese límite
       valorReferencia = (umbralFila['umbral'] as num).toDouble();
-      etiquetaReferencia = 'Umbral Técnico: ${valorReferencia.toStringAsFixed(1)} ${widget.unidadM}';
+      umbralLimite = 'Umbral Técnico: ${valorReferencia.toStringAsFixed(1)} ${widget.unidadM}';
       colorReferencia = Colors.orangeAccent; 
+    // Si no existe umbral en la tabla de supabse se utiliza el promedio calculado
     } else {
-      
       valorReferencia = _calcularPromedio(selectedFilter);
-      etiquetaReferencia = 'Promedio: ${valorReferencia.toStringAsFixed(1)} ${widget.unidadM}';
+      umbralLimite = 'Promedio: ${valorReferencia.toStringAsFixed(1)} ${widget.unidadM}';
       colorReferencia = Colors.orangeAccent;
     }
 
@@ -106,11 +115,12 @@ class _BarGraphDiaryState extends State<BarGraphDiary> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               GlobalText(
-                '${widget.titleM} : $selectedFilter',
+                '${widget.titleM} : $selectedFilter', // Título dinámico del gráfico
                 color: ColorDefaults.primaryBlue,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
+              // Mostrar el valor del umbral
               Row(
                 children: [
                   Container(
@@ -121,7 +131,7 @@ class _BarGraphDiaryState extends State<BarGraphDiary> {
                   ),
                   const SizedBox(width: 8),
                   GlobalText(
-                    etiquetaReferencia,
+                    umbralLimite,
                     color: colorReferencia,
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
@@ -131,53 +141,60 @@ class _BarGraphDiaryState extends State<BarGraphDiary> {
             ],
           ),
           const SizedBox(height: 10),
+          // Gráfico de barras
           Expanded(
             child: SfCartesianChart(
               key: ValueKey('chart_${selectedFilter}_$valorReferencia'),
-              zoomPanBehavior: ZoomPanBehavior(
+              // Zoom en el eje X
+              zoomPanBehavior: ZoomPanBehavior( 
                   enablePanning: true, 
                   zoomMode: ZoomMode.x
               ),
+              // Configuración del Eje X
               primaryXAxis: CategoryAxis(
-                autoScrollingDelta: 14,
+                autoScrollingDelta: 14, // Máximo de barras en la vista 14
                 autoScrollingMode: AutoScrollingMode.end,
                 majorGridLines: const MajorGridLines(width: 0),
                 labelStyle: TextStyle(
-                    color: ColorDefaults.darkPrimary, fontSize: 11),
+                  color: ColorDefaults.darkPrimary, fontSize: 11),
               ),
+              // Configuración del Eje Y
               primaryYAxis: NumericAxis(
-                minimum: 0,
+                minimum: 0, // Empieza en 0 el valor del eje
                 rangePadding: ChartRangePadding.additional,
                 labelStyle: TextStyle(color: ColorDefaults.darkPrimary, fontSize: 11),
+                // Configuración de la vista del umbral
                 plotBands: <PlotBand>[
                   PlotBand(
-                      isVisible: true,
-                      start: valorReferencia,
-                      end: valorReferencia,
-                      borderWidth: 2,
-                      borderColor: colorReferencia,
-                      dashArray: <double>[6, 6])
+                    isVisible: true,
+                    start: valorReferencia,
+                    end: valorReferencia,
+                    borderWidth: 2,
+                    borderColor: colorReferencia,
+                    dashArray: <double>[6, 6]
+                  )
                 ],
               ),
+              // Configuración de los valores mostrados en la gráfica
               series: <CartesianSeries<dynamic, String>>[
-                // BARRAS
+                // Configuración de las barras de la gráfica
                 ColumnSeries<dynamic, String>(
                   key: ValueKey('bars_$selectedFilter'),
                   name: 'Consumo',
                   dataSource: _sortedData,
                   xValueMapper: (data, _) => data['fecha_operativa']?.toString() ?? '',
-                  yValueMapper: (data, _) => data[selectedFilter] ?? 0,
+                  yValueMapper: (data, _) => data[selectedFilter] ?? 0, // Mostramos los valores del filtro
                   pointColorMapper: (data, _) {
                     final valor = data[selectedFilter] ?? 0;
-                    // Si supera el umbral o promedio, se pinta de rojo
+                    // Se cambia la condición del umbral dependiendo del valor bool insertado en el widget
                     if(widget.umbralInverso == false){
                       return valor > valorReferencia ? Colors.red : ColorDefaults.primaryBlue;
-
                     }else{
                       return valor < valorReferencia ? Colors.red : ColorDefaults.primaryBlue;
                     }
                   },
                   borderRadius: const BorderRadius.vertical(top: Radius.circular(6)),
+                  // Configuración de los dataLabels
                   dataLabelSettings: DataLabelSettings(
                       isVisible: true,
                       borderRadius: 5,
@@ -187,8 +204,7 @@ class _BarGraphDiaryState extends State<BarGraphDiary> {
                           color: ColorDefaults.darkPrimary,
                           fontWeight: FontWeight.bold)),
                 ),
-
-                // LÍNEA DE EVOLUCIÓN
+                // Configuración de la Línea de tendencia evolución
                 LineSeries<dynamic, String>(
                   key: ValueKey('line_$selectedFilter'),
                   name: 'Evolución',
@@ -204,7 +220,7 @@ class _BarGraphDiaryState extends State<BarGraphDiary> {
                     shape: DataMarkerType.circle,
                     color: Colors.green,
                   ),
-                  animationDuration: 1200,
+                  animationDuration: 800,
                 ),
               ],
             ),
