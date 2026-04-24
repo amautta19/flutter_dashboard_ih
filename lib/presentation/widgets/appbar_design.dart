@@ -7,12 +7,19 @@ import 'package:flutter_dashboard_ih/services/supabase_services.dart';
 import 'package:intl/intl.dart';
 
 class AppbarDesign extends StatelessWidget implements PreferredSizeWidget{
-  final String title;
-  final String table;
-  final Color colorBar;
-  final bool filterByMonth;
-  final bool filterByDay;
-  const AppbarDesign({super.key, required this.title, required this.colorBar, required this.table, this.filterByMonth = false, this.filterByDay = false});
+  final String title;       // Título del Appbar
+  final String table;       // Tabla para mostrar la última fecha de actualización
+  final Color colorBar;     // Color del Appbar
+  final bool filterByMonth; // Filtro por Mes, activar o desactivar
+  final bool filterByDay;   // Filtro por Día, activar o desactivar
+  const AppbarDesign({
+    super.key, 
+    required this.title, 
+    required this.colorBar, 
+    required this.table, 
+    this.filterByMonth = false, // Valor por defecto desactivado
+    this.filterByDay = false    // Valor por defecto desactivado
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -30,10 +37,12 @@ class AppbarDesign extends StatelessWidget implements PreferredSizeWidget{
               color: ColorDefaults.darkPrimary,
             ),
             const Spacer(),
+            // Obtener el últim dato actualizado de la tabla
             StreamBuilder(
               stream: SupabaseServices().getLastUpdate(table), 
               builder: (context, snapshot){
                 if(snapshot.hasData && snapshot.data != null){
+                  // Transformar el formato de la fecha
                   DateTime dt = DateTime.parse(snapshot.data!['_time_lima']);
                   String formattedDate = DateFormat('yyy/MM/dd HH:mm').format(dt);
                   return GlobalText(
@@ -47,6 +56,7 @@ class AppbarDesign extends StatelessWidget implements PreferredSizeWidget{
           ],
         ),
       ),
+      // Mostrar los filtros
       actions: [
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
