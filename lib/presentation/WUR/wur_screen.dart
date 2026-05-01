@@ -33,7 +33,8 @@ class _WurScreenState extends State<WurScreen> {
       appBar: AppbarDesign(
         title: 'WUR - PLANTA PUCUSANA', 
         colorBar: Colors.redAccent, 
-        table: 'wur_hora'
+        table: 'wur_hora',
+        filterByMonth: true,
       ),
       drawer: NavbarDisgn(),
       body: SingleChildScrollView(
