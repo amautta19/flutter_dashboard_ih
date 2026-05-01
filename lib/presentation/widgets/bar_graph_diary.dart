@@ -11,13 +11,17 @@ class BarGraphDiary extends StatefulWidget {
   final List<dynamic> allData;  // Lista de toda la data
   final bool umbralInverso;     // Se revierte la condición del umbral del gráfico
   final String unidadM;         // Unidad de los valores (m3, %,...)
-  final String titleM;          // Título del gráfico
+  final String titleM;
+  final double widthGraph;   
+  final int maxLabel;       // Título del gráfico
   const BarGraphDiary({
     super.key, 
     required this.allData, 
     this.umbralInverso = false,       // Valor predeterminado desactivado 
     this.unidadM = 'm³', 
-    this.titleM = 'Consumo Agua (m³)'
+    this.titleM = 'Consumo Agua (m³)',
+    this.widthGraph = 0.60,
+    this.maxLabel = 14,
   });
 
   @override
@@ -103,7 +107,7 @@ class _BarGraphDiaryState extends State<BarGraphDiary> {
 
     return Container(
       height: windowSize.height * 0.42,
-      width: windowSize.width * 0.60,
+      width: windowSize.width * widget.widthGraph,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
           color: ColorDefaults.whitePrimary,
@@ -152,7 +156,7 @@ class _BarGraphDiaryState extends State<BarGraphDiary> {
               ),
               // Configuración del Eje X
               primaryXAxis: CategoryAxis(
-                autoScrollingDelta: 14, // Máximo de barras en la vista 14
+                autoScrollingDelta: widget.maxLabel, // Máximo de barras en la vista 14
                 autoScrollingMode: AutoScrollingMode.end,
                 majorGridLines: const MajorGridLines(width: 0),
                 labelStyle: TextStyle(
