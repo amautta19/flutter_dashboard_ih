@@ -3,7 +3,9 @@ import 'package:flutter_dashboard_ih/defaults/color_defaults.dart';
 import 'package:flutter_dashboard_ih/defaults/text_global.dart';
 import 'package:flutter_dashboard_ih/presentation/WUR/table_wur.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/appbar_design.dart';
+import 'package:flutter_dashboard_ih/presentation/widgets/bar_graph_diary.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/navbar_design.dart';
+import 'package:flutter_dashboard_ih/providers/filter_element_provider.dart';
 import 'package:flutter_dashboard_ih/providers/filter_month_provider.dart';
 import 'package:flutter_dashboard_ih/services/supabase_services.dart';
 import 'package:provider/provider.dart';
@@ -17,6 +19,13 @@ class WurScreen extends StatefulWidget {
 
 class _WurScreenState extends State<WurScreen> {
 
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      context.read<FilterElementProvider>().updateColumn('wur');
+    });
+  }
   @override
   Widget build(BuildContext context) {
     final selectedMonth = context.watch<FilterMonthProvider>().getMonth;
@@ -56,11 +65,16 @@ class _WurScreenState extends State<WurScreen> {
                   if (filteredData.isEmpty) {
                     return const Center(child: GlobalText('No hay datos para este mes seleccionado', fontSize: 24,));
                   }
-
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      GlobalText('Registro de Consumo Diario Manifold - Planta Pucusana', fontSize: 16, fontWeight: FontWeight.bold, color: ColorDefaults.secundaryBlue,),
+                      GlobalText('Registro de WUR - Planta Pucusana', fontSize: 16, fontWeight: FontWeight.bold, color: ColorDefaults.secundaryBlue,),
+                      BarGraphDiary(
+                        allData: filteredData,
+                        titleM: 'WUR',
+                        unidadM: '',
+                        widthGraph: 1,
+                        maxLabel: 20,),
                       const SizedBox(height: 5,),
                       Row(
                         children: [
