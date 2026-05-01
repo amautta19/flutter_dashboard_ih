@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dashboard_ih/defaults/color_defaults.dart';
+import 'package:flutter_dashboard_ih/presentation/WUR/wur_screen.dart';
 import 'package:flutter_dashboard_ih/presentation/estaciones_cip/estaciones_cip_screen.dart';
 import 'package:flutter_dashboard_ih/presentation/fiiltros_pulidores/filtros_pulidores_screen.dart';
 import 'package:flutter_dashboard_ih/presentation/lavadoras/lavadoras_screen.dart';
@@ -129,6 +130,7 @@ class WindowsTableScreen extends StatefulWidget {
 class _WindowsTableScreenState extends State<WindowsTableScreen> {
   // Lista de screens de navegación
   final screens = [
+    WurScreen(),
     PozoScreen(),
     ManifoldScreen(),
     EstacionesCipScreen(),
