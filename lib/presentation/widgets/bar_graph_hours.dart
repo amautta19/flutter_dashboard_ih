@@ -6,7 +6,12 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 
 class BarGraphHours extends StatefulWidget {
   final List<dynamic> allData;
-  const BarGraphHours({super.key, required this.allData});
+  final double widthGraph;
+  const BarGraphHours({
+    super.key, 
+    required this.allData,
+    this.widthGraph = 0.38
+  });
 
   @override
   State<BarGraphHours> createState() => _BarGraphHoursState();
@@ -41,7 +46,7 @@ class _BarGraphHoursState extends State<BarGraphHours> {
 
     return Container(
       height: windowsSize.height * 0.42,
-      width: windowsSize.width * 0.38,
+      width: windowsSize.width * widget.widthGraph,
       padding: const EdgeInsets.all(0),
       decoration: BoxDecoration(
         color: ColorDefaults.whitePrimary,
