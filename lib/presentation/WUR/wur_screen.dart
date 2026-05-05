@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dashboard_ih/defaults/color_defaults.dart';
 import 'package:flutter_dashboard_ih/defaults/text_global.dart';
+import 'package:flutter_dashboard_ih/presentation/WUR/wur_bar_graph_diary.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/appbar_design.dart';
-import 'package:flutter_dashboard_ih/presentation/widgets/bar_graph_diary.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/bar_graph_hours.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/filter_day.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/navbar_design.dart';
@@ -73,7 +73,7 @@ class _WurScreenState extends State<WurScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       GlobalText('Registro de WUR - Planta Pucusana', fontSize: 16, fontWeight: FontWeight.bold, color: ColorDefaults.secundaryBlue,),
-                      BarGraphDiary(
+                      WurBarGraphDiary(
                         allData: filteredData,
                         titleM: 'WUR',
                         unidadM: '',
