@@ -154,6 +154,12 @@ class _WurBarGraphDiaryState extends State<WurBarGraphDiary> {
                   enablePanning: true, 
                   zoomMode: ZoomMode.x
               ),
+              tooltipBehavior: TooltipBehavior(
+                enable: true,
+                header: 'WUR',
+                activationMode: ActivationMode.singleTap,
+                duration: 500, 
+              ),
               // Configuración del Eje X
               primaryXAxis: CategoryAxis(
                 autoScrollingDelta: widget.maxLabel, // Máximo de barras en la vista 14
@@ -201,13 +207,15 @@ class _WurBarGraphDiaryState extends State<WurBarGraphDiary> {
                   borderRadius: const BorderRadius.vertical(top: Radius.circular(6)),
                   // Configuración de los dataLabels
                   dataLabelSettings: DataLabelSettings(
-                      isVisible: true,
-                      borderRadius: 5,
-                      color: Colors.amberAccent.withOpacity(0.8),
-                      textStyle: TextStyle(
-                          fontSize: 10,
-                          color: ColorDefaults.darkPrimary,
-                          fontWeight: FontWeight.bold)),
+                    isVisible: true,
+                    borderRadius: 5,
+                    color: Colors.amberAccent.withOpacity(0.8),
+                    // labelPosition: ChartDataLabelPosition.inside,
+                    textStyle: TextStyle(
+                      fontSize: 10,
+                      color: ColorDefaults.darkPrimary,
+                      fontWeight: FontWeight.bold)
+                  ),
                 ),
                 // Configuración de la Línea de tendencia evolución
                 LineSeries<dynamic, String>(
@@ -224,6 +232,15 @@ class _WurBarGraphDiaryState extends State<WurBarGraphDiary> {
                     width: 4,
                     shape: DataMarkerType.circle,
                     color: Colors.green,
+                  ),
+                  dataLabelSettings: DataLabelSettings(
+                    isVisible: true,
+                    textStyle: TextStyle(
+                      fontSize: 12, // Un poco más pequeño para que no se amontone
+                      fontWeight: FontWeight.bold,
+                      color: ColorDefaults.darkPrimary
+                    ),
+                    labelAlignment: ChartDataLabelAlignment.outer
                   ),
                   animationDuration: 800,
                 ),
