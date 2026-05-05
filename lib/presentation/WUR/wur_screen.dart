@@ -79,15 +79,9 @@ class _WurScreenState extends State<WurScreen> {
                         unidadM: '',
                         widthGraph: 1,
                         maxLabel: 20,),
-                      const SizedBox(height: 5,),
-                      Row(
-                        children: [
-                          // TableWur(allData: filteredData),
-                          const Spacer(),
-                        ],
-                      ),
                       const SizedBox(height: 10,),
                       FilterDayWidget(),
+                      const SizedBox(height: 10,),
                       Consumer<FilterDayProvider>(
                         builder: (context, dayProvider, child){
                           return Column(
