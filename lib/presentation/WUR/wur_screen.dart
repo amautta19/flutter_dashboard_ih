@@ -80,48 +80,48 @@ class _WurScreenState extends State<WurScreen> {
                         widthGraph: 1,
                         maxLabel: 20,),
                       const SizedBox(height: 10,),
-                      FilterDayWidget(),
-                      const SizedBox(height: 10,),
-                      Consumer<FilterDayProvider>(
-                        builder: (context, dayProvider, child){
-                          return Column(
-                            children: [
-                              StreamBuilder(
-                                stream: SupabaseServices().getDataByDayOperative('wur_hora', dayProvider.getDate), 
-                                builder: (context, snapshot){
-                                  if (snapshot.connectionState == ConnectionState.waiting) {
-                                    return SizedBox(
-                                      height: windowSize.height * 0.42,
-                                      width: windowSize.width * 0.8,
-                                      child: Center(child: CircularProgressIndicator(color: ColorDefaults.primaryBlue,),),
-                                    );
-                                  }
-                                  if (snapshot.hasError) {
-                                    return SizedBox(
-                                      height: windowSize.height * 0.42,
-                                      width: windowSize.width * 0.8,
-                                      child: Center(child: GlobalText('Error al obtener los datos! ${snapshot.error}', fontSize: 24, color: Colors.red,),),
-                                    );
-                                  }
-                                  if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                                    // return Center(child: GlobalText('Sin datos disponibles entre ese rango de fechas', fontSize: 24));
-                                    return SizedBox(
-                                      height: windowSize.height * 0.42,
-                                      width: windowSize.width * 0.8,
-                                      child: Center(child: GlobalText('Sin datos disponibles para el día seleccionado', fontSize: 24,)),
-                                    );
-                                  }
-                                  return BarGraphHours(allData: snapshot.data!, widthGraph: 0.8,);
-                                }
-                              )
-                            ],
-                          );
-                        }
-                      )
                     ],
                   );
                 },
               ),
+              FilterDayWidget(),
+              const SizedBox(height: 10,),
+              Consumer<FilterDayProvider>(
+                builder: (context, dayProvider, child){
+                  return Column(
+                    children: [
+                      StreamBuilder(
+                        stream: SupabaseServices().getDataByDayOperative('wur_hora', dayProvider.getDate), 
+                        builder: (context, snapshot){
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return SizedBox(
+                              height: windowSize.height * 0.42,
+                              width: windowSize.width * 0.8,
+                              child: Center(child: CircularProgressIndicator(color: ColorDefaults.primaryBlue,),),
+                            );
+                          }
+                          if (snapshot.hasError) {
+                            return SizedBox(
+                              height: windowSize.height * 0.42,
+                              width: windowSize.width * 0.8,
+                              child: Center(child: GlobalText('Error al obtener los datos! ${snapshot.error}', fontSize: 24, color: Colors.red,),),
+                            );
+                          }
+                          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                            // return Center(child: GlobalText('Sin datos disponibles entre ese rango de fechas', fontSize: 24));
+                            return SizedBox(
+                              height: windowSize.height * 0.42,
+                              width: windowSize.width * 0.8,
+                              child: Center(child: GlobalText('Sin datos disponibles para el día seleccionado', fontSize: 24,)),
+                            );
+                          }
+                          return BarGraphHours(allData: snapshot.data!, widthGraph: 0.8,);
+                        }
+                      )
+                    ],
+                  );
+                }
+              )
             ],
           ),
         ),
