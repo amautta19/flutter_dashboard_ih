@@ -2,22 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dashboard_ih/defaults/color_defaults.dart';
 import 'package:flutter_dashboard_ih/defaults/text_global.dart';
 import 'package:flutter_dashboard_ih/providers/filter_element_provider.dart';
-import 'package:flutter_dashboard_ih/providers/umbrales_provider.dart'; // Importante
+import 'package:flutter_dashboard_ih/providers/umbrales_provider.dart'; 
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
-// Widget para mostrar el consumo diario
 class WurBarGraphDiary extends StatefulWidget {
-  final List<dynamic> allData;  // Lista de toda la data
-  final bool umbralInverso;     // Se revierte la condición del umbral del gráfico
-  final String unidadM;         // Unidad de los valores (m3, %,...)
+  final List<dynamic> allData;
+  final bool umbralInverso;
+  final String unidadM;
   final String titleM;
-  final double widthGraph;   
-  final int maxLabel;       // Título del gráfico
+  final double widthGraph;
+  final int maxLabel;
   const WurBarGraphDiary({
     super.key, 
     required this.allData, 
-    this.umbralInverso = false,       // Valor predeterminado desactivado 
+    this.umbralInverso = false,
     this.unidadM = 'm³', 
     this.titleM = 'Consumo Agua (m³)',
     this.widthGraph = 0.60,
@@ -44,29 +43,59 @@ class _WurBarGraphDiaryState extends State<WurBarGraphDiary> {
       _prepararDatos();
     }
   }
-  // Prearar los datos obtenidos de la lista
+
   void _prepararDatos() {
-    // Ordename los datos de forma ascendente
-    _sortedData = List.from(widget.allData);
-    _sortedData.sort((a, b) {
-      try {
-        DateTime fechaA = DateTime.parse(a['fecha_operativa']);
-        DateTime fechaB = DateTime.parse(b['fecha_operativa']);
-        return fechaA.compareTo(fechaB);
-      } catch (e) {
-        return 0;
+    if (widget.allData.isEmpty) {
+      _sortedData = [];
+      return;
+    }
+
+    // 1. Obtener mes y año de los datos recibidos
+    DateTime fechaRef = DateTime.parse(widget.allData.first['fecha_operativa']);
+    int year = fechaRef.year;
+    int month = fechaRef.month;
+
+    // 2. Calcular días del mes
+    int diasEnMes = DateTime(year, month + 1, 0).day;
+
+    // 3. Mapear datos existentes
+    Map<String, dynamic> dataMap = {
+      for (var item in widget.allData) 
+        _formatearKey(item['fecha_operativa']): item
+    };
+
+    // 4. Generar lista completa de fechas para el eje X
+    List<dynamic> completa = [];
+    for (int i = 1; i <= diasEnMes; i++) {
+      String key = "$year-${month.toString().padLeft(2, '0')}-${i.toString().padLeft(2, '0')}";
+      if (dataMap.containsKey(key)) {
+        completa.add(dataMap[key]);
+      } else {
+        completa.add({
+          'fecha_operativa': key,
+          // Se dejan los demás campos nulos para que el gráfico los tome como 0
+        });
       }
-    });
+    }
+    _sortedData = completa;
   }
 
-  // Obtener el promedio de los valores como umbral
+  String _formatearKey(String fecha) {
+    try {
+      DateTime dt = DateTime.parse(fecha);
+      return "${dt.year}-${dt.month.toString().padLeft(2, '0')}-${dt.day.toString().padLeft(2, '0')}";
+    } catch (e) {
+      return "";
+    }
+  }
+
   double _calcularPromedio(String column) {
     if (_sortedData.isEmpty) return 0;
     double suma = 0;
     int cont = 0;
     for (var item in _sortedData) {
       final valor = (item[column] ?? 0).toDouble();
-      if (valor > 0) { // Solo promediar días con consumo
+      if (valor > 0) {
         suma += valor;
         cont++;
       }
@@ -76,27 +105,22 @@ class _WurBarGraphDiaryState extends State<WurBarGraphDiary> {
 
   @override
   Widget build(BuildContext context) {
-    // Obtenemos valor de los providers
-    final String selectedFilter = context.watch<FilterElementProvider>().getElement; // Filtro escogido
-    final umbralesProvider = context.watch<UmbralesProvider>(); // Lista de umbrales de supabase
+    final String selectedFilter = context.watch<FilterElementProvider>().getElement; 
+    final umbralesProvider = context.watch<UmbralesProvider>(); 
 
-    // Buscamos en la tabla cargada en el provider si existe el elemento
     final umbralFila = umbralesProvider.tablaUmbrales.firstWhere(
       (u) => selectedFilter.contains(u['argumento']),
       orElse: () => {},
     );
 
-    // Variables para la lógica de los umbrales
     double valorReferencia;
     String umbralLimite;
     Color colorReferencia;
 
-    // Si existe un umbral en la tabla de supabase usamos ese
     if (umbralFila.isNotEmpty && umbralFila['umbral'] != null) {
       valorReferencia = (umbralFila['umbral'] as num).toDouble();
       umbralLimite = 'Umbral Técnico: ${valorReferencia.toStringAsFixed(1)} ${widget.unidadM}';
       colorReferencia = Colors.orangeAccent; 
-    // Si no existe umbral en la tabla de supabse se utiliza el promedio calculado
     } else {
       valorReferencia = _calcularPromedio(selectedFilter);
       umbralLimite = 'Promedio: ${valorReferencia.toStringAsFixed(1)} ${widget.unidadM}';
@@ -119,12 +143,11 @@ class _WurBarGraphDiaryState extends State<WurBarGraphDiary> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               GlobalText(
-                '${widget.titleM} : $selectedFilter', // Título dinámico del gráfico
+                '${widget.titleM} : $selectedFilter', 
                 color: ColorDefaults.primaryBlue,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
-              // Mostrar el valor del umbral
               Row(
                 children: [
                   Container(
@@ -145,11 +168,9 @@ class _WurBarGraphDiaryState extends State<WurBarGraphDiary> {
             ],
           ),
           const SizedBox(height: 10),
-          // Gráfico de barras
           Expanded(
             child: SfCartesianChart(
               key: ValueKey('chart_${selectedFilter}_$valorReferencia'),
-              // Zoom en el eje X
               zoomPanBehavior: ZoomPanBehavior( 
                   enablePanning: true, 
                   zoomMode: ZoomMode.x
@@ -160,21 +181,18 @@ class _WurBarGraphDiaryState extends State<WurBarGraphDiary> {
                 activationMode: ActivationMode.singleTap,
                 duration: 500, 
               ),
-              // Configuración del Eje X
               primaryXAxis: CategoryAxis(
-                autoScrollingDelta: widget.maxLabel, // Máximo de barras en la vista 14
+                autoScrollingDelta: widget.maxLabel, 
                 autoScrollingMode: AutoScrollingMode.end,
                 majorGridLines: const MajorGridLines(width: 0),
                 labelStyle: TextStyle(
                   color: ColorDefaults.darkPrimary, fontSize: 11),
               ),
-              // Configuración del Eje Y
               primaryYAxis: NumericAxis(
-                minimum: 0, // Empieza en 0 el valor del eje
+                minimum: 0, 
                 maximum: 3.2,
                 rangePadding: ChartRangePadding.additional,
                 labelStyle: TextStyle(color: ColorDefaults.darkPrimary, fontSize: 11),
-                // Configuración de la vista del umbral
                 plotBands: <PlotBand>[
                   PlotBand(
                     isVisible: true,
@@ -186,18 +204,15 @@ class _WurBarGraphDiaryState extends State<WurBarGraphDiary> {
                   )
                 ],
               ),
-              // Configuración de los valores mostrados en la gráfica
               series: <CartesianSeries<dynamic, String>>[
-                // Configuración de las barras de la gráfica
                 ColumnSeries<dynamic, String>(
                   key: ValueKey('bars_$selectedFilter'),
                   name: 'Consumo',
                   dataSource: _sortedData,
                   xValueMapper: (data, _) => data['fecha_operativa']?.toString() ?? '',
-                  yValueMapper: (data, _) => data[selectedFilter] ?? 0, // Mostramos los valores del filtro
+                  yValueMapper: (data, _) => data[selectedFilter] ?? 0, 
                   pointColorMapper: (data, _) {
                     final valor = data[selectedFilter] ?? 0;
-                    // Se cambia la condición del umbral dependiendo del valor bool insertado en el widget
                     if(widget.umbralInverso == false){
                       return valor > valorReferencia ? Colors.red : Colors.green;
                     }else{
@@ -205,19 +220,16 @@ class _WurBarGraphDiaryState extends State<WurBarGraphDiary> {
                     }
                   },
                   borderRadius: const BorderRadius.vertical(top: Radius.circular(6)),
-                  // Configuración de los dataLabels
                   dataLabelSettings: DataLabelSettings(
                     isVisible: true,
                     borderRadius: 5,
                     color: Colors.amberAccent.withOpacity(0.8),
-                    // labelPosition: ChartDataLabelPosition.inside,
                     textStyle: TextStyle(
                       fontSize: 10,
                       color: ColorDefaults.darkPrimary,
                       fontWeight: FontWeight.bold)
                   ),
                 ),
-                // Configuración de la Línea de tendencia evolución
                 LineSeries<dynamic, String>(
                   key: ValueKey('line_$selectedFilter'),
                   name: 'Evolución',
@@ -236,7 +248,7 @@ class _WurBarGraphDiaryState extends State<WurBarGraphDiary> {
                   dataLabelSettings: DataLabelSettings(
                     isVisible: true,
                     textStyle: TextStyle(
-                      fontSize: 12, // Un poco más pequeño para que no se amontone
+                      fontSize: 12, 
                       fontWeight: FontWeight.bold,
                       color: ColorDefaults.darkPrimary
                     ),
