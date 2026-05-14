@@ -75,7 +75,7 @@ class _TableWurSemanalState extends State<TableWurSemanal> {
 
     return SizedBox(
       height: windowSize.height * 0.3,
-      width: windowSize.width * 0.25,
+      width: windowSize.width * 0.20,
       child: SfDataGridTheme(
         data: SfDataGridThemeData(
           gridLineColor: ColorDefaults.darkPrimary.withOpacity(0.5),
