@@ -63,4 +63,11 @@ Stream<List<Map<String, dynamic>>> getDataByDayOperative(String table, DateTime 
       .single();
     return response['valor'];
   }
+
+  Stream<List<Map<String, dynamic>>> getWurSemana(){
+    return supabase
+      .from('wur_semanal')
+      .stream(primaryKey: ['id'])
+      .order('semana_inicio', ascending: true);
+  }
 }
