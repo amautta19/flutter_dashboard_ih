@@ -18,9 +18,9 @@ class BarGraphWurMonthly extends StatefulWidget {
     super.key, 
     required this.allData, 
     this.umbralInverso = false,       // Valor predeterminado desactivado 
-    this.unidadM = 'm³', 
+    this.unidadM = '', 
     this.titleM = 'Consumo Agua (m³)',
-    this.widthGraph = 0.60,
+    this.widthGraph = 0.50,
     this.maxLabel = 14,
   });
 
@@ -59,21 +59,6 @@ class _BarGraphWurMonthlyState extends State<BarGraphWurMonthly> {
     });
   }
 
-  // Obtener el promedio de los valores como umbral
-  double _calcularPromedio(String column) {
-    if (_sortedData.isEmpty) return 0;
-    double suma = 0;
-    int cont = 0;
-    for (var item in _sortedData) {
-      final valor = (item[column] ?? 0).toDouble();
-      if (valor > 0) { // Solo promediar días con consumo
-        suma += valor;
-        cont++;
-      }
-    }
-    return cont > 0 ? suma / cont : 0;
-  }
-
   @override
   Widget build(BuildContext context) {
     // Obtenemos valor de los providers
@@ -92,21 +77,15 @@ class _BarGraphWurMonthlyState extends State<BarGraphWurMonthly> {
     Color colorReferencia;
 
     // Si existe un umbral en la tabla de supabase usamos ese
-    if (umbralFila.isNotEmpty && umbralFila['umbral'] != null) {
-      valorReferencia = (umbralFila['umbral'] as num).toDouble();
-      umbralLimite = 'Umbral Técnico: ${valorReferencia.toStringAsFixed(1)} ${widget.unidadM}';
-      colorReferencia = Colors.orangeAccent; 
+    valorReferencia = (umbralFila['umbral'] as num).toDouble();
+    umbralLimite = 'Umbral Técnico: ${valorReferencia.toStringAsFixed(1)} ${widget.unidadM}';
+    colorReferencia = Colors.orange; 
     // Si no existe umbral en la tabla de supabse se utiliza el promedio calculado
-    } else {
-      valorReferencia = _calcularPromedio(selectedFilter);
-      umbralLimite = 'Promedio: ${valorReferencia.toStringAsFixed(1)} ${widget.unidadM}';
-      colorReferencia = Colors.orangeAccent;
-    }
 
     final windowSize = MediaQuery.of(context).size;
 
     return Container(
-      height: windowSize.height * 0.42,
+      height: windowSize.height * 0.35,
       width: windowSize.width * widget.widthGraph,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -184,7 +163,7 @@ class _BarGraphWurMonthlyState extends State<BarGraphWurMonthly> {
                 // Configuración de las barras de la gráfica
                 ColumnSeries<dynamic, String>(
                   key: ValueKey('bars_$selectedFilter'),
-                  name: 'Consumo',
+                  name: 'WUR',
                   dataSource: _sortedData,
                   xValueMapper: (data, _) => data['mes_label']?.toString() ?? '',
                   yValueMapper: (data, _) => data['wur_mensual'] ?? 0, // Mostramos los valores del filtro
@@ -192,9 +171,9 @@ class _BarGraphWurMonthlyState extends State<BarGraphWurMonthly> {
                     final valor = data[selectedFilter] ?? 0;
                     // Se cambia la condición del umbral dependiendo del valor bool insertado en el widget
                     if(widget.umbralInverso == false){
-                      return valor > valorReferencia ? Colors.red : ColorDefaults.primaryBlue;
+                      return valor > valorReferencia ? Colors.red : Colors.green;
                     }else{
-                      return valor < valorReferencia ? Colors.red : ColorDefaults.primaryBlue;
+                      return valor < valorReferencia ? Colors.red : Colors.green;
                     }
                   },
                   borderRadius: const BorderRadius.vertical(top: Radius.circular(6)),
@@ -215,16 +194,16 @@ class _BarGraphWurMonthlyState extends State<BarGraphWurMonthly> {
                   dataSource: _sortedData,
                   xValueMapper: (data, _) => data['mes_label']?.toString() ?? '',
                   yValueMapper: (data, _) => data['wur_mensual'] ?? 0,
-                  color: Colors.green,
+                  color: ColorDefaults.primaryBlue,
                   width: 3,
                   markerSettings: const MarkerSettings(
                     isVisible: true,
                     height: 4,
                     width: 4,
                     shape: DataMarkerType.circle,
-                    color: Colors.green,
+                    color: Colors.blueAccent,
                   ),
-                  animationDuration: 800,
+                  animationDuration: 500,
                 ),
               ],
             ),
