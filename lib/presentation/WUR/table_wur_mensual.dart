@@ -4,19 +4,19 @@ import 'package:flutter_dashboard_ih/defaults/text_global.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
 
-class TableWurSemanal extends StatefulWidget {
+class TableWurMensual extends StatefulWidget {
   final List<dynamic> allData; 
-  const TableWurSemanal({super.key, required this.allData});
+  const TableWurMensual({super.key, required this.allData});
 
   @override
-  State<TableWurSemanal> createState() => _TableWurSemanalState();
+  State<TableWurMensual> createState() => _TableWurMensualState();
 }
 
-class _TableWurSemanalState extends State<TableWurSemanal> {
+class _TableWurMensualState extends State<TableWurMensual> {
   late _ConsumoDataSource _dataSource;
   
   @override
-  void didUpdateWidget(TableWurSemanal oldWidget) {
+  void didUpdateWidget(TableWurMensual oldWidget) {
     super.didUpdateWidget(oldWidget);
     if(oldWidget.allData != widget.allData){
       _actualizarDataSource();
@@ -28,8 +28,8 @@ class _TableWurSemanalState extends State<TableWurSemanal> {
       List<dynamic> sortedData = List.from(widget.allData);
       // Ordenamos por fecha de inicio descendente (la más reciente arriba)
       sortedData.sort((a, b) {
-        DateTime fechaA = DateTime.parse(a['semana_inicio'] ?? DateTime.now().toString());
-        DateTime fechaB = DateTime.parse(b['semana_inicio'] ?? DateTime.now().toString());
+        DateTime fechaA = DateTime.parse(a['mes_inicio'] ?? DateTime.now().toString());
+        DateTime fechaB = DateTime.parse(b['mes_inicio'] ?? DateTime.now().toString());
         return fechaB.compareTo(fechaA);
       });
       _dataSource = _ConsumoDataSource(data: sortedData);
@@ -53,7 +53,7 @@ class _TableWurSemanalState extends State<TableWurSemanal> {
 
     return SizedBox(
       height: windowSize.height * 0.3,
-      width: windowSize.width * 0.2,
+      width: windowSize.width * 0.3,
       child: SfDataGridTheme(
         data: SfDataGridThemeData(
           gridLineColor: ColorDefaults.darkPrimary.withOpacity(0.5),
@@ -73,9 +73,11 @@ class _TableWurSemanalState extends State<TableWurSemanal> {
 
 List<GridColumn> _getColumns(BorderSide border) {
   return [
-    _buildColumn('semana', 'Semana', border), 
-    _buildColumn('fecha_inicio', 'Fecha Inicio', border), 
-    _buildColumn('wur_semanal', 'WUR', border), 
+    _buildColumn('mes', 'Mes', border), 
+    _buildColumn('bebida_total', 'Bebida', border), 
+    _buildColumn('pozos_total', 'Pozos', border), 
+    _buildColumn('wur_mensual', 'WUR', border), 
+
   ];
 }
 
@@ -103,18 +105,22 @@ class _ConsumoDataSource extends DataGridSource {
       return DataGridRow(cells: [
         // La etiqueta "Semana X"
         DataGridCell<String>(
-          columnName: 'semana', 
-          value: item['semana_label']?.toString() ?? 'N/A'
+          columnName: 'mes', 
+          value: item['mes_label']?.toString() ?? 'N/A'
         ),
         // La fecha de inicio de la semana (String)
-        DataGridCell<String>(
-          columnName: 'fecha_inicio', 
-          value: item['semana_inicio']?.toString() ?? 'N/A'
+        DataGridCell<double>(
+          columnName: 'bebida_total', 
+          value: (item['total_m3_bebida_mensual'] as num?)?.toDouble() ?? 0.0
         ),
         // El valor numérico del WUR
         DataGridCell<double>(
-          columnName: 'wur_semanal', 
-          value: (item['wur_semanal'] as num?)?.toDouble() ?? 0.0
+          columnName: 'pozos_total', 
+          value: (item['tota_pozos_mensual'] as num?)?.toDouble() ?? 0.0
+        ),
+        DataGridCell<double>(
+          columnName: 'wur_mensual', 
+          value: (item['wur_mensual'] as num?)?.toDouble() ?? 0.0
         ),
       ]);
     }).toList();
@@ -133,8 +139,8 @@ class _ConsumoDataSource extends DataGridSource {
     return DataGridRowAdapter(
       color: ColorDefaults.whitePrimary,
       cells: row.getCells().map<Widget>((cell) {
-        final bool isWur = cell.columnName == 'wur_semanal';
-        final bool isFecha = cell.columnName == 'fecha_inicio';
+        final bool isWur = cell.columnName == 'wur_mensual';
+        final bool isFecha = cell.columnName == 'mes';
 
         return Container(
           alignment: Alignment.center, 
