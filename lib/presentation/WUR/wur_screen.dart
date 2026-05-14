@@ -5,6 +5,7 @@ import 'package:flutter_dashboard_ih/presentation/WUR/wur_bar_graph_diary.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/appbar_design.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/bar_graph_hours.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/filter_day.dart';
+import 'package:flutter_dashboard_ih/presentation/widgets/filter_month.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/navbar_design.dart';
 import 'package:flutter_dashboard_ih/providers/filter_day_provider.dart';
 import 'package:flutter_dashboard_ih/providers/filter_element_provider.dart';
@@ -37,7 +38,7 @@ class _WurScreenState extends State<WurScreen> {
         title: 'WUR - PLANTA PUCUSANA', 
         colorBar: Colors.redAccent, 
         table: 'wur_hora',
-        filterByMonth: true,
+        filterByMonth: false,
       ),
       drawer: NavbarDisgn(),
       body: SingleChildScrollView(
@@ -45,6 +46,7 @@ class _WurScreenState extends State<WurScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
           child: Column(
             children: [
+              FilterMonthWidget(),
               // --- FUTURE BUILDER PRINCIPAL (DEPENDE DEL MES) ---
               StreamBuilder<List<dynamic>>(
                 stream: SupabaseServices().getData('wur_diario'),
