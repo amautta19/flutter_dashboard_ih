@@ -1,93 +1,84 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dashboard_ih/defaults/text_global.dart';
 
 class CardWur extends StatelessWidget {
-  const CardWur({super.key});
+  final double valorActual;
+  final double umbral;
+
+  const CardWur({
+    super.key,
+    required this.valorActual,
+    required this.umbral,
+  });
 
   @override
   Widget build(BuildContext context) {
+    // Definimos si el proceso es eficiente según tu umbral de planta
+    final bool esEficiente = valorActual <= umbral;
+    // Verde Cian para eficiencia, Rojo suave para ineficiencia
+    final Color colorEstado = esEficiente ? const Color(0xFF00FFC2) : const Color(0xFFFF5252);
+
     return Container(
-      width: 180, // Ajusta según el espacio en tu layout
-      height: 150,
+      width: 240,
+      padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
-        // color: const Color(0xFF1E293B),
-        color: Colors.lightBlueAccent,
-        borderRadius: BorderRadius.circular(16),
+        // Gradiente Azul un poco más claro y profesional
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            const Color(0xFF1E293B), // Slate 800: Más claro que el anterior
+            const Color(0xFF0F172A), // Slate 900: Mantiene la profundidad
+          ],
+        ),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: colorEstado.withOpacity(0.4),
+          width: 2,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
           ),
         ],
-        border: Border.all(
-          color: Colors.blueAccent.withOpacity(0.3),
-          width: 1,
-        ),
       ),
-      child: Stack(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          // Un pequeño adorno visual de fondo (opcional)
-          Positioned(
-            right: -10,
-            top: -10,
-            child: Icon(
-              Icons.water_drop_outlined,
-              size: 80,
-              color: Colors.blueAccent.withOpacity(0.05),
-            ),
+          GlobalText(
+            'WUR 2026',
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: Colors.white.withOpacity(0.8),
           ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
+          const SizedBox(height: 8),
+          // El KPI principal
+          GlobalText(
+            valorActual.toStringAsFixed(2),
+            fontSize: 68, // Un poco más grande para llenar el espacio
+            fontWeight: FontWeight.w900,
+            color: colorEstado,
+          ),
+          const SizedBox(height: 16),
+          // Indicador de umbral minimalista
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.05),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  'WUR ACUMULADO',
-                  style: TextStyle(
-                    color: Colors.blueAccent[100],
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1.2,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.baseline,
-                  textBaseline: TextBaseline.alphabetic,
-                  children: [
-                    const Text(
-                      '1.58', // Valor de ejemplo
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      'm³/hl', // Unidad típica de WUR
-                      style: TextStyle(
-                        color: Colors.grey[400],
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 1),
-                // Indicador de tendencia simple
-                Row(
-                  children: [
-                    const Icon(Icons.trending_down, color: Colors.greenAccent, size: 16),
-                    const SizedBox(width: 4),
-                    Text(
-                      '-2.4% vs ayer',
-                      style: TextStyle(
-                        color: Colors.greenAccent[400],
-                        fontSize: 11,
-                      ),
-                    ),
-                  ],
+                Icon(Icons.tune_rounded, size: 14, color: colorEstado.withOpacity(0.7)),
+                const SizedBox(width: 6),
+                GlobalText(
+                  'UMBRAL: $umbral',
+                  fontSize: 11,
+                  color: Colors.white70,
+                  fontWeight: FontWeight.bold,
                 ),
               ],
             ),

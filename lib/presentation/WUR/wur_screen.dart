@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dashboard_ih/defaults/color_defaults.dart';
 import 'package:flutter_dashboard_ih/defaults/text_global.dart';
 import 'package:flutter_dashboard_ih/presentation/WUR/bar_graph_wur_monthly.dart';
+import 'package:flutter_dashboard_ih/presentation/WUR/card_wur.dart';
 import 'package:flutter_dashboard_ih/presentation/WUR/table_wur_mensual.dart';
 import 'package:flutter_dashboard_ih/presentation/WUR/table_wur_semanal.dart';
 import 'package:flutter_dashboard_ih/presentation/WUR/wur_bar_graph_diary.dart';
@@ -53,6 +54,8 @@ class _WurScreenState extends State<WurScreen> {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  CardWur(valorActual: 1.52, umbral: 1.55,),
+                  const SizedBox(width: 10,),
                   StreamBuilder<List<dynamic>>(
                     stream: SupabaseServices().getWurMensual(), // Llamada a la nueva vista
                     builder: (context, snapshot) {
