@@ -111,8 +111,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        scaffoldBackgroundColor: ColorDefaults.darkPrimary,
-      ),
+scaffoldBackgroundColor: const Color(0xFF12121E),      ),
       // Si las versiones son iguales muestra la app, si son diferentes salta a la ventana de actualizar versión
       home: (actualVersion == newVersion)
           ? const WindowsTableScreen()
