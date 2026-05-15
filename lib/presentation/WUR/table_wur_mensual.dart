@@ -134,9 +134,10 @@ class _DataSource extends DataGridSource{
     );
 
     return DataGridRowAdapter(
+      color: ColorDefaults.whitePrimary,
       cells: row.getCells().map<Widget>((cell){
         final bool isWur = cell.columnName == 'wur';
-        Color cellBackgroundColor = ColorDefaults.whitePrimary;
+        Color cellBackgroundColor = Colors.transparent;
         Color textColor = ColorDefaults.darkPrimary;
         if(isWur){
           double valorCelda = (cell.value as num).toDouble();
