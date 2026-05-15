@@ -73,22 +73,27 @@ class _TableWurSemanalState extends State<TableWurSemanal> {
       width: 2.5
     );
 
-    return SizedBox(
-      height: windowSize.height * 0.3,
-      width: windowSize.width * 0.20,
-      child: SfDataGridTheme(
-        data: SfDataGridThemeData(
-          gridLineColor: ColorDefaults.darkPrimary.withOpacity(0.5),
-          gridLineStrokeWidth: 2.5,
+    return Column(
+      children: [
+        GlobalText('WUR - Semanal', fontSize: 18, color: ColorDefaults.secundaryBlue, fontWeight: FontWeight.bold,),
+        SizedBox(
+          height: windowSize.height * 0.3,
+          width: windowSize.width * 0.20,
+          child: SfDataGridTheme(
+            data: SfDataGridThemeData(
+              gridLineColor: ColorDefaults.darkPrimary.withOpacity(0.5),
+              gridLineStrokeWidth: 2.5,
+            ),
+            child: SfDataGrid(
+              source: _dataSource,
+              columnWidthMode: ColumnWidthMode.fill, 
+              gridLinesVisibility: GridLinesVisibility.horizontal,
+              headerGridLinesVisibility: GridLinesVisibility.horizontal,
+              columns: _getColumns(customBorder),
+            ),
+          ),
         ),
-        child: SfDataGrid(
-          source: _dataSource,
-          columnWidthMode: ColumnWidthMode.fill, 
-          gridLinesVisibility: GridLinesVisibility.horizontal,
-          headerGridLinesVisibility: GridLinesVisibility.horizontal,
-          columns: _getColumns(customBorder),
-        ),
-      ),
+      ],
     );
   }
 }

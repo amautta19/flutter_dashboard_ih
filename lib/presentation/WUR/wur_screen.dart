@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dashboard_ih/defaults/color_defaults.dart';
 import 'package:flutter_dashboard_ih/defaults/text_global.dart';
 import 'package:flutter_dashboard_ih/presentation/WUR/bar_graph_wur_monthly.dart';
+import 'package:flutter_dashboard_ih/presentation/WUR/table_wur_mensual.dart';
 import 'package:flutter_dashboard_ih/presentation/WUR/table_wur_semanal.dart';
 import 'package:flutter_dashboard_ih/presentation/WUR/wur_bar_graph_diary.dart';
 import 'package:flutter_dashboard_ih/presentation/widgets/appbar_design.dart';
@@ -47,11 +48,41 @@ class _WurScreenState extends State<WurScreen> {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   StreamBuilder<List<dynamic>>(
-                  stream: SupabaseServices().getWurMensual(), // Llamada a la nueva vista
+                    stream: SupabaseServices().getWurMensual(), // Llamada a la nueva vista
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(child: CircularProgressIndicator(color: ColorDefaults.primaryBlue));
+                      }
+                      if (snapshot.hasError) {
+                        return const Center(child: GlobalText('Error al obtener los datos!', fontSize: 24, color: Colors.red,));
+                      }
+                      if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return Center(child: GlobalText('Sin datos disponibles', fontSize: 24));
+                      }
+                      return Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          BarGraphWurMonthly(
+                            allData: snapshot.data!,
+                            unidadM: '',
+                            titleM: 'WUR Mensual',
+                            maxLabel: 12,
+                          ),
+                          const SizedBox(width: 5,),
+                          TableWurMonthly(allData: snapshot.data!, width: 0.15,),
+                        ],
+                      );
+                    },
+                  ),
+                  const SizedBox(width: 5,),
+                  StreamBuilder<List<dynamic>>(
+                  stream: SupabaseServices().getWurSemana(), // Llamada a la nueva vista
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return Center(child: CircularProgressIndicator(color: ColorDefaults.primaryBlue));
@@ -62,32 +93,10 @@ class _WurScreenState extends State<WurScreen> {
                     if (!snapshot.hasData || snapshot.data!.isEmpty) {
                       return Center(child: GlobalText('Sin datos disponibles', fontSize: 24));
                     }
-                    return BarGraphWurMonthly(
-                      allData: snapshot.data!,
-                      unidadM: '',
-                      titleM: 'WUR Mensual',
-                      maxLabel: 12,
-
-                    );
+                    return TableWurSemanal(allData: snapshot.data!);
                   },
                 ),
-                              
-              StreamBuilder<List<dynamic>>(
-              stream: SupabaseServices().getWurSemana(), // Llamada a la nueva vista
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator(color: ColorDefaults.primaryBlue));
-                }
-                if (snapshot.hasError) {
-                  return const Center(child: GlobalText('Error al obtener los datos!', fontSize: 24, color: Colors.red,));
-                }
-                if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Center(child: GlobalText('Sin datos disponibles', fontSize: 24));
-                }
-                return TableWurSemanal(allData: snapshot.data!);
-              },
-            ),
-                ]
+              ]
               ),
               FilterMonthWidget(),
               // --- FUTURE BUILDER PRINCIPAL (DEPENDE DEL MES) ---
@@ -117,13 +126,13 @@ class _WurScreenState extends State<WurScreen> {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      GlobalText('Registro de WUR - Planta Pucusana', fontSize: 16, fontWeight: FontWeight.bold, color: ColorDefaults.secundaryBlue,),
+                      // GlobalText('Registro de WUR - Planta Pucusana', fontSize: 16, fontWeight: FontWeight.bold, color: ColorDefaults.secundaryBlue,),
                       WurBarGraphDiary(
                         allData: filteredData,
                         titleM: 'WUR',
                         unidadM: '',
-                        widthGraph: 1,
-                        maxLabel: 20,),
+                        widthGraph: 0.5,
+                        maxLabel: 10,),
                       const SizedBox(height: 10,),
                     ],
                   );
@@ -160,7 +169,7 @@ class _WurScreenState extends State<WurScreen> {
                               child: Center(child: GlobalText('Sin datos disponibles para el día seleccionado', fontSize: 24,)),
                             );
                           }
-                          return BarGraphHours(allData: snapshot.data!, widthGraph: 0.8,);
+                          return BarGraphHours(allData: snapshot.data!, widthGraph: 0.5,);
                         }
                       )
                     ],
