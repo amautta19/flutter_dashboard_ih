@@ -52,6 +52,7 @@ class _WurScreenState extends State<WurScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CardWur(valorActual: 1.52, umbral: 1.55,),
