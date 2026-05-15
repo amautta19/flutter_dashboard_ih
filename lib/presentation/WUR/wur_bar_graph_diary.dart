@@ -113,7 +113,7 @@ class _WurBarGraphDiaryState extends State<WurBarGraphDiary> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               GlobalText(
-                '${widget.titleM} : $selectedFilter', 
+                widget.titleM, 
                 color: ColorDefaults.primaryBlue,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,

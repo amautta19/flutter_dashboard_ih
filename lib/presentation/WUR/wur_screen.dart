@@ -35,7 +35,7 @@ class _WurScreenState extends State<WurScreen> {
   }
   @override
   Widget build(BuildContext context) {
-    final selectedMonth = context.watch<FilterMonthProvider>().getMonth;
+    List<String> meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Setiembre', 'Octubre', 'Noviembre', 'Diciembre'];
     final windowSize = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppbarDesign(
@@ -102,84 +102,96 @@ class _WurScreenState extends State<WurScreen> {
                 ),
               ]
               ),
-              FilterMonthWidget(),
-              // --- FUTURE BUILDER PRINCIPAL (DEPENDE DEL MES) ---
-              StreamBuilder<List<dynamic>>(
-                stream: SupabaseServices().getData('wur_diario'),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator(color: ColorDefaults.primaryBlue));
-                  }
-                  if (snapshot.hasError) {
-                    return const Center(child: GlobalText('Error al obtener los datos!', fontSize: 24, color: Colors.red,));
-                  }
-                  if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return Center(child: GlobalText('Sin datos disponibles', fontSize: 24));
-                  }
-
-                  final filteredData = snapshot.data!.where((item) {
-                    try {
-                      final fecha = DateTime.parse(item['fecha_operativa']);
-                      return fecha.month == selectedMonth;
-                    } catch (e) { return false; }
-                  }).toList();
-
-                  if (filteredData.isEmpty) {
-                    return const Center(child: GlobalText('No hay datos para este mes seleccionado', fontSize: 24,));
-                  }
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+              Row(
+                children: [
+                  Column(
                     children: [
-                      // GlobalText('Registro de WUR - Planta Pucusana', fontSize: 16, fontWeight: FontWeight.bold, color: ColorDefaults.secundaryBlue,),
-                      WurBarGraphDiary(
-                        allData: filteredData,
-                        titleM: 'WUR',
-                        unidadM: '',
-                        widthGraph: 0.5,
-                        maxLabel: 10,),
-                      const SizedBox(height: 10,),
-                    ],
-                  );
-                },
-              ),
-              FilterDayWidget(),
-              const SizedBox(height: 10,),
-              Consumer<FilterDayProvider>(
-                builder: (context, dayProvider, child){
-                  return Column(
-                    children: [
-                      StreamBuilder(
-                        stream: SupabaseServices().getDataByDayOperative('wur_hora', dayProvider.getDate), 
-                        builder: (context, snapshot){
+                      FilterMonthWidget(),
+                      StreamBuilder<List<dynamic>>(
+                        stream: SupabaseServices().getData('wur_diario'),
+                        builder: (context, snapshot) {
+                          final selectedMonth = context.watch<FilterMonthProvider>().getMonth;
+                          String nombremes = meses[selectedMonth - 1];
                           if (snapshot.connectionState == ConnectionState.waiting) {
-                            return SizedBox(
-                              height: windowSize.height * 0.42,
-                              width: windowSize.width * 0.8,
-                              child: Center(child: CircularProgressIndicator(color: ColorDefaults.primaryBlue,),),
-                            );
+                            return Center(child: CircularProgressIndicator(color: ColorDefaults.primaryBlue));
                           }
                           if (snapshot.hasError) {
-                            return SizedBox(
-                              height: windowSize.height * 0.42,
-                              width: windowSize.width * 0.8,
-                              child: Center(child: GlobalText('Error al obtener los datos! ${snapshot.error}', fontSize: 24, color: Colors.red,),),
-                            );
+                            return const Center(child: GlobalText('Error al obtener los datos!', fontSize: 24, color: Colors.red,));
                           }
                           if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                            // return Center(child: GlobalText('Sin datos disponibles entre ese rango de fechas', fontSize: 24));
-                            return SizedBox(
-                              height: windowSize.height * 0.42,
-                              width: windowSize.width * 0.8,
-                              child: Center(child: GlobalText('Sin datos disponibles para el día seleccionado', fontSize: 24,)),
+                            return Center(child: GlobalText('Sin datos disponibles', fontSize: 24));
+                          }
+
+                          final filteredData = snapshot.data!.where((item) {
+                            try {
+                              final fecha = DateTime.parse(item['fecha_operativa']);
+                              return fecha.month == selectedMonth;
+                            } catch (e) { return false; }
+                          }).toList();
+
+                          if (filteredData.isEmpty) {
+                            return const Center(child: GlobalText('No hay datos para este mes seleccionado', fontSize: 24,));
+                          }
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              WurBarGraphDiary(
+                                allData: filteredData,
+                                titleM: 'WUR diario en el mes de $nombremes',
+                                unidadM: '',
+                                widthGraph: 0.5,
+                                maxLabel: 10,),
+                              const SizedBox(height: 10,),
+                            ],
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                  Spacer(),
+                  Column(
+                    children: [
+                      FilterDayWidget(),
+                        Consumer<FilterDayProvider>(
+                          builder: (context, dayProvider, child){
+                            return Column(
+                              children: [
+                                StreamBuilder(
+                                  stream: SupabaseServices().getDataByDayOperative('wur_hora', dayProvider.getDate), 
+                                  builder: (context, snapshot){
+                                    if (snapshot.connectionState == ConnectionState.waiting) {
+                                      return SizedBox(
+                                        height: windowSize.height * 0.42,
+                                        width: windowSize.width * 0.8,
+                                        child: Center(child: CircularProgressIndicator(color: ColorDefaults.primaryBlue,),),
+                                      );
+                                    }
+                                    if (snapshot.hasError) {
+                                      return SizedBox(
+                                        height: windowSize.height * 0.42,
+                                        width: windowSize.width * 0.8,
+                                        child: Center(child: GlobalText('Error al obtener los datos! ${snapshot.error}', fontSize: 24, color: Colors.red,),),
+                                      );
+                                    }
+                                    if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                                      // return Center(child: GlobalText('Sin datos disponibles entre ese rango de fechas', fontSize: 24));
+                                      return SizedBox(
+                                        height: windowSize.height * 0.42,
+                                        width: windowSize.width * 0.8,
+                                        child: Center(child: GlobalText('Sin datos disponibles para el día seleccionado', fontSize: 24,)),
+                                      );
+                                    }
+                                    return BarGraphHours(allData: snapshot.data!, widthGraph: 0.45,);
+                                  }
+                                )
+                              ],
                             );
                           }
-                          return BarGraphHours(allData: snapshot.data!, widthGraph: 0.5,);
-                        }
-                      )
+                        )
                     ],
-                  );
-                }
-              )
+                  )
+                ],
+              ),
             ],
           ),
         ),
