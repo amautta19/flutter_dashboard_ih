@@ -78,7 +78,7 @@ class _TableWurSemanalState extends State<TableWurSemanal> {
         GlobalText('WUR - Semanal', fontSize: 18, color: ColorDefaults.secundaryBlue, fontWeight: FontWeight.bold,),
         SizedBox(
           height: windowSize.height * 0.3,
-          width: windowSize.width * 0.20,
+          width: windowSize.width * 0.15,
           child: SfDataGridTheme(
             data: SfDataGridThemeData(
               gridLineColor: ColorDefaults.darkPrimary.withOpacity(0.5),
@@ -101,7 +101,7 @@ class _TableWurSemanalState extends State<TableWurSemanal> {
 List<GridColumn> _getColumns(BorderSide border) {
   return [
     _buildColumn('semana', 'Semana', border), 
-    _buildColumn('fecha_inicio', 'Día Inicio', border), 
+    // _buildColumn('fecha_inicio', 'Día Inicio', border), 
     _buildColumn('wur_semanal', 'WUR', border), 
   ];
 }
@@ -132,10 +132,10 @@ class _ConsumoDataSource extends DataGridSource {
           columnName: 'semana', 
           value: item['semana_label']?.toString() ?? 'N/A'
         ),
-        DataGridCell<String>(
-          columnName: 'fecha_inicio', 
-          value: item['semana_inicio']?.toString() ?? 'N/A'
-        ),
+        // DataGridCell<String>(
+        //   columnName: 'fecha_inicio', 
+        //   value: item['semana_inicio']?.toString() ?? 'N/A'
+        // ),
         DataGridCell<double>(
           columnName: 'wur_semanal', 
           value: (item['wur_semanal'] as num?)?.toDouble() ?? 0.0
