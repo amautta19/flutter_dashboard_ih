@@ -43,6 +43,13 @@ class _TableWurMonthlyState extends State<TableWurMonthly> {
     if(!mounted) return;
     setState(() {
       List<dynamic> sortedData = List.from(widget.allData);
+      if(sortedData.isNotEmpty){
+        sortedData.sort((a,b){
+          DateTime fechaA = DateTime.parse(a['mes_inicio'] ?? DateTime.now().toString());
+          DateTime fechaB = DateTime.parse(b['mes_inicio'] ?? DateTime.now().toString());
+          return fechaB.compareTo(fechaA);
+        });
+      }
       _dataSource = _DataSource(data: sortedData);
     });
   }
