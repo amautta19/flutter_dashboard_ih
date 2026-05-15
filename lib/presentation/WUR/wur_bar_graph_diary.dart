@@ -44,49 +44,19 @@ class _WurBarGraphDiaryState extends State<WurBarGraphDiary> {
     }
   }
 
+  // Prearar los datos obtenidos de la lista
   void _prepararDatos() {
-    if (widget.allData.isEmpty) {
-      _sortedData = [];
-      return;
-    }
-
-    // 1. Obtener mes y año de los datos recibidos
-    DateTime fechaRef = DateTime.parse(widget.allData.first['fecha_operativa']);
-    int year = fechaRef.year;
-    int month = fechaRef.month;
-
-    // 2. Calcular días del mes
-    int diasEnMes = DateTime(year, month + 1, 0).day;
-
-    // 3. Mapear datos existentes
-    Map<String, dynamic> dataMap = {
-      for (var item in widget.allData) 
-        _formatearKey(item['fecha_operativa']): item
-    };
-
-    // 4. Generar lista completa de fechas para el eje X
-    List<dynamic> completa = [];
-    for (int i = 1; i <= diasEnMes; i++) {
-      String key = "$year-${month.toString().padLeft(2, '0')}-${i.toString().padLeft(2, '0')}";
-      if (dataMap.containsKey(key)) {
-        completa.add(dataMap[key]);
-      } else {
-        completa.add({
-          'fecha_operativa': key,
-          // Se dejan los demás campos nulos para que el gráfico los tome como 0
-        });
+    // Ordename los datos de forma ascendente
+    _sortedData = List.from(widget.allData);
+    _sortedData.sort((a, b) {
+      try {
+        DateTime fechaA = DateTime.parse(a['fecha_operativa']);
+        DateTime fechaB = DateTime.parse(b['fecha_operativa']);
+        return fechaA.compareTo(fechaB);
+      } catch (e) {
+        return 0;
       }
-    }
-    _sortedData = completa;
-  }
-
-  String _formatearKey(String fecha) {
-    try {
-      DateTime dt = DateTime.parse(fecha);
-      return "${dt.year}-${dt.month.toString().padLeft(2, '0')}-${dt.day.toString().padLeft(2, '0')}";
-    } catch (e) {
-      return "";
-    }
+    });
   }
 
   double _calcularPromedio(String column) {
