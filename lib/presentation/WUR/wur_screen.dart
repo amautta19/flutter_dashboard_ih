@@ -55,7 +55,7 @@ class _WurScreenState extends State<WurScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  CardWur(valorActual: 1.52, umbral: 1.55,),
+                  CardWur(valorActual: 1.52, umbral: 1.55, litrosBebida: 5400, litrosPozos: 6700,),
                   const SizedBox(width: 10,),
                   StreamBuilder<List<dynamic>>(
                     stream: SupabaseServices().getWurMensual(), // Llamada a la nueva vista
