@@ -102,11 +102,13 @@ class _WurScreenState extends State<WurScreen> {
                 ),
               ]
               ),
+              const SizedBox(height: 20,),
               Row(
                 children: [
                   Column(
                     children: [
                       FilterMonthWidget(),
+                      const SizedBox(height: 5,),
                       StreamBuilder<List<dynamic>>(
                         stream: SupabaseServices().getData('wur_diario'),
                         builder: (context, snapshot) {
@@ -152,6 +154,7 @@ class _WurScreenState extends State<WurScreen> {
                   Column(
                     children: [
                       FilterDayWidget(),
+                      const SizedBox(height: 5,),
                         Consumer<FilterDayProvider>(
                           builder: (context, dayProvider, child){
                             return Column(
