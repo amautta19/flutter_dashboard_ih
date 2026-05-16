@@ -55,7 +55,21 @@ class _WurScreenState extends State<WurScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  CardWur(valorActual: 1.52, umbral: 1.55, litrosBebida: 5400, litrosPozos: 6700,),
+                  StreamBuilder(
+                    stream: SupabaseServices().getWurAnual(), 
+                    builder: (context, snapshot){
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(child: CircularProgressIndicator(color: ColorDefaults.primaryBlue));
+                      }
+                      if (snapshot.hasError) {
+                        return const Center(child: GlobalText('Error al obtener los datos!', fontSize: 24, color: Colors.red,));
+                      }
+                      if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return Center(child: GlobalText('Sin datos disponibles', fontSize: 24));
+                      }
+                      return CardWur(allData: snapshot.data!, umbral: 1.55,);
+                    }
+                  ),
                   const SizedBox(width: 10,),
                   StreamBuilder<List<dynamic>>(
                     stream: SupabaseServices().getWurMensual(), // Llamada a la nueva vista
