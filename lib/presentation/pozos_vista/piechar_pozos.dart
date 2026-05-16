@@ -21,7 +21,6 @@ class _PozosPieChartState extends State<PozosPieChart> {
     _procesarDatos();
   }
 
-  // ESTA ES LA CLAVE: Solo actualiza si los valores de los pozos cambiaron
   @override
   void didUpdateWidget(PozosPieChart oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -41,13 +40,12 @@ class _PozosPieChartState extends State<PozosPieChart> {
 
     double nuevoTotal = t1 + t3;
 
-    // Solo disparamos el redibujo si la suma cambió
     if (nuevoTotal != _ultimoTotal) {
       setState(() {
         _ultimoTotal = nuevoTotal;
         _chartData = [
-          {'nombre': 'Pozo 1', 'valor': t1, 'color': ColorDefaults.primaryBlue},
-          {'nombre': 'Pozo 3', 'valor': t3, 'color': Colors.orangeAccent},
+          {'nombre': 'Pozo 1', 'valor': t1, 'color': ColorDefaults.darkCyan},
+          {'nombre': 'Pozo 3', 'valor': t3, 'color': ColorDefaults.darkUmbral},
         ];
       });
     }
@@ -60,32 +58,67 @@ class _PozosPieChartState extends State<PozosPieChart> {
     return Container(
       height: windowsSize.height * 0.35,
       width: windowsSize.width * 0.25,
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: ColorDefaults.whitePrimary,
+        color: ColorDefaults.darkBgCard,
         borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: ColorDefaults.darkBgBorder, width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: SfCircularChart(
+        backgroundColor: Colors.transparent,
         title: ChartTitle(
           text: 'Distribución Total Pozos (m³)',
-          textStyle: TextStyle(fontWeight: FontWeight.bold, color: ColorDefaults.primaryBlue, fontSize: 14),
+          textStyle: const TextStyle(
+            fontWeight: FontWeight.bold,
+            color: ColorDefaults.darkCyan,
+            fontSize: 14,
+          ),
         ),
-        legend: const Legend(isVisible: true, position: LegendPosition.bottom),
-        tooltipBehavior: TooltipBehavior(enable: true, duration: 150, animationDuration: 0),
+        legend: Legend(
+          isVisible: true,
+          position: LegendPosition.bottom,
+          textStyle: const TextStyle(
+            color: ColorDefaults.darkTextMuted,
+            fontSize: 12,
+          ),
+          iconHeight: 12,
+          iconWidth: 12,
+        ),
+        tooltipBehavior: TooltipBehavior(
+          enable: true,
+          color: ColorDefaults.darkBgHeader,
+          textStyle: const TextStyle(
+            color: ColorDefaults.darkTextPrimary,
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+          ),
+          duration: 150,
+          animationDuration: 0,
+        ),
         series: <CircularSeries<Map<String, dynamic>, String>>[
           PieSeries<Map<String, dynamic>, String>(
-            dataSource: _chartData, // Usamos la data del estado
+            dataSource: _chartData,
             xValueMapper: (data, _) => data['nombre'],
             yValueMapper: (data, _) => data['valor'],
             pointColorMapper: (data, _) => data['color'],
             dataLabelSettings: const DataLabelSettings(
               isVisible: true,
               labelPosition: ChartDataLabelPosition.inside,
-              textStyle: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+              textStyle: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: ColorDefaults.darkBgCard,
+                fontSize: 12,
+              ),
             ),
-            // Animación más corta para que sea fluido
-            animationDuration: 500, 
-          )
+            animationDuration: 500,
+          ),
         ],
       ),
     );
