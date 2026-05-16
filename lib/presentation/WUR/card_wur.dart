@@ -3,26 +3,45 @@ import 'package:flutter_dashboard_ih/defaults/color_defaults.dart';
 import 'package:flutter_dashboard_ih/defaults/text_global.dart';
 
 class CardWur extends StatelessWidget {
-  final double valorActual;
+  final List<dynamic> allData;
   final double umbral;
-  final double litrosBebida; // Nuevo
-  final double litrosPozos;  // Nuevo
 
   const CardWur({
     super.key,
-    required this.valorActual,
+    required this.allData,
     required this.umbral,
-    required this.litrosBebida,
-    required this.litrosPozos,
   });
+
+  // ── Obtener el WUR más reciente ──────────────────────────────
+  double get _valorActual {
+    if (allData.isEmpty) return 0.0;
+    final ultimo = allData.last;
+    return (ultimo['wur_anual'] ?? 0).toDouble();
+  }
+
+  // ── Sumar total litros bebida ────────────────────────────────
+  double get _litrosBebida {
+    if (allData.isEmpty) return 0.0;
+    return allData.fold(0.0, (sum, item) => sum + (item['total_m3_bebida_anual'] ?? 0).toDouble());
+  }
+
+  // ── Sumar total litros pozos ─────────────────────────────────
+  double get _litrosPozos {
+    if (allData.isEmpty) return 0.0;
+    return allData.fold(0.0, (sum, item) => sum + (item['total_pozos_anual'] ?? 0).toDouble());
+  }
 
   @override
   Widget build(BuildContext context) {
+    final double valorActual = _valorActual;
+    final double litrosBebida = _litrosBebida;
+    final double litrosPozos = _litrosPozos;
+
     final bool esEficiente = valorActual <= umbral;
     final Color colorEstado = esEficiente ? const Color(0xFF00FFC2) : const Color(0xFFFF5252);
 
     return Container(
-      width: 260, // Aumentamos un pelo el ancho para que respiren los datos nuevos
+      width: 260,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
@@ -47,11 +66,11 @@ class CardWur extends StatelessWidget {
             'WUR 2026',
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: ColorDefaults.primaryBlue,
+            color: ColorDefaults.darkCyan,
           ),
           const SizedBox(height: 10),
-          
-          // --- SECCIÓN NUEVA: LITROS BEBIDA Y POZOS ---
+
+          // ── Mini stats ───────────────────────────────────────
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
@@ -59,9 +78,10 @@ class CardWur extends StatelessWidget {
               _buildMiniStat('Pozos', litrosPozos, Icons.waves_rounded),
             ],
           ),
-          // --------------------------------------------
 
           const SizedBox(height: 10),
+
+          // ── Valor WUR ────────────────────────────────────────
           GlobalText(
             valorActual.toStringAsFixed(2),
             fontSize: 62,
@@ -69,8 +89,8 @@ class CardWur extends StatelessWidget {
             color: colorEstado,
           ),
           const SizedBox(height: 12),
-          
-          // Indicador de umbral
+
+          // ── Indicador umbral ─────────────────────────────────
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
@@ -96,7 +116,6 @@ class CardWur extends StatelessWidget {
     );
   }
 
-  // Widget auxiliar para los textos pequeños de litros
   Widget _buildMiniStat(String label, double value, IconData icon) {
     return Column(
       children: [
@@ -108,7 +127,7 @@ class CardWur extends StatelessWidget {
           ],
         ),
         GlobalText(
-          '${(value).toStringAsFixed(0)} m3', // Lo mostramos en 'k' para que no ocupe espacio
+          '${value.toStringAsFixed(0)} m3',
           fontSize: 14,
           color: Colors.white70,
           fontWeight: FontWeight.w600,
