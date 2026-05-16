@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dashboard_ih/defaults/color_defaults.dart';
 import 'package:flutter_dashboard_ih/defaults/text_global.dart';
+import 'package:flutter_dashboard_ih/providers/umbrales_provider.dart';
+import 'package:provider/provider.dart';
 
 class CardWur extends StatelessWidget {
   final List<dynamic> allData;
@@ -33,12 +35,16 @@ class CardWur extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final umbralProvider = Provider.of<UmbralesProvider>(context);
     final double valorActual = _valorActual;
     final double litrosBebida = _litrosBebida;
     final double litrosPozos = _litrosPozos;
-
-    final bool esEficiente = valorActual <= umbral;
+    final umbralMap = umbralProvider.tablaUmbrales.firstWhere(
+      (elemento) => elemento['argumento'] == 'wur'
+    );
+    final bool esEficiente = valorActual <= umbralMap['umbral'];
     final Color colorEstado = esEficiente ? const Color(0xFF00FFC2) : const Color(0xFFFF5252);
+
 
     return Container(
       width: 260,
@@ -103,7 +109,7 @@ class CardWur extends StatelessWidget {
                 Icon(Icons.tune_rounded, size: 12, color: colorEstado.withOpacity(0.7)),
                 const SizedBox(width: 6),
                 GlobalText(
-                  'UMBRAL: $umbral',
+                  'UMBRAL: ${umbralMap['umbral']}',
                   fontSize: 10,
                   color: Colors.white70,
                   fontWeight: FontWeight.bold,
