@@ -2,23 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dashboard_ih/defaults/color_defaults.dart';
 import 'package:flutter_dashboard_ih/defaults/text_global.dart';
 import 'package:flutter_dashboard_ih/providers/filter_element_provider.dart';
-import 'package:flutter_dashboard_ih/providers/umbrales_provider.dart'; // Importante
+import 'package:flutter_dashboard_ih/providers/umbrales_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
-// Widget para mostrar el consumo diario
 class BarGraphDiary extends StatefulWidget {
-  final List<dynamic> allData;  // Lista de toda la data
-  final bool umbralInverso;     // Se revierte la condición del umbral del gráfico
-  final String unidadM;         // Unidad de los valores (m3, %,...)
+  final List<dynamic> allData;
+  final bool umbralInverso;
+  final String unidadM;
   final String titleM;
-  final double widthGraph;   
-  final int maxLabel;       // Título del gráfico
+  final double widthGraph;
+  final int maxLabel;
+
   const BarGraphDiary({
-    super.key, 
-    required this.allData, 
-    this.umbralInverso = false,       // Valor predeterminado desactivado 
-    this.unidadM = 'm³', 
+    super.key,
+    required this.allData,
+    this.umbralInverso = false,
+    this.unidadM = 'm³',
     this.titleM = 'Consumo Agua (m³)',
     this.widthGraph = 0.60,
     this.maxLabel = 14,
@@ -44,9 +44,8 @@ class _BarGraphDiaryState extends State<BarGraphDiary> {
       _prepararDatos();
     }
   }
-  // Prearar los datos obtenidos de la lista
+
   void _prepararDatos() {
-    // Ordename los datos de forma ascendente
     _sortedData = List.from(widget.allData);
     _sortedData.sort((a, b) {
       try {
@@ -59,14 +58,13 @@ class _BarGraphDiaryState extends State<BarGraphDiary> {
     });
   }
 
-  // Obtener el promedio de los valores como umbral
   double _calcularPromedio(String column) {
     if (_sortedData.isEmpty) return 0;
     double suma = 0;
     int cont = 0;
     for (var item in _sortedData) {
       final valor = (item[column] ?? 0).toDouble();
-      if (valor > 0) { // Solo promediar días con consumo
+      if (valor > 0) {
         suma += valor;
         cont++;
       }
@@ -76,31 +74,23 @@ class _BarGraphDiaryState extends State<BarGraphDiary> {
 
   @override
   Widget build(BuildContext context) {
-    // Obtenemos valor de los providers
-    final String selectedFilter = context.watch<FilterElementProvider>().getElement; // Filtro escogido
-    final umbralesProvider = context.watch<UmbralesProvider>(); // Lista de umbrales de supabase
+    final String selectedFilter = context.watch<FilterElementProvider>().getElement;
+    final umbralesProvider = context.watch<UmbralesProvider>();
 
-    // Buscamos en la tabla cargada en el provider si existe el elemento
     final umbralFila = umbralesProvider.tablaUmbrales.firstWhere(
       (u) => selectedFilter.contains(u['argumento']),
       orElse: () => {},
     );
 
-    // Variables para la lógica de los umbrales
     double valorReferencia;
     String umbralLimite;
-    Color colorReferencia;
 
-    // Si existe un umbral en la tabla de supabase usamos ese
     if (umbralFila.isNotEmpty && umbralFila['umbral'] != null) {
       valorReferencia = (umbralFila['umbral'] as num).toDouble();
       umbralLimite = 'Umbral Técnico: ${valorReferencia.toStringAsFixed(1)} ${widget.unidadM}';
-      colorReferencia = Colors.orangeAccent; 
-    // Si no existe umbral en la tabla de supabse se utiliza el promedio calculado
     } else {
       valorReferencia = _calcularPromedio(selectedFilter);
       umbralLimite = 'Promedio: ${valorReferencia.toStringAsFixed(1)} ${widget.unidadM}';
-      colorReferencia = Colors.orangeAccent;
     }
 
     final windowSize = MediaQuery.of(context).size;
@@ -108,127 +98,156 @@ class _BarGraphDiaryState extends State<BarGraphDiary> {
     return Container(
       height: windowSize.height * 0.42,
       width: windowSize.width * widget.widthGraph,
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-          color: ColorDefaults.whitePrimary,
-          borderRadius: BorderRadius.circular(15),
-          border: Border.all(color: ColorDefaults.whitePrimary)),
+        color: ColorDefaults.darkBgCard,
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: ColorDefaults.darkBgBorder, width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: Column(
         children: [
+          // ── Header ──────────────────────────────────────────────
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               GlobalText(
-                '${widget.titleM} : $selectedFilter', // Título dinámico del gráfico
-                color: ColorDefaults.primaryBlue,
+                '${widget.titleM} : $selectedFilter',
+                color: ColorDefaults.darkCyan,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
-              // Mostrar el valor del umbral
               Row(
                 children: [
                   Container(
                     width: 10,
                     height: 10,
-                    decoration: BoxDecoration(
-                        color: colorReferencia, shape: BoxShape.circle),
+                    decoration: const BoxDecoration(
+                      color: ColorDefaults.darkUmbral,
+                      shape: BoxShape.circle,
+                    ),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 6),
                   GlobalText(
                     umbralLimite,
-                    color: colorReferencia,
+                    color: ColorDefaults.darkUmbral,
                     fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                  )
+                    fontSize: 13,
+                  ),
                 ],
-              )
+              ),
             ],
           ),
+
           const SizedBox(height: 10),
-          // Gráfico de barras
+
+          // ── Gráfico ─────────────────────────────────────────────
           Expanded(
             child: SfCartesianChart(
               key: ValueKey('chart_${selectedFilter}_$valorReferencia'),
-              // Zoom en el eje X
-              zoomPanBehavior: ZoomPanBehavior( 
-                  enablePanning: true, 
-                  zoomMode: ZoomMode.x
+              backgroundColor: Colors.transparent,
+              plotAreaBackgroundColor: Colors.transparent,
+              zoomPanBehavior: ZoomPanBehavior(
+                enablePanning: true,
+                zoomMode: ZoomMode.x,
               ),
-              // Configuración del Eje X
+              tooltipBehavior: TooltipBehavior(
+                enable: true,
+                header: selectedFilter,
+                color: ColorDefaults.darkBgHeader,
+                textStyle: const TextStyle(
+                  color: ColorDefaults.darkTextPrimary,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+                activationMode: ActivationMode.singleTap,
+                duration: 500,
+              ),
               primaryXAxis: CategoryAxis(
-                autoScrollingDelta: widget.maxLabel, // Máximo de barras en la vista 14
+                autoScrollingDelta: widget.maxLabel,
                 autoScrollingMode: AutoScrollingMode.end,
                 majorGridLines: const MajorGridLines(width: 0),
-                labelStyle: TextStyle(
-                  color: ColorDefaults.darkPrimary, fontSize: 11),
+                axisLine: const AxisLine(color: ColorDefaults.darkAxisLine, width: 1),
+                labelStyle: const TextStyle(color: ColorDefaults.darkTextMuted, fontSize: 10),
               ),
-              // Configuración del Eje Y
               primaryYAxis: NumericAxis(
-                minimum: 0, // Empieza en 0 el valor del eje
+                minimum: 0,
                 rangePadding: ChartRangePadding.additional,
-                labelStyle: TextStyle(color: ColorDefaults.darkPrimary, fontSize: 11),
-                // Configuración de la vista del umbral
+                majorGridLines: const MajorGridLines(
+                  width: 0.5,
+                  color: ColorDefaults.darkGridLine,
+                ),
+                axisLine: const AxisLine(color: ColorDefaults.darkAxisLine, width: 1),
+                labelStyle: const TextStyle(color: ColorDefaults.darkTextMuted, fontSize: 10),
                 plotBands: <PlotBand>[
                   PlotBand(
                     isVisible: true,
                     start: valorReferencia,
                     end: valorReferencia,
                     borderWidth: 2,
-                    borderColor: colorReferencia,
-                    dashArray: <double>[6, 6]
-                  )
+                    borderColor: ColorDefaults.darkUmbral,
+                    dashArray: <double>[6, 6],
+                  ),
                 ],
               ),
-              // Configuración de los valores mostrados en la gráfica
               series: <CartesianSeries<dynamic, String>>[
-                // Configuración de las barras de la gráfica
+                // ── Barras ──────────────────────────────────────────
                 ColumnSeries<dynamic, String>(
                   key: ValueKey('bars_$selectedFilter'),
                   name: 'Consumo',
                   dataSource: _sortedData,
                   xValueMapper: (data, _) => data['fecha_operativa']?.toString() ?? '',
-                  yValueMapper: (data, _) => data[selectedFilter] ?? 0, // Mostramos los valores del filtro
+                  yValueMapper: (data, _) => data[selectedFilter] ?? 0,
                   pointColorMapper: (data, _) {
-                    final valor = data[selectedFilter] ?? 0;
-                    // Se cambia la condición del umbral dependiendo del valor bool insertado en el widget
-                    if(widget.umbralInverso == false){
-                      return valor > valorReferencia ? Colors.red : ColorDefaults.primaryBlue;
-                    }else{
-                      return valor < valorReferencia ? Colors.red : ColorDefaults.primaryBlue;
+                    final valor = (data[selectedFilter] ?? 0).toDouble();
+                    if (!widget.umbralInverso) {
+                      return valor > valorReferencia ? ColorDefaults.darkBarBad : ColorDefaults.darkBarGood;
+                    } else {
+                      return valor < valorReferencia ? ColorDefaults.darkBarBad : ColorDefaults.darkBarGood;
                     }
                   },
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(6)),
-                  // Configuración de los dataLabels
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(5)),
                   dataLabelSettings: DataLabelSettings(
-                      isVisible: true,
-                      borderRadius: 5,
-                      color: Colors.amberAccent.withOpacity(0.8),
-                      textStyle: TextStyle(
-                          fontSize: 10,
-                          color: ColorDefaults.darkPrimary,
-                          fontWeight: FontWeight.bold)),
+                    isVisible: true,
+                    borderRadius: 4,
+                    color: ColorDefaults.darkBgHeader.withOpacity(0.85),
+                    textStyle: const TextStyle(
+                      fontSize: 10,
+                      color: ColorDefaults.darkTextPrimary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
-                // Configuración de la Línea de tendencia evolución
+                // ── Línea de tendencia ───────────────────────────────
                 LineSeries<dynamic, String>(
                   key: ValueKey('line_$selectedFilter'),
                   name: 'Evolución',
                   dataSource: _sortedData,
                   xValueMapper: (data, _) => data['fecha_operativa']?.toString() ?? '',
                   yValueMapper: (data, _) => data[selectedFilter] ?? 0,
-                  color: Colors.green,
-                  width: 3,
+                  color: ColorDefaults.darkCyan,
+                  width: 2,
                   markerSettings: const MarkerSettings(
                     isVisible: true,
-                    height: 4,
-                    width: 4,
+                    height: 5,
+                    width: 5,
                     shape: DataMarkerType.circle,
-                    color: Colors.green,
+                    color: ColorDefaults.darkCyan,
+                    borderColor: ColorDefaults.darkTextPrimary,
+                    borderWidth: 1,
                   ),
+                  dataLabelSettings: const DataLabelSettings(isVisible: false),
                   animationDuration: 800,
                 ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );
