@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dashboard_ih/defaults/text_global.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_dashboard_ih/providers/filter_day_provider.dart';
 import 'package:flutter_dashboard_ih/defaults/color_defaults.dart';
@@ -10,73 +11,93 @@ class FilterDayWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dayProvider = context.watch<FilterDayProvider>();
-    
-    return InkWell(
-      onTap: () async {
-        final DateTime? picked = await showDatePicker(
-          context: context,
-          initialDate: dayProvider.getDate,
-          firstDate: DateTime(2025),
-          lastDate: DateTime.now(),
-          builder: (context, child) {
-            return Theme(
-              data: Theme.of(context).copyWith(
-                colorScheme: ColorScheme.light(
-                  primary: ColorDefaults.primaryBlue,
-                  onPrimary: ColorDefaults.whitePrimary,
-                  onSurface: ColorDefaults.darkPrimary,
+
+    return Padding(
+      padding: const EdgeInsets.all(5.0),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: ColorDefaults.darkBgHeader,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: ColorDefaults.darkCyan, width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: ColorDefaults.darkCyan.withOpacity(0.15),
+              blurRadius: 8,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: IntrinsicHeight(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // ── Ícono calendario ────────────────────────────────
+              const Icon(
+                Icons.calendar_today_rounded,
+                color: ColorDefaults.darkCyan,
+                size: 18,
+              ),
+              const SizedBox(width: 8),
+              GlobalText(
+                'Fecha Operativa:',
+                color: ColorDefaults.darkCyan,
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
+              // ── Divisor ─────────────────────────────────────────
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: VerticalDivider(
+                  color: ColorDefaults.darkCyan.withOpacity(0.3),
+                  thickness: 1,
                 ),
               ),
-              child: child!,
-            );
-          },
-        );
-        if (picked != null) {
-          dayProvider.updateDate(picked);
-        }
-      },
-      child: Container(
-        height: 50,
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        decoration: BoxDecoration(
-          color: ColorDefaults.whitePrimary,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: ColorDefaults.darkPrimary),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // ETIQUETA A LA IZQUIERDA
-            Text(
-              'Fecha Operativa:',
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-                color: ColorDefaults.darkPrimary.withOpacity(0.7),
+              // ── Fecha + tap ──────────────────────────────────────
+              InkWell(
+                borderRadius: BorderRadius.circular(8),
+                onTap: () async {
+                  final DateTime? picked = await showDatePicker(
+                    context: context,
+                    initialDate: dayProvider.getDate,
+                    firstDate: DateTime(2025),
+                    lastDate: DateTime.now(),
+                    builder: (context, child) {
+                      return Theme(
+                        data: Theme.of(context).copyWith(
+                          colorScheme: ColorScheme.dark(
+                            primary: ColorDefaults.darkCyan,
+                            onPrimary: ColorDefaults.darkBgCard,
+                            surface: ColorDefaults.darkBgHeader,
+                            onSurface: ColorDefaults.darkTextPrimary,
+                          ),
+                        ),
+                        child: child!,
+                      );
+                    },
+                  );
+                  if (picked != null) {
+                    dayProvider.updateDate(picked);
+                  }
+                },
+                child: Row(
+                  children: [
+                    GlobalText(
+                      DateFormat('dd/MM/yyyy').format(dayProvider.getDate),
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: ColorDefaults.darkTextPrimary,
+                    ),
+                    const SizedBox(width: 4),
+                    const Icon(
+                      Icons.arrow_drop_down,
+                      color: ColorDefaults.darkCyan,
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(width: 10),
-            VerticalDivider( // Una pequeña línea separadora vertical
-              color: ColorDefaults.darkPrimary.withOpacity(0.2),
-              indent: 10,
-              endIndent: 10,
-            ),
-            const SizedBox(width: 10),
-            Icon(Icons.calendar_today_rounded, 
-                size: 16, 
-                color: ColorDefaults.primaryBlue),
-            const SizedBox(width: 8),
-            Text(
-              DateFormat('dd/MM/yyyy').format(dayProvider.getDate),
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: ColorDefaults.darkPrimary,
-              ),
-            ),
-            const SizedBox(width: 5),
-            Icon(Icons.arrow_drop_down, color: ColorDefaults.darkPrimary),
-          ],
+            ],
+          ),
         ),
       ),
     );

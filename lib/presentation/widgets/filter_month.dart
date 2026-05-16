@@ -62,8 +62,8 @@ class FilterMonthWidget extends StatelessWidget {
                     Icons.arrow_drop_down,
                     color: ColorDefaults.darkCyan,
                   ),
-                  style: const TextStyle(
-                    color: ColorDefaults.darkCyan,
+                  style: TextStyle(
+                    color: ColorDefaults.whitePrimary,
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
                   ),
