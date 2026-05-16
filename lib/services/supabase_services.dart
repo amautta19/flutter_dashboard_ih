@@ -76,4 +76,9 @@ Stream<List<Map<String, dynamic>>> getDataByDayOperative(String table, DateTime 
         .stream(primaryKey: ['id'])
         .order('mes_inicio', ascending: true);
   }
+  Stream<List<Map<String, dynamic>>> getWurAnual(){
+    return supabase
+      .from('wur_anual')
+      .stream(primaryKey: ['id']);
+  }
 }
