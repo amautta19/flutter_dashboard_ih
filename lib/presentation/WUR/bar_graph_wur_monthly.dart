@@ -29,17 +29,6 @@ class BarGraphWurMonthly extends StatefulWidget {
 }
 
 class _BarGraphWurMonthlyState extends State<BarGraphWurMonthly> {
-  // Paleta de colores — mismo esquema que los otros gráficos
-  static const Color _bgCard       = Color(0xFF1E1E2E);
-  static const Color _bgCardBorder = Color(0xFF2E2E4E);
-  static const Color _bgTooltip    = Color(0xFF2A2A3E);
-  static const Color _cyan         = Color(0xFF00E5FF);
-  static const Color _textPrimary  = Colors.white;
-  static const Color _textMuted    = Color(0xFFB0B0C8);
-  static const Color _gridLine     = Color(0x1FFFFFFF);
-  static const Color _axisLine     = Color(0x33FFFFFF);
-  static const Color _barGood      = Color(0xFF4CAF50);
-  static const Color _barBad       = Color(0xFFE53935);
 
   late List<dynamic> _sortedData;
 
@@ -90,9 +79,9 @@ class _BarGraphWurMonthlyState extends State<BarGraphWurMonthly> {
       width: windowSize.width * widget.widthGraph,
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: _bgCard,
+        color: ColorDefaults.darkBgCard,
         borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: _bgCardBorder, width: 1),
+        border: Border.all(color: ColorDefaults.darkBgBorder, width: 1),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.3),
@@ -109,7 +98,7 @@ class _BarGraphWurMonthlyState extends State<BarGraphWurMonthly> {
             children: [
               GlobalText(
                 '${widget.titleM} : $selectedFilter',
-                color: _cyan,
+                color: ColorDefaults.darkCyan,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
@@ -134,9 +123,7 @@ class _BarGraphWurMonthlyState extends State<BarGraphWurMonthly> {
               ),
             ],
           ),
-
           const SizedBox(height: 10),
-
           // ── Gráfico ─────────────────────────────────────────────
           Expanded(
             child: SfCartesianChart(
@@ -150,9 +137,9 @@ class _BarGraphWurMonthlyState extends State<BarGraphWurMonthly> {
               tooltipBehavior: TooltipBehavior(
                 enable: true,
                 header: 'WUR Mensual',
-                color: _bgTooltip,
+                color: ColorDefaults.darkBgHeader,
                 textStyle: const TextStyle(
-                  color: _textPrimary,
+                  color: ColorDefaults.darkTextPrimary,
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                 ),
@@ -163,18 +150,18 @@ class _BarGraphWurMonthlyState extends State<BarGraphWurMonthly> {
                 autoScrollingDelta: widget.maxLabel,
                 autoScrollingMode: AutoScrollingMode.end,
                 majorGridLines: const MajorGridLines(width: 0),
-                axisLine: const AxisLine(color: _axisLine, width: 1),
-                labelStyle: const TextStyle(color: _textMuted, fontSize: 10),
+                axisLine: const AxisLine(color: ColorDefaults.darkAxisLine, width: 1),
+                labelStyle: const TextStyle(color: ColorDefaults.darkTextMuted, fontSize: 10),
               ),
               primaryYAxis: NumericAxis(
                 minimum: 0,
                 rangePadding: ChartRangePadding.additional,
                 majorGridLines: const MajorGridLines(
                   width: 0.5,
-                  color: _gridLine,
+                  color: ColorDefaults.darkGridLine,
                 ),
-                axisLine: const AxisLine(color: _axisLine, width: 1),
-                labelStyle: const TextStyle(color: _textMuted, fontSize: 10),
+                axisLine: const AxisLine(color: ColorDefaults.darkAxisLine, width: 1),
+                labelStyle: const TextStyle(color: ColorDefaults.darkTextMuted, fontSize: 10),
                 plotBands: <PlotBand>[
                   PlotBand(
                     isVisible: true,
@@ -197,19 +184,19 @@ class _BarGraphWurMonthlyState extends State<BarGraphWurMonthly> {
                   pointColorMapper: (data, _) {
                     final valor = (data['wur_mensual'] ?? 0).toDouble();
                     if (!widget.umbralInverso) {
-                      return valor > valorReferencia ? _barBad : _barGood;
+                      return valor > valorReferencia ? ColorDefaults.darkBarBad : ColorDefaults.darkBarGood;
                     } else {
-                      return valor < valorReferencia ? _barBad : _barGood;
+                      return valor < valorReferencia ? ColorDefaults.darkBarBad : ColorDefaults.darkBarGood;
                     }
                   },
                   borderRadius: const BorderRadius.vertical(top: Radius.circular(5)),
                   dataLabelSettings: DataLabelSettings(
                     isVisible: true,
                     borderRadius: 4,
-                    color: _bgTooltip.withOpacity(0.85),
+                    color: ColorDefaults.darkBgHeader.withOpacity(0.85),
                     textStyle: const TextStyle(
                       fontSize: 10,
-                      color: _textPrimary,
+                      color: ColorDefaults.darkTextPrimary,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -222,14 +209,14 @@ class _BarGraphWurMonthlyState extends State<BarGraphWurMonthly> {
                   dataSource: _sortedData,
                   xValueMapper: (data, _) => data['mes_label']?.toString() ?? '',
                   yValueMapper: (data, _) => data['wur_mensual'] ?? 0,
-                  color: _cyan,
+                  color: ColorDefaults.darkCyan,
                   width: 2,
                   markerSettings: const MarkerSettings(
                     isVisible: true,
                     height: 5,
                     width: 5,
                     shape: DataMarkerType.circle,
-                    color: _cyan,
+                    color: ColorDefaults.darkCyan,
                     borderColor: Colors.white,
                     borderWidth: 1,
                   ),
