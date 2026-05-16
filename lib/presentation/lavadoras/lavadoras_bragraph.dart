@@ -18,29 +18,54 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
   late TooltipBehavior _tooltipLower;
   late TooltipBehavior _tooltipTeorico;
 
+  // Colores por línea — consistentes en los 3 gráficos
+  static const Color _colorLinea1  = Colors.green;
+  static const Color _colorLinea2  = Colors.blue;  // cyan más oscuro
+  static const Color _colorLinea10 = Colors.orange; // naranja
+  static const Color _colorLinea11 = Colors.red; // rojo
+
   @override
   void initState() {
     super.initState();
     _generarRangoCompleto();
-    
+
     _tooltipUpper = TooltipBehavior(
-      enable: true, 
+      enable: true,
       header: '',
       format: 'series.name: point.y m³',
-      canShowMarker: false
+      canShowMarker: false,
+      color: ColorDefaults.darkBgHeader,
+      textStyle: const TextStyle(
+        color: ColorDefaults.darkTextPrimary,
+        fontSize: 12,
+        fontWeight: FontWeight.bold,
+      ),
     );
-    
+
     _tooltipLower = TooltipBehavior(
       enable: true,
-      header: '', 
+      header: '',
       format: 'series.name: point.y min',
-      canShowMarker: true
+      canShowMarker: true,
+      color: ColorDefaults.darkBgHeader,
+      textStyle: const TextStyle(
+        color: ColorDefaults.darkTextPrimary,
+        fontSize: 12,
+        fontWeight: FontWeight.bold,
+      ),
     );
+
     _tooltipTeorico = TooltipBehavior(
       enable: true,
       header: '',
       format: 'series.name: point.y m³',
-      canShowMarker: true
+      canShowMarker: true,
+      color: ColorDefaults.darkBgHeader,
+      textStyle: const TextStyle(
+        color: ColorDefaults.darkTextPrimary,
+        fontSize: 12,
+        fontWeight: FontWeight.bold,
+      ),
     );
   }
 
@@ -55,13 +80,12 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
   void _generarRangoCompleto() {
     List<dynamic> fullDay = [];
     DateTime ahora = DateTime.now();
-    // Inicio del turno: Hoy a las 08:00 AM
     DateTime inicioTurno = DateTime(ahora.year, ahora.month, ahora.day, 8, 0);
 
     for (int i = 0; i < 24; i++) {
       DateTime horaActual = inicioTurno.add(Duration(hours: i));
       String label = DateFormat('HH:mm').format(horaActual);
-      
+
       dynamic existingData;
       try {
         existingData = widget.allData.firstWhere(
@@ -96,29 +120,42 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
     return Container(
       height: windowSize.height * 0.90,
       width: double.infinity,
-      padding: const EdgeInsets.all(5),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-          color: ColorDefaults.whitePrimary,
-          borderRadius: BorderRadius.circular(15),
-          border: Border.all(color: ColorDefaults.whitePrimary)),
+        color: ColorDefaults.darkBgCard,
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: ColorDefaults.darkBgBorder, width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: Column(
         children: [
           GlobalText(
             'Consumo Total Lavadoras vs Tiempo Efectivo',
-            color: ColorDefaults.primaryBlue,
+            color: ColorDefaults.darkCyan,
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
           const SizedBox(height: 5),
-          
-          // --- GRÁFICA SUPERIOR ---
+
+          // ── Gráfico superior — Consumo total ─────────────────
           Expanded(
             flex: 3,
             child: SfCartesianChart(
-              legend: const Legend(
-                  isVisible: true, 
-                  position: LegendPosition.bottom, 
-                  textStyle: TextStyle(fontSize: 12)
+              backgroundColor: Colors.transparent,
+              plotAreaBackgroundColor: Colors.transparent,
+              legend: Legend(
+                isVisible: true,
+                position: LegendPosition.bottom,
+                textStyle: const TextStyle(
+                  fontSize: 12,
+                  color: ColorDefaults.darkTextMuted,
+                ),
               ),
               tooltipBehavior: _tooltipUpper,
               zoomPanBehavior: ZoomPanBehavior(enablePanning: true, zoomMode: ZoomMode.x),
@@ -126,89 +163,147 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
                 isVisible: true,
                 labelStyle: const TextStyle(fontSize: 0),
                 autoScrollingDelta: 24,
-                majorGridLines: const MajorGridLines(width: 1, color: Colors.black, dashArray: [5, 5]),
+                majorGridLines: const MajorGridLines(
+                  width: 0.5,
+                  color: ColorDefaults.darkGridLine,
+                  dashArray: [5, 5],
+                ),
+                axisLine: const AxisLine(color: ColorDefaults.darkAxisLine, width: 1),
               ),
               primaryYAxis: NumericAxis(
                 labelStyle: const TextStyle(fontSize: 0),
                 minimum: 0,
                 maximum: 60,
+                axisLine: const AxisLine(color: ColorDefaults.darkAxisLine, width: 1),
+                majorGridLines: const MajorGridLines(
+                  width: 0.5,
+                  color: ColorDefaults.darkGridLine,
+                ),
                 title: AxisTitle(
                   text: 'Consumo Total',
-                  textStyle: TextStyle(fontSize: 14, color: Colors.redAccent, fontWeight: FontWeight.bold)
+                  textStyle: const TextStyle(
+                    fontSize: 13,
+                    color: ColorDefaults.darkCyan,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
               series: <CartesianSeries<dynamic, String>>[
                 _buildColumnSeries('Lavadoras Total', 'Lavadoras', ColorDefaults.primaryBlue),
-                _buildColumnSeries('Consumo Teórico', 'lavadoras_teorico', ColorDefaults.secundaryBlue)
+                _buildColumnSeries('Consumo Teórico', 'lavadoras_teorico', ColorDefaults.darkCyan),
               ],
             ),
           ),
+
+          // ── Gráfico medio — Consumo teórico por línea ────────
           Expanded(
             flex: 3,
             child: SfCartesianChart(
+              backgroundColor: Colors.transparent,
+              plotAreaBackgroundColor: Colors.transparent,
               tooltipBehavior: _tooltipTeorico,
-              legend: const Legend(
-                  isVisible: true, 
-                  position: LegendPosition.bottom, 
-                  textStyle: TextStyle(fontSize: 12)
+              legend: Legend(
+                isVisible: true,
+                position: LegendPosition.bottom,
+                textStyle: const TextStyle(
+                  fontSize: 12,
+                  color: ColorDefaults.darkTextMuted,
+                ),
               ),
               zoomPanBehavior: ZoomPanBehavior(enablePanning: true, zoomMode: ZoomMode.x),
               primaryXAxis: CategoryAxis(
                 interval: 1,
-                autoScrollingDelta: 24, // Reducimos para que se vean bien las 4 columnas por hora
-                majorGridLines: const MajorGridLines(width: 1, color: Colors.black, dashArray: [5,5]),
-                labelStyle: TextStyle(color: ColorDefaults.darkPrimary, fontSize: 0, fontWeight: FontWeight.bold),
+                autoScrollingDelta: 24,
+                majorGridLines: const MajorGridLines(
+                  width: 0.5,
+                  color: ColorDefaults.darkGridLine,
+                  dashArray: [5, 5],
+                ),
+                axisLine: const AxisLine(color: ColorDefaults.darkAxisLine, width: 1),
+                labelStyle: const TextStyle(fontSize: 0),
               ),
               primaryYAxis: NumericAxis(
-                title: AxisTitle(
-                  text: 'Consumo Teórico',
-                  textStyle: TextStyle(fontSize: 14, color: Colors.redAccent, fontWeight: FontWeight.bold)
-                ),
                 minimum: 0,
                 maximum: 10,
                 labelStyle: const TextStyle(fontSize: 0),
+                axisLine: const AxisLine(color: ColorDefaults.darkAxisLine, width: 1),
+                majorGridLines: const MajorGridLines(
+                  width: 0.5,
+                  color: ColorDefaults.darkGridLine,
+                ),
+                title: AxisTitle(
+                  text: 'Consumo Teórico',
+                  textStyle: const TextStyle(
+                    fontSize: 13,
+                    color: ColorDefaults.darkCyan,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
               series: <CartesianSeries<dynamic, String>>[
-                // Llamamos a cada línea. Cada una genera su barra y su fondo.
-                ..._buildGroupedProgress('Línea 1', 'lavadora_l1_teorico', ColorDefaults.primaryBlue),
-                ..._buildGroupedProgress('Línea 2', 'lavadora_l2_teorico', Colors.teal),
-                ..._buildGroupedProgress('Línea 10', 'lavadora_l10_teorico', Colors.orangeAccent),
-                ..._buildGroupedProgress('Línea 11', 'lavadora_l11_teorico', Colors.redAccent),
+                ..._buildGroupedProgress('Línea 1',  'lavadora_l1_teorico',  _colorLinea1),
+                ..._buildGroupedProgress('Línea 2',  'lavadora_l2_teorico',  _colorLinea2),
+                ..._buildGroupedProgress('Línea 10', 'lavadora_l10_teorico', _colorLinea10),
+                ..._buildGroupedProgress('Línea 11', 'lavadora_l11_teorico', _colorLinea11),
               ],
             ),
           ),
-          // --- GRÁFICA INFERIOR ---
+
+          // ── Gráfico inferior — Minutos efectivos por línea ───
           Expanded(
             flex: 4,
             child: SfCartesianChart(
+              backgroundColor: Colors.transparent,
+              plotAreaBackgroundColor: Colors.transparent,
               tooltipBehavior: _tooltipLower,
-              legend: const Legend(
-                  isVisible: true, 
-                  position: LegendPosition.bottom, 
-                  textStyle: TextStyle(fontSize: 12)
+              legend: Legend(
+                isVisible: true,
+                position: LegendPosition.bottom,
+                textStyle: const TextStyle(
+                  fontSize: 12,
+                  color: ColorDefaults.darkTextMuted,
+                ),
               ),
               zoomPanBehavior: ZoomPanBehavior(enablePanning: true, zoomMode: ZoomMode.x),
               primaryXAxis: CategoryAxis(
                 interval: 1,
-                autoScrollingDelta: 24, 
-                majorGridLines: const MajorGridLines(width: 1, color: Colors.black, dashArray: [5,5]),
-                labelStyle: TextStyle(color: ColorDefaults.darkPrimary, fontSize: 13, fontWeight: FontWeight.bold),
+                autoScrollingDelta: 24,
+                majorGridLines: const MajorGridLines(
+                  width: 0.5,
+                  color: ColorDefaults.darkGridLine,
+                  dashArray: [5, 5],
+                ),
+                axisLine: const AxisLine(color: ColorDefaults.darkAxisLine, width: 1),
+                labelStyle: const TextStyle(
+                  color: ColorDefaults.darkTextMuted,
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               primaryYAxis: NumericAxis(
-                title: AxisTitle(
-                  text: 'Minutos Efectivos por Línea',
-                  textStyle: TextStyle(fontSize: 14, color: Colors.redAccent, fontWeight: FontWeight.bold)
-                ),
                 minimum: 0,
-                maximum: 240, 
+                maximum: 240,
                 interval: 60,
                 labelStyle: const TextStyle(fontSize: 0),
+                axisLine: const AxisLine(color: ColorDefaults.darkAxisLine, width: 1),
+                majorGridLines: const MajorGridLines(
+                  width: 0.5,
+                  color: ColorDefaults.darkGridLine,
+                ),
+                title: AxisTitle(
+                  text: 'Minutos Efectivos por Línea',
+                  textStyle: const TextStyle(
+                    fontSize: 13,
+                    color: ColorDefaults.darkCyan,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
               series: <CartesianSeries<dynamic, String>>[
-                ..._buildFixedCenterProgress('Línea 1', 'linea1', ColorDefaults.primaryBlue, 30),
-                ..._buildFixedCenterProgress('Línea 2', 'linea2', Colors.teal, 90),
-                ..._buildFixedCenterProgress('Línea 10', 'linea10', Colors.orangeAccent, 150),
-                ..._buildFixedCenterProgress('Línea 11', 'linea11', Colors.redAccent, 210),
+                ..._buildFixedCenterProgress('Línea 1',  'linea1',  _colorLinea1,  30),
+                ..._buildFixedCenterProgress('Línea 2',  'linea2',  _colorLinea2,  90),
+                ..._buildFixedCenterProgress('Línea 10', 'linea10', _colorLinea10, 150),
+                ..._buildFixedCenterProgress('Línea 11', 'linea11', _colorLinea11, 210),
               ],
             ),
           ),
@@ -216,7 +311,10 @@ class _BarGraphDiaryMultiState extends State<BarGraphDiaryMulti> {
       ),
     );
   }
-List<CartesianSeries<dynamic, String>> _buildGroupedProgress(
+
+  // ── Series helpers ───────────────────────────────────────────
+
+  List<CartesianSeries<dynamic, String>> _buildGroupedProgress(
       String name, String key, Color color) {
     return [
       ColumnSeries<dynamic, String>(
@@ -226,14 +324,18 @@ List<CartesianSeries<dynamic, String>> _buildGroupedProgress(
         yValueMapper: (data, _) => data[key] ?? 0,
         color: color,
         enableTooltip: true,
-        dataLabelSettings: DataLabelSettings(
+        dataLabelSettings: const DataLabelSettings(
           isVisible: true,
-          // labelAlignment: ChartDataLabelAlignment.top,
-          textStyle: const TextStyle(fontSize: 10, color: Colors.black, fontWeight: FontWeight.bold),
+          textStyle: TextStyle(
+            fontSize: 10,
+            color: ColorDefaults.darkTextPrimary,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
     ];
   }
+
   List<CartesianSeries<dynamic, String>> _buildFixedCenterProgress(
       String name, String key, Color color, double fixedCenterY) {
     return [
@@ -261,23 +363,30 @@ List<CartesianSeries<dynamic, String>> _buildGroupedProgress(
         isVisibleInLegend: false,
         borderColor: color.withOpacity(0.3),
         borderWidth: 1,
+        dataLabelSettings: const DataLabelSettings(isVisible: false),
       ),
       ScatterSeries<dynamic, String>(
         dataSource: _fullRangeData,
         enableTooltip: false,
         xValueMapper: (data, _) => _formatTime(data['_time_lima']),
-        yValueMapper: (data, _) => fixedCenterY, 
+        yValueMapper: (data, _) => fixedCenterY,
         color: Colors.transparent,
         markerSettings: const MarkerSettings(isVisible: false),
         isVisibleInLegend: false,
         dataLabelSettings: DataLabelSettings(
           isVisible: true,
           showZeroValue: true,
-          builder: (dynamic data, dynamic point, dynamic series, int pointIndex, int seriesIndex) {
-            final double realValue = double.tryParse((data[key] ?? 0).toString()) ?? 0;
+          builder: (dynamic data, dynamic point, dynamic series,
+              int pointIndex, int seriesIndex) {
+            final double realValue =
+                double.tryParse((data[key] ?? 0).toString()) ?? 0;
             return Text(
               realValue.toInt().toString(),
-              style: const TextStyle(fontSize: 12, color: Colors.black, fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                fontSize: 12,
+                color: ColorDefaults.darkTextPrimary,
+                fontWeight: FontWeight.bold,
+              ),
             );
           },
         ),
@@ -285,7 +394,8 @@ List<CartesianSeries<dynamic, String>> _buildGroupedProgress(
     ];
   }
 
-  ColumnSeries<dynamic, String> _buildColumnSeries(String name, String key, Color color) {
+  ColumnSeries<dynamic, String> _buildColumnSeries(
+      String name, String key, Color color) {
     return ColumnSeries<dynamic, String>(
       name: name,
       enableTooltip: true,
@@ -295,11 +405,15 @@ List<CartesianSeries<dynamic, String>> _buildGroupedProgress(
       color: color,
       width: 0.8,
       borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
-      dataLabelSettings: DataLabelSettings(
+      dataLabelSettings: const DataLabelSettings(
         isVisible: true,
         showZeroValue: false,
         labelAlignment: ChartDataLabelAlignment.outer,
-        textStyle: TextStyle(fontSize: 12, color: ColorDefaults.darkPrimary, fontWeight: FontWeight.bold),
+        textStyle: TextStyle(
+          fontSize: 12,
+          color: ColorDefaults.darkTextMuted,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }
