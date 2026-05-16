@@ -16,34 +16,45 @@ class _FilterElementWidgetState extends State<FilterElementWidget> {
   @override
   Widget build(BuildContext context) {
     final filterelementProvider = context.watch<FilterElementProvider>();
+
     return Container(
-      height: 50,
       decoration: BoxDecoration(
-        color: ColorDefaults.darkPrimary,
+        color: Colors.transparent,
       ),
-      child: Wrap( // Wrap para que si hay muchas opciones no se rompa la pantalla
+      child: Wrap(
         spacing: 8,
         runSpacing: 8,
         children: widget.columns.map((String value) {
           final isSelected = filterelementProvider.getElement == value;
-          
+
           return ChoiceChip(
-            label: GlobalText(value, 
-              color: isSelected ? ColorDefaults.whitePrimary : ColorDefaults.darkPrimary,
+            label: GlobalText(
+              value,
+              color: isSelected ? ColorDefaults.darkBgCard : ColorDefaults.darkCyan,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              fontSize: 14,),
+              fontSize: 14,
+            ),
             selected: isSelected,
             onSelected: (bool selected) {
               if (selected) filterelementProvider.updateColumn(value);
             },
-            selectedColor: ColorDefaults.primaryBlue, // Tu azul principal
-            backgroundColor: ColorDefaults.whitePrimary,
+            // ── Seleccionado: fondo cyan sólido ──────────────────
+            selectedColor: ColorDefaults.darkCyan,
+            // ── No seleccionado: fondo oscuro transparente ───────
+            backgroundColor: ColorDefaults.darkBgHeader,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
               side: BorderSide(
-                color: isSelected ? ColorDefaults.primaryBlue : ColorDefaults.darkPrimary.withOpacity(0.3),
+                color: isSelected
+                    ? ColorDefaults.darkCyan
+                    : ColorDefaults.darkCyan.withOpacity(0.3),
+                width: 1,
               ),
             ),
+            // ── Sombra cyan cuando está seleccionado ─────────────
+            shadowColor: isSelected
+                ? ColorDefaults.darkCyan.withOpacity(0.4)
+                : Colors.transparent,
             elevation: isSelected ? 4 : 0,
             pressElevation: 2,
           );
