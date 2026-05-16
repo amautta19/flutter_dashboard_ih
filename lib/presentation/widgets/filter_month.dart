@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dashboard_ih/defaults/text_global.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_dashboard_ih/defaults/color_defaults.dart';
 import '../../providers/filter_month_provider.dart';
@@ -13,16 +14,16 @@ class FilterMonthWidget extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(5.0),
       child: Container(
-        // Padding para que no pegue a los bordes del contenedor blanco
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         decoration: BoxDecoration(
-          color: ColorDefaults.whitePrimary, // Fondo blanco sólido
-          borderRadius: BorderRadius.circular(12), // Bordes redondeados como la imagen
+          color: ColorDefaults.darkBgHeader,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: ColorDefaults.darkCyan, width: 1),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
+              color: ColorDefaults.darkCyan.withOpacity(0.15),
+              blurRadius: 8,
+              offset: const Offset(0, 3),
             ),
           ],
         ),
@@ -30,33 +31,39 @@ class FilterMonthWidget extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // --- TEXTO DE DISEÑO AL COSTADO ---
-              const Text(
-                "Filtrar Mes:",
-                style: TextStyle(
-                  color: Color(0xFF5F6368), // Gris oscuro de la imagen
-                  fontWeight: FontWeight.w500,
-                  fontSize: 14,
-                ),
+              // ── Ícono calendario ────────────────────────────────
+              const Icon(
+                Icons.calendar_month_rounded,
+                color: ColorDefaults.darkCyan,
+                size: 18,
               ),
-      
-              // --- LÍNEA VERTICAL DIVISORIA ---
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 12),
+              const SizedBox(width: 8),
+              GlobalText(
+                'Filtrar Mes:',
+                color: ColorDefaults.darkCyan,
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
+              // ── Divisor ─────────────────────────────────────────
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: VerticalDivider(
-                  color: Colors.black12,
+                  color: ColorDefaults.darkCyan.withOpacity(0.3),
                   thickness: 1,
                 ),
               ),
-      
-              // --- DROPDOWN DE MESES ---
+
+              // ── Dropdown ────────────────────────────────────────
               DropdownButtonHideUnderline(
                 child: DropdownButton<int>(
                   value: monthProvider.getMonth,
-                  dropdownColor: ColorDefaults.whitePrimary,
-                  icon: const Icon(Icons.arrow_drop_down, color: Colors.black87),
+                  dropdownColor: ColorDefaults.darkBgHeader,
+                  icon: const Icon(
+                    Icons.arrow_drop_down,
+                    color: ColorDefaults.darkCyan,
+                  ),
                   style: const TextStyle(
-                    color: Color(0xFF3C4043), // Texto oscuro profesional
+                    color: ColorDefaults.darkCyan,
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
                   ),
@@ -66,15 +73,15 @@ class FilterMonthWidget extends StatelessWidget {
                     }
                   },
                   items: const [
-                    DropdownMenuItem(value: 1, child: Text("Enero")),
-                    DropdownMenuItem(value: 2, child: Text("Febrero")),
-                    DropdownMenuItem(value: 3, child: Text("Marzo")),
-                    DropdownMenuItem(value: 4, child: Text("Abril")),
-                    DropdownMenuItem(value: 5, child: Text("Mayo")),
-                    DropdownMenuItem(value: 6, child: Text("Junio")),
-                    DropdownMenuItem(value: 7, child: Text("Julio")),
-                    DropdownMenuItem(value: 8, child: Text("Agosto")),
-                    DropdownMenuItem(value: 9, child: Text("Septiembre")),
+                    DropdownMenuItem(value: 1,  child: Text("Enero")),
+                    DropdownMenuItem(value: 2,  child: Text("Febrero")),
+                    DropdownMenuItem(value: 3,  child: Text("Marzo")),
+                    DropdownMenuItem(value: 4,  child: Text("Abril")),
+                    DropdownMenuItem(value: 5,  child: Text("Mayo")),
+                    DropdownMenuItem(value: 6,  child: Text("Junio")),
+                    DropdownMenuItem(value: 7,  child: Text("Julio")),
+                    DropdownMenuItem(value: 8,  child: Text("Agosto")),
+                    DropdownMenuItem(value: 9,  child: Text("Septiembre")),
                     DropdownMenuItem(value: 10, child: Text("Octubre")),
                     DropdownMenuItem(value: 11, child: Text("Noviembre")),
                     DropdownMenuItem(value: 12, child: Text("Diciembre")),
