@@ -155,7 +155,7 @@ class _WurScreenState extends State<WurScreen> {
                                 allData: filteredData,
                                 titleM: 'WUR diario en el mes de $nombremes',
                                 unidadM: '',
-                                widthGraph: 0.5,
+                                widthGraph: 0.52,
                                 maxLabel: 10,),
                               const SizedBox(height: 10,),
                             ],
