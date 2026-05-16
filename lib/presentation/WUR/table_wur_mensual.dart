@@ -78,7 +78,7 @@ class _TableWurMonthlyState extends State<TableWurMonthly> {
           GlobalText(
             'WUR Mensual',
             fontSize: 16,
-            color: ColorDefaults.darkCyan,
+            color: ColorDefaults.secundaryBlue,
             fontWeight: FontWeight.bold,
           ),
           const SizedBox(height: 10),

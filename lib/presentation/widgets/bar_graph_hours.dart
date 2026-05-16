@@ -63,9 +63,9 @@ class _BarGraphHoursState extends State<BarGraphHours> {
         title: ChartTitle(
           text: 'Evolución Temporal: ${filterElementProvider.getElement}',
           alignment: ChartAlignment.near,
-          textStyle: const TextStyle(
+          textStyle: TextStyle(
             fontWeight: FontWeight.bold,
-            color: ColorDefaults.darkCyan,
+            color: ColorDefaults.secundaryBlue,
             fontSize: 14,
           ),
         ),

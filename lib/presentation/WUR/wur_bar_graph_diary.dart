@@ -119,7 +119,7 @@ class _WurBarGraphDiaryState extends State<WurBarGraphDiary> {
             children: [
               GlobalText(
                 widget.titleM,
-                color: ColorDefaults.darkCyan,
+                color: ColorDefaults.secundaryBlue,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),

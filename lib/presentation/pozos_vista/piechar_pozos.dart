@@ -75,9 +75,9 @@ class _PozosPieChartState extends State<PozosPieChart> {
         backgroundColor: Colors.transparent,
         title: ChartTitle(
           text: 'Distribución Total Pozos (m³)',
-          textStyle: const TextStyle(
+          textStyle: TextStyle(
             fontWeight: FontWeight.bold,
-            color: ColorDefaults.darkCyan,
+            color: ColorDefaults.secundaryBlue,
             fontSize: 14,
           ),
         ),

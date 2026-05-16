@@ -119,7 +119,7 @@ class _BarGraphDiaryState extends State<BarGraphDiary> {
             children: [
               GlobalText(
                 '${widget.titleM} : $selectedFilter',
-                color: ColorDefaults.darkCyan,
+                color: ColorDefaults.secundaryBlue,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
