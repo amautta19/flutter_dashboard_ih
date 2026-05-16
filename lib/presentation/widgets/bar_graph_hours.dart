@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dashboard_ih/defaults/color_defaults.dart';
 import 'package:flutter_dashboard_ih/providers/filter_element_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -17,16 +18,6 @@ class BarGraphHours extends StatefulWidget {
 }
 
 class _BarGraphHoursState extends State<BarGraphHours> {
-  // Paleta de colores — mismo esquema que WurBarGraphDiary
-  static const Color _bgCard       = Color(0xFF1E1E2E);
-  static const Color _bgCardBorder = Color(0xFF2E2E4E);
-  static const Color _bgTooltip    = Color(0xFF2A2A3E);
-  static const Color _cyan         = Color(0xFF00E5FF);
-  static const Color _textPrimary  = Colors.white;
-  static const Color _textMuted    = Color(0xFFB0B0C8);
-  static const Color _gridLine     = Color(0x1FFFFFFF);
-  static const Color _axisLine     = Color(0x33FFFFFF);
-
   List<dynamic> _currentData = [];
 
   @override
@@ -55,9 +46,9 @@ class _BarGraphHoursState extends State<BarGraphHours> {
       width: windowsSize.width * widget.widthGraph,
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: _bgCard,
+        color: ColorDefaults.darkBgCard,
         borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: _bgCardBorder, width: 1),
+        border: Border.all(color: ColorDefaults.darkBgBorder, width: 1),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.3),
@@ -74,16 +65,16 @@ class _BarGraphHoursState extends State<BarGraphHours> {
           alignment: ChartAlignment.near,
           textStyle: const TextStyle(
             fontWeight: FontWeight.bold,
-            color: _cyan,
+            color: ColorDefaults.darkCyan,
             fontSize: 14,
           ),
         ),
         tooltipBehavior: TooltipBehavior(
           enable: true,
           header: 'Hora',
-          color: _bgTooltip,
+          color: ColorDefaults.darkBgHeader,
           textStyle: const TextStyle(
-            color: _textPrimary,
+            color: ColorDefaults.darkTextPrimary,
             fontSize: 12,
             fontWeight: FontWeight.bold,
           ),
@@ -97,19 +88,19 @@ class _BarGraphHoursState extends State<BarGraphHours> {
         ),
         primaryXAxis: CategoryAxis(
           majorGridLines: const MajorGridLines(width: 0),
-          axisLine: const AxisLine(color: _axisLine, width: 1),
-          labelStyle: const TextStyle(color: _textMuted, fontSize: 10),
+          axisLine: const AxisLine(color: ColorDefaults.darkAxisLine, width: 1),
+          labelStyle: const TextStyle(color: ColorDefaults.darkTextMuted, fontSize: 10),
           labelRotation: 0,
           labelIntersectAction: AxisLabelIntersectAction.hide,
         ),
         primaryYAxis: NumericAxis(
           majorGridLines: const MajorGridLines(
             width: 0.5,
-            color: _gridLine,
+            color: ColorDefaults.darkGridLine,
             dashArray: <double>[5, 5],
           ),
-          axisLine: const AxisLine(color: _axisLine, width: 1),
-          labelStyle: const TextStyle(color: _textMuted, fontSize: 10),
+          axisLine: const AxisLine(color: ColorDefaults.darkAxisLine, width: 1),
+          labelStyle: const TextStyle(color: ColorDefaults.darkTextMuted, fontSize: 10),
         ),
         series: <CartesianSeries<dynamic, String>>[
           ColumnSeries<dynamic, String>(
@@ -122,9 +113,8 @@ class _BarGraphHoursState extends State<BarGraphHours> {
               }
               return fullTime;
             },
-            yValueMapper: (data, _) =>
-                data[filterElementProvider.getElement] ?? 0,
-            color: _cyan,
+            yValueMapper: (data, _) => data[filterElementProvider.getElement] ?? 0,
+            color: ColorDefaults.darkCyan,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(5)),
             spacing: 0.2,
             width: 0.8,
@@ -132,11 +122,11 @@ class _BarGraphHoursState extends State<BarGraphHours> {
             dataLabelSettings: DataLabelSettings(
               isVisible: true,
               borderRadius: 4,
-              color: _bgTooltip.withOpacity(0.85),
+              color: ColorDefaults.darkBgHeader.withOpacity(0.85),
               textStyle: const TextStyle(
                 fontSize: 10,
                 fontWeight: FontWeight.bold,
-                color: _textPrimary,
+                color: ColorDefaults.darkTextPrimary,
               ),
               labelAlignment: ChartDataLabelAlignment.outer,
             ),

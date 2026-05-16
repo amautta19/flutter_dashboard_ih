@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dashboard_ih/defaults/color_defaults.dart';
 import 'package:flutter_dashboard_ih/defaults/text_global.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
@@ -19,18 +20,6 @@ class TableWurMonthly extends StatefulWidget {
 }
 
 class _TableWurMonthlyState extends State<TableWurMonthly> {
-  // Paleta de colores — mismo esquema que los gráficos
-  static const Color _bgCard       = Color(0xFF1E1E2E);
-  static const Color _bgCardBorder = Color(0xFF2E2E4E);
-  static const Color _bgHeader     = Color(0xFF2A2A3E);
-  static const Color _bgRow        = Color(0xFF1E1E2E);
-  static const Color _bgRowAlt     = Color(0xFF232336);
-  static const Color _cyan         = Color(0xFF00E5FF);
-  static const Color _textPrimary  = Colors.white;
-  static const Color _textMuted    = Color(0xFFB0B0C8);
-  static const Color _gridLine     = Color(0x1FFFFFFF);
-  static const Color _barGood      = Color(0xFF4CAF50);
-  static const Color _barBad       = Color(0xFFE53935);
 
   _DataSource _dataSource = _DataSource(data: []);
 
@@ -71,9 +60,9 @@ class _TableWurMonthlyState extends State<TableWurMonthly> {
       height: windowSize.height * widget.heiht,
       width: windowSize.width * widget.width,
       decoration: BoxDecoration(
-        color: _bgCard,
+        color: ColorDefaults.darkBgCard,
         borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: _bgCardBorder, width: 1),
+        border: Border.all(color: ColorDefaults.darkBgBorder, width: 1),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.3),
@@ -86,22 +75,19 @@ class _TableWurMonthlyState extends State<TableWurMonthly> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // ── Título ───────────────────────────────────────────────
           GlobalText(
             'WUR Mensual',
             fontSize: 16,
-            color: _cyan,
+            color: ColorDefaults.darkCyan,
             fontWeight: FontWeight.bold,
           ),
-          // const SizedBox(height: 10),
-          const SizedBox(height: 10,),
-          // ── Tabla ────────────────────────────────────────────────
+          const SizedBox(height: 10),
           Expanded(
             child: SfDataGridTheme(
               data: SfDataGridThemeData(
-                gridLineColor: _gridLine,
+                gridLineColor: ColorDefaults.darkGridLine,
                 gridLineStrokeWidth: 1,
-                headerColor: _bgHeader,
+                headerColor: ColorDefaults.darkBgHeader,
               ),
               child: SfDataGrid(
                 source: _dataSource,
@@ -130,28 +116,23 @@ GridColumn _buildColumn(String name, String label) {
     columnName: name,
     label: Container(
       alignment: Alignment.center,
-      decoration: const BoxDecoration(
-        color: Color(0xFF2A2A3E), // _bgHeader
+      decoration: BoxDecoration(
+        color: ColorDefaults.darkBgHeader,
         border: Border(
-          bottom: BorderSide(color: Color(0xFF00E5FF), width: 2), // línea cyan debajo del header
+          bottom: BorderSide(color: ColorDefaults.darkCyan, width: 2),
         ),
       ),
       child: GlobalText(
         label,
         fontSize: 13,
         fontWeight: FontWeight.bold,
-        color: Color(0xFF00E5FF), // _cyan
+        color: ColorDefaults.darkCyan,
       ),
     ),
   );
 }
 
 class _DataSource extends DataGridSource {
-  static const Color _bgRow    = Color(0xFF1E1E2E);
-  static const Color _bgRowAlt = Color(0xFF232336);
-  static const Color _gridLine = Color(0x1FFFFFFF);
-  static const Color _barGood  = Color(0xFF4CAF50);
-  static const Color _barBad   = Color(0xFFE53935);
 
   _DataSource({required List<dynamic> data}) {
     _rows = data.map<DataGridRow>((item) {
@@ -175,9 +156,8 @@ class _DataSource extends DataGridSource {
 
   @override
   DataGridRowAdapter buildRow(DataGridRow row) {
-    // Índice para filas alternas
     final int index = _rows.indexOf(row);
-    final Color rowBg = index.isOdd ? _bgRowAlt : _bgRow;
+    final Color rowBg = index.isOdd ? ColorDefaults.darkBgCardAlt : ColorDefaults.darkBgCard;
 
     return DataGridRowAdapter(
       color: rowBg,
@@ -185,14 +165,12 @@ class _DataSource extends DataGridSource {
         final bool isWur = cell.columnName == 'wur';
 
         Color cellBg = Colors.transparent;
-        Color textColor = const Color(0xFFB0B0C8); // _textMuted
 
         if (isWur) {
           final double valor = (cell.value as num).toDouble();
           cellBg = valor > 1.55
-              ? _barBad.withOpacity(0.85)
-              : _barGood.withOpacity(0.85);
-          textColor = Colors.white;
+              ? ColorDefaults.darkBarBad.withOpacity(0.85)
+              : ColorDefaults.darkBarGood.withOpacity(0.85);
         }
 
         return Container(
@@ -201,16 +179,16 @@ class _DataSource extends DataGridSource {
           decoration: BoxDecoration(
             color: cellBg,
             border: Border(
-              bottom: BorderSide(color: _gridLine, width: 1),
+              bottom: BorderSide(color: ColorDefaults.darkGridLine, width: 1),
               left: isWur
-                  ? const BorderSide(color: Color(0x1FFFFFFF), width: 1)
+                  ? BorderSide(color: ColorDefaults.darkGridLine, width: 1)
                   : BorderSide.none,
             ),
           ),
           child: GlobalText(
             cell.value.toString(),
             fontSize: 12,
-            color: Colors.white,
+            color: ColorDefaults.darkTextPrimary,
             fontWeight: isWur ? FontWeight.bold : FontWeight.normal,
           ),
         );

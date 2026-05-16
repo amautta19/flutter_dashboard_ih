@@ -15,17 +15,6 @@ class TableWurSemanal extends StatefulWidget {
 }
 
 class _TableWurSemanalState extends State<TableWurSemanal> {
-  // Paleta de colores — mismo esquema que el resto
-  static const Color _bgCard       = Color(0xFF1E1E2E);
-  static const Color _bgCardBorder = Color(0xFF2E2E4E);
-  static const Color _bgHeader     = Color(0xFF2A2A3E);
-  static const Color _bgRow        = Color(0xFF1E1E2E);
-  static const Color _bgRowAlt     = Color(0xFF232336);
-  static const Color _cyan         = Color(0xFF00E5FF);
-  static const Color _textMuted    = Color(0xFFB0B0C8);
-  static const Color _gridLine     = Color(0x1FFFFFFF);
-  static const Color _barGood      = Color(0xFF4CAF50);
-  static const Color _barBad       = Color(0xFFE53935);
 
   _ConsumoDataSource _dataSource = _ConsumoDataSource(data: [], umbralReferencia: 0.0);
 
@@ -78,9 +67,9 @@ class _TableWurSemanalState extends State<TableWurSemanal> {
       height: windowSize.height * 0.35,
       width: windowSize.width * 0.15,
       decoration: BoxDecoration(
-        color: _bgCard,
+        color: ColorDefaults.darkBgCard,
         borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: _bgCardBorder, width: 1),
+        border: Border.all(color: ColorDefaults.darkBgBorder, width: 1),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.3),
@@ -93,21 +82,19 @@ class _TableWurSemanalState extends State<TableWurSemanal> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // ── Título ───────────────────────────────────────────────
           GlobalText(
             'WUR - Semanal',
             fontSize: 16,
-            color: _cyan,
+            color: ColorDefaults.darkCyan,
             fontWeight: FontWeight.bold,
           ),
           const SizedBox(height: 10),
-
           Expanded(
             child: SfDataGridTheme(
               data: SfDataGridThemeData(
-                gridLineColor: _gridLine,
+                gridLineColor: ColorDefaults.darkGridLine,
                 gridLineStrokeWidth: 1,
-                headerColor: _bgHeader,
+                headerColor: ColorDefaults.darkBgHeader,
               ),
               child: SfDataGrid(
                 source: _dataSource,
@@ -136,29 +123,23 @@ GridColumn _buildColumn(String name, String label) {
     columnName: name,
     label: Container(
       alignment: Alignment.center,
-      decoration: const BoxDecoration(
-        color: Color(0xFF2A2A3E),
+      decoration: BoxDecoration(
+        color: ColorDefaults.darkBgHeader,
         border: Border(
-          bottom: BorderSide(color: Color(0xFF00E5FF), width: 2),
+          bottom: BorderSide(color: ColorDefaults.darkCyan, width: 2),
         ),
       ),
       child: GlobalText(
         label,
         fontSize: 13,
         fontWeight: FontWeight.bold,
-        color: Color(0xFF00E5FF),
+        color: ColorDefaults.darkCyan,
       ),
     ),
   );
 }
 
 class _ConsumoDataSource extends DataGridSource {
-  static const Color _bgRow    = Color(0xFF1E1E2E);
-  static const Color _bgRowAlt = Color(0xFF232336);
-  static const Color _gridLine = Color(0x1FFFFFFF);
-  static const Color _barGood  = Color(0xFF4CAF50);
-  static const Color _barBad   = Color(0xFFE53935);
-
   final double umbralReferencia;
 
   _ConsumoDataSource({required List<dynamic> data, required this.umbralReferencia}) {
@@ -184,7 +165,9 @@ class _ConsumoDataSource extends DataGridSource {
   @override
   DataGridRowAdapter buildRow(DataGridRow row) {
     final int index = _rows.indexOf(row);
-    final Color rowBg = index.isOdd ? _bgRowAlt : _bgRow;
+    final Color rowBg = index.isOdd
+        ? ColorDefaults.darkBgCardAlt
+        : ColorDefaults.darkBgCard;
 
     return DataGridRowAdapter(
       color: rowBg,
@@ -192,14 +175,14 @@ class _ConsumoDataSource extends DataGridSource {
         final bool isWur = cell.columnName == 'wur_semanal';
 
         Color cellBg = Colors.transparent;
-        Color textColor = const Color(0xFFB0B0C8); // _textMuted
+        Color textColor = ColorDefaults.darkTextMuted;
 
         if (isWur) {
           final double valor = (cell.value as num).toDouble();
           cellBg = valor > umbralReferencia
-              ? _barBad.withOpacity(0.85)
-              : _barGood.withOpacity(0.85);
-          textColor = Colors.white;
+              ? ColorDefaults.darkBarBad.withOpacity(0.85)
+              : ColorDefaults.darkBarGood.withOpacity(0.85);
+          textColor = ColorDefaults.darkTextPrimary;
         }
 
         return Container(
@@ -208,9 +191,9 @@ class _ConsumoDataSource extends DataGridSource {
           decoration: BoxDecoration(
             color: cellBg,
             border: Border(
-              bottom: BorderSide(color: _gridLine, width: 1),
+              bottom: BorderSide(color: ColorDefaults.darkGridLine, width: 1),
               left: isWur
-                  ? const BorderSide(color: Color(0x1FFFFFFF), width: 1)
+                  ? BorderSide(color: ColorDefaults.darkGridLine, width: 1)
                   : BorderSide.none,
             ),
           ),
